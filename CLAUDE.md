@@ -90,3 +90,88 @@
 - 산출물(보고서·구성도·내역서)은 한국어로 작성하는 것을 기본으로 함
 - 질문·도움 요청은 현재 진행 중인 주차와 해당 산출물 기준으로 맥락을 맞출 것
 - 원본 일정표 참고 사항: 2~4주 슬라이드 부제는 "15일 과정(01–15일)"이지만 표에는 01~14일차만 있음
+
+---
+
+# 학습용 웹 앱 작업 현황 (이어서 작업할 때 여기부터 읽기)
+
+`reference_학습장.html`(기존 단일 파일 학습장: 1주차 + 일차 01~06)의 디자인·기능을 바탕으로, 위 7주 커리큘럼 전체를 담는 학습 웹 앱을 만드는 중입니다.
+
+- **상세 계획 파일:** `C:\Users\user\.claude\plans\foamy-shimmying-widget.md` (폴더 구조, 레슨 형식, 단계, 검증 방법)
+- **원격 저장소:** https://github.com/jintheog/ebiztech_ojt.git (`main`)
+- **최종 갱신:** 2026-11-05, 1단계 완료 시점
+
+## 진행 상황
+
+| 단계 | 내용 | 상태 |
+|---|---|---|
+| 1 | 앱 골격 + 기존 레슨 10개(w1-1~w1-4, d01~d06) 이전 | ✅ 완료 (커밋 `8704a00`) |
+| 2 | 3주차 일차 07~10 Network 레슨 4개 (`d07`~`d10`) + 서브넷 계산기 위젯(넣을지 사용자 확인 필요) | ⏭ 다음 차례 |
+| 3 | 4주차 일차 11~14 Storage·데이터 보호·Cloud 레슨 4개 (`d11`~`d14`) | 대기 |
+| 4 | 5~6주차 zCompute 레슨 8개 (`zc1`~`zc8`, 실습 과제 1~3은 zc4·zc6·zc8의 `tasks`) | 대기 |
+| 5 | 7주차 zStorage 레슨 5개 (`zs1`~`zs5`) | 대기 |
+| 6 | 마무리: 이 문서에 최종 구조 반영, 전체 점검 | 대기 |
+
+사용자 결정 사항:
+- 블록 하나를 끝낼 때마다 사용자에게 확인을 받고 다음 단계로 넘어갑니다.
+- 연습 터미널, 종합시험, 질문 노트, 복습 일정은 모두 유지합니다.
+- 일차 번호와 tag는 교육일정표 PDF 표를 따릅니다: 일차 07~10은 3주차, 일차 11~14는 4주차입니다.
+
+## 앱 구조
+
+```
+index.html            더블클릭으로 열림 (서버 없음, file://)
+app/
+  core.js             공통 함수, 상태(localStorage), OJT.lesson() 등록, 레슨 로더, 목차, 라우터
+  home.js             홈(진도·복습·대응표·7주 계획표·백업), 공부법
+  lesson.js           레슨 화면, 셀프체크, 퀴즈, 실습 체크리스트(tasks), 완료·복습, 준비 중 화면(vSoon)
+  cards.js exam.js qnote.js widgets.js terminal.js styles.css
+content/
+  curriculum.js       블록 6개 · 레슨 31개 순서/메타(일차, 학습 항목, 활동) · 블록별 종합시험 · PLAN(7주 계획표)
+  guide.js            공부법 본문
+  lessons/<id>.js     레슨 1개 = 파일 1개
+tests/apptest.html    동작 테스트 페이지
+```
+
+- `file://`에서는 ES 모듈과 fetch를 쓸 수 없습니다. 그래서 모든 파일은 일반 `<script>`이고 전역 스코프를 공유합니다.
+- `core.js`가 `curriculum.js`의 순서대로 `content/lessons/<id>.js`를 동적으로 불러옵니다. 파일이 없으면 목차와 홈에 "준비 중"으로 표시됩니다(개발자 도구의 파일 없음 오류는 정상입니다).
+- 저장 키는 `zadara-ojt-7w-v1`입니다. 상태 구조는 `{guide, L:{레슨id:{quiz,qlast,es,et,note,done,rv,tk}}, cards, exams, term, qn, ts}`입니다.
+
+## 레슨 추가하는 법
+
+1. `content/lessons/<id>.js` 파일을 만듭니다. id와 순서는 이미 `curriculum.js`에 정의되어 있습니다. 형식은 기존 파일(예: `d04.js`)을 그대로 따릅니다.
+   ```js
+   OJT.lesson({
+     id:'d07', week:3, day:'07', tag:'일차 07', mins:'약 3시간',
+     title:'…', cover:[['일정표 항목','s1'], …], act:'PDF의 학습 확인/활동',
+     goal:[…], terms:[['용어','영문','정의'], …],
+     body:`<h2 id="s1">…</h2> …`,      // 첫 절은 반드시 id="s1"
+     summary:[…], essay:[{q,a}, …], quiz:[{q, o:[정답, 오답…], e:'해설'}, …],
+     tasks:[{title:'실습 과제 1) …', items:['단계', …], note:'선택'}]   // 선택
+   });
+   ```
+2. 본문 박스는 `box analogy`(비유), `box mem`(외울 것), `box warn`(주의)를 씁니다. 그림은 `flow`, `layers`, 표는 `tbl-wrap`를 씁니다. 위젯은 `<div data-widget="이름"></div>`로 넣고 `app/widgets.js`의 `WIDGETS`에 등록합니다.
+3. 분량과 문체는 기존 레슨에 맞춥니다: 용어 15~20개, 본문 8~10절, 셀프체크 5~6개, 퀴즈 12~15개, 쉬운 한국어와 비유.
+4. zCompute·zStorage 레슨은 쓰기 전에 `Zadara Cloud Platform 기능 소개_20261103.pdf`와 `신입사원 기술 부문 OJT 계획서_v4_20261103.pdf`를 먼저 읽습니다. 자료로 확인할 수 없는 콘솔 화면이나 절차는 지어내지 않고 "사내 실습 환경에서 확인" 박스로 표시합니다.
+
+## 검증 방법
+
+Chrome 확장(claude-in-chrome)은 사용자가 설치하지 않기로 했습니다. 대신 설치된 Chrome을 화면 없이(headless) 실행합니다.
+
+```bash
+CH="/c/Program Files/Google/Chrome/Application/chrome.exe"; P="<스크래치 폴더>/prof"   # 반드시 별도 프로필
+# 화면 렌더 확인
+"$CH" --headless=new --disable-gpu --user-data-dir="$P" --virtual-time-budget=4000 --dump-dom "file:///C:/Users/user/Desktop/OJT/index.html#d07"
+# 동작 테스트 (phase=1 다음 phase=2, 같은 프로필). 전부 PASS여야 함
+"$CH" --headless=new --disable-gpu --user-data-dir="$P" --virtual-time-budget=8000 --dump-dom "file:///C:/Users/user/Desktop/OJT/tests/apptest.html?phase=1"
+```
+- ⚠ `apptest.html?phase=1`은 localStorage를 지웁니다. 사용자의 평소 브라우저로 열지 말고, 반드시 별도 `--user-data-dir`로 실행합니다.
+- 페이지 콘솔 로그는 headless stderr에 잡히지 않습니다. JS 오류는 테스트 페이지의 `JSERROR` 줄로 확인합니다.
+- 1단계 기준 결과는 phase 1 17개 PASS, phase 2 5개 PASS입니다. 새 레슨을 추가한 뒤에는 해당 레슨 화면을 dump해서 퀴즈·셀프체크·용어 개수를 확인합니다.
+
+## git 규칙
+
+- 저장소 사용자는 `jintheog <jintheog11@gmail.com>`입니다(저장소 로컬 설정).
+- **단계가 끝날 때마다 커밋하고 `git push`합니다.** 강제 push는 하지 않습니다. 원격에 예상하지 못한 변경이 있으면 멈추고 사용자에게 먼저 알립니다.
+- 커밋 메시지는 한국어로 "N단계: …" 형식으로 쓰고, 끝에 `Co-Authored-By` 줄을 붙입니다.
+- PDF(회사 원본 자료)는 `.gitignore`로 저장소에서 제외되어 있습니다.

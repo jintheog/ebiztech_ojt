@@ -1,0 +1,75 @@
+<!doctype html><html><head><meta charset="utf-8"><base href="../"></head><body>
+<!-- 앱 동작 테스트. phase=1: 레슨 완료·카드·질문·시험·백업 흐름 / phase=2: 새로고침 후 저장 유지. 실행법은 CLAUDE.md 참고. -->
+<header class="top"><div class="bar"><i id="pbar"></i></div><span id="pnum"></span><span id="sync"></span><button id="menuBtn"></button></header>
+<nav id="nav"></nav><main id="view"></main><div id="toast"></div>
+<pre id="out">RUNNING</pre>
+<script>
+const LOG = []; const ok = (name, cond, extra) => LOG.push((cond ? 'PASS ' : 'FAIL ') + name + (extra ? ' :: ' + extra : ''));
+window.onerror = (m, s, l) => { LOG.push('JSERROR ' + m + ' @' + s + ':' + l); };
+</script>
+<script src="content/curriculum.js"></script><script src="content/guide.js"></script>
+<script src="app/core.js"></script><script src="app/widgets.js"></script><script src="app/home.js"></script>
+<script src="app/lesson.js"></script><script src="app/cards.js"></script><script src="app/exam.js"></script>
+<script src="app/qnote.js"></script><script src="app/terminal.js"></script>
+<script>
+const phase = new URLSearchParams(location.search).get('phase');
+const wait = (c, t = 3000) => new Promise((res, rej) => { const s = Date.now(); (function p() { if (c()) res(); else if (Date.now() - s > t) rej(new Error('timeout')); else setTimeout(p, 30); })(); });
+const go = h => new Promise(r => { location.hash = h; setTimeout(r, 60); });
+(async () => {
+  try {
+    await wait(() => LESSONS.length > 0);
+    ok('lessons loaded', LESSONS.length >= 10, LESSONS.map(l => l.id).join(','));
+    ok('curriculum size 31', ALL.length === 31);
+    ok('terms indexed', ALLTERMS.length > 100, ALLTERMS.length);
+    if (phase === '1') {
+      localStorage.clear(); S = defaults();
+      await go('d01');
+      const l = LMAP.d01;
+      // quiz: click the correct option (o[0]) for every question
+      document.querySelectorAll('#quizBox .q').forEach(el => {
+        const qtext = el.querySelector('.q-h span:last-child').textContent;
+        const q = l.quiz.find(x => x.q === qtext);
+        [...el.querySelectorAll('.opt')].find(b => b.textContent === q.o[0]).click();
+      });
+      ok('quiz 100', LP('d01').quiz === 100, LP('d01').quiz);
+      // essays: type + grade
+      const ta = document.querySelector('#essays textarea'); ta.value = '내 답 테스트'; ta.dispatchEvent(new Event('input'));
+      document.querySelectorAll('#essays .es').forEach(el => { el.querySelector('[data-act=show]').click(); el.querySelector('[data-g="2"]').click(); });
+      ok('essays graded', lstat('d01').essOk);
+      const nc = document.querySelector('#noteCk'); nc.checked = true; nc.dispatchEvent(new Event('change'));
+      const fb = document.querySelector('#finBtn'); ok('finish enabled', fb && !fb.disabled); fb.click();
+      ok('lesson done + review set', LP('d01').done === today() && LP('d01').rv.next === addDays(today(), 1));
+      await new Promise(r => setTimeout(r, 800)); // essay debounce
+      ok('essay text saved', LP('d01').et[0] === '내 답 테스트');
+      // terminal mission A step 1 + card rating + question note
+      await go('term');
+      ok('terminal rendered', !!document.querySelector('#ttyIn'));
+      await go('cards'); document.querySelector('#fcCard').click(); document.querySelector('[data-k="2"]').click();
+      ok('card rated', Object.values(S.cards).includes(2));
+      await go('qnote'); document.querySelector('#qnNew').value = '질문 테스트'; document.querySelector('#qnAdd').click();
+      ok('qnote added', S.qn.length === 1);
+      // exam: answer all, submit
+      await go('ex-it1'); document.querySelector('#exStart').click();
+      document.querySelectorAll('.exam-q').forEach(el => el.querySelector('.opt').click());
+      document.querySelector('#exSubmit').click();
+      ok('exam scored', S.exams['ex-it1'] && typeof S.exams['ex-it1'].best === 'number', JSON.stringify(S.exams['ex-it1']));
+      // soon page + nav
+      await go('zs3'); ok('soon page', document.querySelector('#view').textContent.includes('준비 중'));
+      ok('nav exam links', document.querySelectorAll('#nav .nav-a.exam').length === 6);
+      // export/import round trip
+      const snap = JSON.stringify(S);
+      S = defaults(); save();
+      importState(new Blob([snap], { type: 'application/json' })); await wait(() => S.qn.length === 1).catch(() => {});
+      ok('import restores', LP('d01').done === today() && S.qn.length === 1);
+      const bad = JSON.stringify(S); importState(new Blob(['not json'])); await wait(() => document.querySelector('#toast').textContent.includes('불러오기 실패')).catch(() => {});
+      ok('bad import ignored', JSON.stringify(S) === bad);
+      ok('saved to localStorage', JSON.parse(localStorage.getItem('zadara-ojt-7w-v1')).L.d01.done === today());
+    } else {
+      ok('persisted after reload', LP('d01').done === today() && LP('d01').et[0] === '내 답 테스트' && S.qn.length === 1);
+      await go('home');
+      ok('home shows 1/31', document.querySelector('#pnum').textContent === '1 / 31 레슨', document.querySelector('#pnum').textContent);
+    }
+  } catch (e) { LOG.push('EXCEPTION ' + e.message + '\n' + e.stack); }
+  document.getElementById('out').textContent = 'DONE\n' + LOG.join('\n');
+})();
+</script></body></html>
