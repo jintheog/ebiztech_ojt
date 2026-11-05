@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Zadara OJT 학습장</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nanum+Pen+Script&display=swap">
+<link rel="stylesheet" href="app/styles.css">
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <div class="brand"><b>Zadara OJT 학습장</b><span>WEEK 1–7 · 신입사원 기술 OJT</span></div>
+  <div class="prog"><div class="bar" aria-hidden="true"><i id="pbar" style="width:0%"></i></div><span class="prog-num" id="pnum">0 레슨</span></div>
+  <span class="sync" id="sync">이 브라우저에 저장</span>
+  <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="nav">목차</button>
+</div></header>
+<div class="shell">
+  <nav id="nav" aria-label="목차"></nav>
+  <main id="view"><p class="muted">불러오는 중…</p></main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- 내용: 커리큘럼 정의와 공부법. 레슨 파일(content/lessons/*.js)은 core.js가 순서대로 불러옵니다. -->
+<script src="content/curriculum.js"></script>
+<script src="content/guide.js"></script>
+<!-- 앱 코드 -->
+<script src="app/core.js"></script>
+<script src="app/widgets.js"></script>
+<script src="app/home.js"></script>
+<script src="app/lesson.js"></script>
+<script src="app/cards.js"></script>
+<script src="app/exam.js"></script>
+<script src="app/qnote.js"></script>
+<script src="app/terminal.js"></script>
+</body>
+</html>
