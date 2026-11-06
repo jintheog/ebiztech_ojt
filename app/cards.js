@@ -14,7 +14,7 @@ function vCards() {
     '<div class="seg" id="fcMode"><button data-v="all">모든 카드</button><button data-v="weak">몰라요·헷갈려요만</button><button data-v="new">처음 보는 것만</button></div>' +
     '<div class="seg" id="fcDir"><button data-v="term">용어 → 뜻</button><button data-v="def">뜻 → 용어</button></div></div>';
   h += '<div id="fcStats" class="small muted" style="margin:12px 0"></div><div id="fcArea"></div>';
-  h += '<h2>전체 용어 목록</h2><p class="small muted">IT 용어 정리 과제에 쓰세요. 복사하면 "용어 / 영문 / 정의 / 내 비유(빈칸)" 표 형식으로 붙여 넣을 수 있습니다.</p>' +
+  h += '<h2>전체 용어 목록</h2><p class="small muted">IT 용어 정리 과제에 쓰세요. 복사하면 "용어 / 영문 / 정의 / 내 말로 설명(빈칸)" 표 형식으로 붙여 넣을 수 있습니다.</p>' +
     '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"><input type="search" id="glQ" placeholder="용어 검색 (예: SSH, 가상화)" aria-label="용어 검색" style="flex:1;min-width:180px"><button class="btn sm" id="glCopy">전체 용어 복사</button></div><div class="gl-list" id="glList"></div><textarea id="glFallback" hidden style="width:100%;height:120px;margin-top:8px" aria-label="복사용 텍스트"></textarea>';
   $('#view').innerHTML = h;
   $('#fcDeck').value = FC.deck;
@@ -26,7 +26,7 @@ function vCards() {
   drawCard(); drawGloss('');
   $('#glQ').oninput = e => drawGloss(e.target.value);
   $('#glCopy').onclick = () => {
-    const txt = '용어\t영문\t한 줄 정의\t내 비유\n' + ALLTERMS.map(t => t.term + '\t' + t.en + '\t' + t.def + '\t').join('\n');
+    const txt = '용어\t영문\t한 줄 정의\t내 말로 설명\n' + ALLTERMS.map(t => t.term + '\t' + t.en + '\t' + t.def + '\t').join('\n');
     const fb = () => { const ta = $('#glFallback'); ta.hidden = false; ta.value = txt; ta.focus(); ta.select(); toast('자동 복사가 안 되어 아래에 펼쳤습니다. Ctrl+C로 복사하세요'); };
     try { navigator.clipboard.writeText(txt).then(() => toast(ALLTERMS.length + '개 용어를 복사했습니다'), fb); } catch (e) { fb(); }
   };
