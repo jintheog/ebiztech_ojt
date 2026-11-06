@@ -1,5 +1,5 @@
 <!doctype html><html><head><meta charset="utf-8"><base href="../"></head><body>
-<!-- 앱 동작 테스트. phase=1: 레슨 완료·카드·질문·시험·백업 흐름 / phase=2: 새로고침 후 저장 유지. 실행법은 CLAUDE.md 참고. -->
+<!-- 앱 동작 테스트. phase=1: 문제 은행·퀴즈·종합시험 규칙, 레슨 완료·카드·질문·시험·백업 흐름 / phase=2: 새로고침 후 저장 유지. 실행법은 CLAUDE.md 참고. -->
 <header class="top"><div class="bar"><i id="pbar"></i></div><span id="pnum"></span><span id="sync"></span><button id="menuBtn"></button></header>
 <nav id="nav"></nav><main id="view"></main><div id="toast"></div>
 <pre id="out">RUNNING</pre>
@@ -15,6 +15,28 @@ window.onerror = (m, s, l) => { LOG.push('JSERROR ' + m + ' @' + s + ':' + l); }
 const phase = new URLSearchParams(location.search).get('phase');
 const wait = (c, t = 3000) => new Promise((res, rej) => { const s = Date.now(); (function p() { if (c()) res(); else if (Date.now() - s > t) rej(new Error('timeout')); else setTimeout(p, 30); })(); });
 const go = h => new Promise(r => { location.hash = h; setTimeout(r, 60); });
+const key = q => q.lid + ':' + q.slot;
+const slotSet = qs => qs.map(key).sort().join(',');
+// 레슨 퀴즈에서 i번째 문제의 정답 보기를 누른다
+const answerLesson = i => { const el = document.querySelector('#quizBox .q[data-n="' + i + '"]'); el.querySelectorAll('.opt')[LQ.qs[i].opts.findIndex(o => o.ok)].click(); };
+const countBy = qs => qs.reduce((m, q) => (m[q.lid] = (m[q.lid] || 0) + 1, m), {});
+
+/* 문제 은행 규칙 검사용 가짜 레슨 */
+const P = (q, o) => ({ q, o: o || [q + '-정답', q + '-오답1', q + '-오답2'], e: q + ' 해설' });
+const GEN_MBPS = { gen() {
+  const mbps = [100, 200, 300, 500, 800][Math.floor(Math.random() * 5)], gb = [1, 2, 4, 5][Math.floor(Math.random() * 4)];
+  const sec = v => (Math.round(v * 10) / 10) + '초';
+  return { q: mbps + 'Mbps 회선으로 ' + gb + 'GB 파일을 받는 데 이론상 최소 몇 초?', o: [sec(gb * 1000 / (mbps / 8)), sec(gb * 1000 / mbps), sec(gb * 1024 / (mbps / 8)), sec(gb * 1000 * 8 / (mbps / 8))], e: '해설' };
+} };
+const FAKE = [
+  { id: 'fa', exam: false, quiz: [P('fa0'), P('fa1'), P('fa2'), P('fa3')] },
+  { id: 'fb', quiz: [Object.assign(P('fb0'), { x: 1 }), { v: [P('fb1-v1'), P('fb1-v2'), P('fb1-v3')] }, { gen() { throw new Error('boom'); } },
+    { gen: () => ({ q: 'dup', o: ['1', '1', '2'], e: 'e' }) }, GEN_MBPS, P('fb5'), P('fb6'), { v: [P('fb7-v1'), P('fb7-v2')], x: 1 }] },
+  { id: 'fc', quiz: Array.from({ length: 20 }, (_, i) => P('fc' + i)) },
+  { id: 'fd', quiz: [P('fd0'), P('fd1')] }
+];
+const FB_BAD = ['fb:0', 'fb:2', 'fb:3', 'fb:7']; // x:1 두 개 + 실패하는 gen 두 개
+
 (async () => {
   try {
     await wait(() => LESSONS.length > 0);
@@ -23,21 +45,94 @@ const go = h => new Promise(r => { location.hash = h; setTimeout(r, 60); });
     ok('terms indexed', ALLTERMS.length > 100, ALLTERMS.length);
     if (phase === '1') {
       localStorage.clear(); S = defaults();
+
+      /* ---- 문제 은행: 실제 레슨 데이터 ---- */
+      const allSlots = LESSONS.flatMap(l => lessonSlots(l));
+      const vSlots = allSlots.filter(s => s.item && Array.isArray(s.item.v)), gSlots = allSlots.filter(s => s.item && typeof s.item.gen === 'function');
+      const badV = vSlots.flatMap(s => s.item.v.map((ver, i) => [s, ver, i])).filter(([s, ver]) => !(ver && typeof ver.q === 'string' && ver.q && Array.isArray(ver.o) && ver.o.length >= 2 && typeof ver.e === 'string' && ver.e))
+        .map(([s, , i]) => key(s) + ' v' + i);
+      ok('v versions have q/o(2+)/e', badV.length === 0, 'v슬롯 ' + vSlots.length + '개' + (badV.length ? ' 불량: ' + badV.join(',') : ''));
+      const genCheck = slots => {
+        const bad = [];
+        slots.forEach(s => { for (let r = 0; r < 100; r++) {
+          let out; try { out = s.item.gen(); } catch (e) { bad.push(key(s) + ' 오류: ' + e.message); break; }
+          const o = out && Array.isArray(out.o) ? out.o.map(String) : [];
+          if (!out || !out.q || !out.e || o.length < 2) { bad.push(key(s) + ' 형식'); break; }
+          if (new Set(o).size !== o.length) { bad.push(key(s) + ' 보기 중복: ' + o.join('|')); break; }
+          if (o.filter(t => t === o[0]).length !== 1) { bad.push(key(s) + ' 정답 개수'); break; }
+          const m = qDraw([s], 1).qs[0];
+          if (!m || m.opts.filter(x => x.ok).length !== 1 || m.opts.find(x => x.ok).t !== m.o[0]) { bad.push(key(s) + ' 출제 정답'); break; }
+        } });
+        return bad;
+      };
+      const badG = genCheck(gSlots);
+      ok('gen x100: no error, no dup, one answer', badG.length === 0, 'gen슬롯 ' + gSlots.length + '개' + (badG.length ? ' 불량: ' + badG.join(' / ') : ''));
+      const dead = allSlots.filter(s => !s.item.gen && !qMake(s.item)).map(key);
+      ok('every real slot is valid', dead.length === 0, dead.join(','));
+
+      /* ---- 문제 은행: 가짜 데이터로 규칙 검사 ---- */
+      const fb = FAKE[1];
+      ok('qMake rejects throwing gen / dup options', qMake(fb.quiz[2]) === null && qMake(fb.quiz[3]) === null);
+      ok('gen checker catches bad gen', genCheck(lessonSlots(fb).filter(s => s.item.gen)).length === 2 && genCheck([lessonSlots(fb)[4]]).length === 0);
+      const vSeen = new Set(); for (let r = 0; r < 200; r++) vSeen.add(qMake(fb.quiz[1]).q);
+      ok('v picks among versions', vSeen.size === 3, [...vSeen].join(','));
+      const fbDraw = qDraw(lessonSlots(fb), 10).qs; // 슬롯 8개 중 실패 2개 → 6개
+      ok('qDraw skips failed slots', fbDraw.length === 6 && !fbDraw.some(q => ['fb:2', 'fb:3'].includes(key(q))), slotSet(fbDraw));
+      const fcDraw = qDraw(lessonSlots(FAKE[2]), 10).qs;
+      ok('qDraw 10 of 20, unique slots', fcDraw.length === 10 && new Set(fcDraw.map(key)).size === 10);
+      const q1 = examQuota({ a: 20, b: 3, c: 2 }, 10, 3).quota;
+      ok('examQuota min + proportional', q1.a >= 3 && q1.b === 3 && q1.c === 2 && q1.a + q1.b + q1.c === 10, JSON.stringify(q1));
+      const q2 = examQuota(Object.fromEntries('abcdefgh'.split('').map(k => [k, 12])), 20, 3);
+      ok('examQuota raises n to meet minimum', q2.n === 24 && Object.values(q2.quota).every(v => v === 3), JSON.stringify(q2));
+      const q3 = examQuota({ a: 30, b: 10, c: 10 }, 20, 3).quota;
+      ok('examQuota proportional to slots', q3.a >= 10 && q3.a + q3.b + q3.c === 20, JSON.stringify(q3));
+      let fe = [];
+      for (let r = 0; r < 300; r++) {
+        const x = examBuild(FAKE, 12), c = countBy(x.qs), ks = x.qs.map(key);
+        if (x.qs.length !== 12) fe.push('개수 ' + x.qs.length);
+        if (c.fa) fe.push('exam:false 출제');
+        if (ks.some(k => FB_BAD.includes(k))) fe.push('x:1/실패 슬롯 출제 ' + ks.filter(k => FB_BAD.includes(k)));
+        if (new Set(ks).size !== ks.length) fe.push('슬롯 중복');
+        if (!(c.fb >= 3 && c.fc >= 3 && c.fd === 2)) fe.push('레슨별 최소 ' + JSON.stringify(c));
+        if (x.excluded.map(l => l.id).join() !== 'fa' || x.included.map(l => l.id).join() !== 'fb,fc,fd') fe.push('범위');
+        if (fe.length) break;
+      }
+      ok('examBuild x300: excludes exam:false & x:1, no dup, min per lesson', fe.length === 0, fe.join(' / '));
+
+      /* ---- 레슨 퀴즈 ---- */
       await go('d01');
       const l = LMAP.d01;
-      // quiz: click the correct option (o[0]) for every question
-      document.querySelectorAll('#quizBox .q').forEach(el => {
-        const qtext = el.querySelector('.q-h span:last-child').textContent;
-        const q = l.quiz.find(x => x.q === qtext);
-        [...el.querySelectorAll('.opt')].find(b => b.textContent === q.o[0]).click();
-      });
+      ok('lesson quiz: min(10, bank) drawn', LQ.lid === 'd01' && LQ.qs.length === Math.min(QUIZ_N, l.quiz.length) && document.querySelectorAll('#quizBox .q').length === LQ.qs.length, LQ.qs.length + ' / 은행 ' + l.quiz.length);
+      ok('quiz info text matches', document.querySelector('#quizInfo').textContent.includes('문제 은행 ' + l.quiz.length + '문제 중 ' + LQ.qs.length + '문제'));
+      answerLesson(0); answerLesson(1);
+      const before = LQ, beforeSet = slotSet(LQ.qs);
+      route(true); // 복습 완료 버튼과 같은 다시 그리기
+      document.querySelector('#essays .es [data-act=show]').click(); document.querySelector('#essays .es [data-g="1"]').click(); // 셀프체크 채점 → 완료 조건 갱신
+      ok('re-render keeps quiz & answers', LQ === before && slotSet(LQ.qs) === beforeSet && document.querySelectorAll('#quizBox .opt.ok').length === 2 && document.querySelectorAll('#quizBox .q[data-n="0"] .opt:disabled').length > 0);
+      for (let i = 2; i < LQ.qs.length; i++) answerLesson(i);
       ok('quiz 100', LP('d01').quiz === 100, LP('d01').quiz);
+      route(true);
+      ok('re-render after finish shows score, no redraw', LQ === before && !!document.querySelector('#qAgain'));
+      document.querySelector('#qAgain').click();
+      ok('retry draws new quiz', LQ !== before && LQ.qs.every(q => q.pick == null) && LQ.qs.length === Math.min(QUIZ_N, l.quiz.length));
+      const beforeNav = LQ;
+      await go('d02'); await go('d01');
+      ok('other lesson and back draws new quiz', LQ !== beforeNav && LQ.lid === 'd01');
+      // 은행이 10개 넘는 레슨: 다시 풀면 구성이 바뀌는지 (우연히 같을 수 있어 최대 5번)
+      await go('d04');
+      const d4 = LMAP.d04.quiz.length, first = slotSet(LQ.qs);
+      ok('d04 draws 10 of bank', d4 > QUIZ_N && LQ.qs.length === QUIZ_N, '은행 ' + d4);
+      let changed = false;
+      for (let t = 0; t < 5 && !changed; t++) { for (let i = 0; i < LQ.qs.length; i++) answerLesson(i); document.querySelector('#qAgain').click(); changed = slotSet(LQ.qs) !== first; }
+      ok('retry changes composition', changed);
+
       // essays: type + grade
+      await go('d01');
       const ta = document.querySelector('#essays textarea'); ta.value = '내 답 테스트'; ta.dispatchEvent(new Event('input'));
       document.querySelectorAll('#essays .es').forEach(el => { el.querySelector('[data-act=show]').click(); el.querySelector('[data-g="2"]').click(); });
       ok('essays graded', lstat('d01').essOk);
       const nc = document.querySelector('#noteCk'); nc.checked = true; nc.dispatchEvent(new Event('change'));
-      const fb = document.querySelector('#finBtn'); ok('finish enabled', fb && !fb.disabled); fb.click();
+      const fb2 = document.querySelector('#finBtn'); ok('finish enabled', fb2 && !fb2.disabled); fb2.click();
       ok('lesson done + review set', LP('d01').done === today() && LP('d01').rv.next === addDays(today(), 1));
       await new Promise(r => setTimeout(r, 800)); // essay debounce
       ok('essay text saved', LP('d01').et[0] === '내 답 테스트');
@@ -48,11 +143,35 @@ const go = h => new Promise(r => { location.hash = h; setTimeout(r, 60); });
       ok('card rated', Object.values(S.cards).includes(2));
       await go('qnote'); document.querySelector('#qnNew').value = '질문 테스트'; document.querySelector('#qnAdd').click();
       ok('qnote added', S.qn.length === 1);
-      // exam: answer all, submit
-      await go('ex-it1'); document.querySelector('#exStart').click();
-      document.querySelectorAll('.exam-q').forEach(el => el.querySelector('.opt').click());
+
+      /* ---- 종합시험 ---- */
+      await go('ex-w1');
+      const w1s = LESSONS.filter(x => x.block === 'w1'), w1inc = w1s.filter(x => x.exam !== false);
+      const w1slots = w1inc.reduce((a, x) => a + lessonSlots(x, true).length, 0), w1n = Math.min(EXAMS['ex-w1'].n, w1slots);
+      let ce = [];
+      for (let r = 0; r < 50; r++) {
+        if (r) vExam('ex-w1'); // 화면을 다시 열 때마다 새로 출제
+        const c = countBy(EQ.qs);
+        if (EQ.qs.length !== w1n) ce.push('개수 ' + EQ.qs.length);
+        if (c['w1-4']) ce.push('w1-4 출제');
+        if (EQ.qs.some(q => LMAP[q.lid].quiz[q.slot].x)) ce.push('x:1 출제');
+        if (new Set(EQ.qs.map(key)).size !== EQ.qs.length) ce.push('슬롯 중복');
+        if (!w1inc.every(x => (c[x.id] || 0) >= Math.min(EXAM_MIN, lessonSlots(x, true).length))) ce.push('레슨별 최소 ' + JSON.stringify(c));
+        if (ce.length) break;
+      }
+      ok('ex-w1 x50: no w1-4, no x:1, no dup, min per lesson', ce.length === 0, ce.join(' / '));
+      const lede = document.querySelector('#exLede').textContent;
+      ok('ex-w1 text matches scope', lede.includes('레슨 ' + w1inc.length + '개에서 ' + w1n + '문제') && document.querySelector('#view').textContent.includes(LMAP['w1-4'].title + ' 레슨은 시험 범위에서 제외'), lede);
+      await go('ex-it1');
+      const it1 = LESSONS.filter(x => x.block === 'it1'), ci = countBy(EQ.qs);
+      ok('ex-it1 n & min per lesson', EQ.qs.length === EXAMS['ex-it1'].n && it1.every(x => ci[x.id] >= EXAM_MIN) && document.querySelector('#exLede').textContent.includes('레슨 ' + it1.length + '개에서 ' + EQ.qs.length + '문제'), JSON.stringify(ci));
+      document.querySelector('#exStart').click();
+      document.querySelectorAll('.exam-q').forEach(el => el.querySelectorAll('.opt')[EQ.qs[+el.dataset.n].opts.findIndex(o => o.ok)].click());
       document.querySelector('#exSubmit').click();
-      ok('exam scored', S.exams['ex-it1'] && typeof S.exams['ex-it1'].best === 'number', JSON.stringify(S.exams['ex-it1']));
+      ok('exam scored', S.exams['ex-it1'] && S.exams['ex-it1'].best === 100, JSON.stringify(S.exams['ex-it1']));
+      const rows = [...document.querySelectorAll('#exPer .res-l')].map(r => [r.dataset.lid, r.querySelector('.mono').textContent]);
+      ok('exam per-lesson result matches lid', rows.length === it1.length && rows.every(([id, t]) => t === ci[id] + '/' + ci[id]), JSON.stringify(rows));
+
       // soon page + nav
       await go('zs3'); ok('soon page', document.querySelector('#view').textContent.includes('준비 중'));
       ok('nav exam links', document.querySelectorAll('#nav .nav-a.exam').length === 6);
@@ -68,6 +187,8 @@ const go = h => new Promise(r => { location.hash = h; setTimeout(r, 60); });
       ok('persisted after reload', LP('d01').done === today() && LP('d01').et[0] === '내 답 테스트' && S.qn.length === 1);
       await go('home');
       ok('home shows 1/31', document.querySelector('#pnum').textContent === '1 / 31 레슨', document.querySelector('#pnum').textContent);
+      await go('d01');
+      ok('lesson quiz after reload', LQ && LQ.lid === 'd01' && LQ.qs.length === Math.min(QUIZ_N, LMAP.d01.quiz.length));
     }
   } catch (e) { LOG.push('EXCEPTION ' + e.message + '\n' + e.stack); }
   document.getElementById('out').textContent = 'DONE\n' + LOG.join('\n');

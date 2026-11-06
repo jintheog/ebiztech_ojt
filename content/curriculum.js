@@ -46,7 +46,7 @@ const CURRICULUM = [
   },
   {
     id: 'zc', title: 'Zadara zCompute (5–6주차)', short: 'zCompute',
-    exam: { id: 'ex-zc', title: 'zCompute 종합시험', n: 20 },
+    exam: { id: 'ex-zc', title: 'zCompute 종합시험', n: 24 },
     lessons: [
       { id: 'zc1', week: 5, tag: 'zCompute 1', title: '플랫폼 및 권한', items: 'Region · Account · Project · IAM' },
       { id: 'zc2', week: 5, tag: 'zCompute 2', title: '네트워크 설계', items: 'VPC · Subnet · Route Table · Security Group' },

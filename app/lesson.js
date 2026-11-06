@@ -1,5 +1,5 @@
 /* 레슨 화면: 목표 · 일정표 항목 · 용어 · 본문 · 핵심 정리 · 셀프체크 · 퀴즈 · 실습 체크리스트 · 완료/복습.
-   레슨 데이터 형식은 content/lessons/*.js 참고. quiz의 o[0]이 정답(화면에서는 섞어서 보여줌). */
+   레슨 데이터 형식은 content/lessons/*.js 참고. quiz는 문제 은행(슬롯 형식은 app/core.js의 "문제 은행" 주석), o[0]이 정답(화면에서는 섞어서 보여줌). */
 
 function pagerHTML(id) {
   const idx = ALL.findIndex(m => m.id === id), b = BLOCK[META[id].block];
@@ -12,6 +12,7 @@ function pagerHTML(id) {
 
 /* 아직 파일이 없는 레슨 */
 function vSoon(id) {
+  LQ = null; // 다른 레슨으로 이동: 돌아오면 퀴즈를 새로 뽑는다
   const m = META[id];
   let h = '<div class="eyebrow">' + esc(m.tag) + ' · 준비 중</div><h1>' + esc(m.title) + '</h1>';
   h += '<div class="box" style="margin-top:16px"><b class="small">교육일정표' + (m.day ? ' 일차 ' + m.day : '') + '</b><ul style="margin-bottom:0">' +
@@ -37,7 +38,7 @@ function vLesson(id) {
   h += '<h2 id="sum">핵심 정리: 손노트에 옮겨 쓰기</h2><p>펼치기 <b>전에</b> 이 레슨의 핵심을 손노트에 먼저 떠올려 쓰세요. 그다음 펼쳐서 비교하고, 빠진 것을 파란 펜으로 보충합니다.</p>' +
     '<div class="sum" id="sumBox"><span class="pen">손노트에 옮겨 쓸 것</span><div id="sumBody" hidden><ol>' + l.summary.map(s => '<li>' + esc(s) + '</li>').join('') + '</ol></div><div class="btn-row" id="sumBtnRow"><button class="btn" id="sumBtn">떠올려 썼어요, 펼치기</button></div></div>';
   h += '<h2 id="essay">셀프체크: 말로 설명하기</h2><p>질문마다 <b>먼저 소리 내서 설명</b>해 보고, 짧게 적은 뒤, 모범 답안과 비교해 스스로 채점하세요. 단어가 조금 달라도 핵심이 같으면 ○입니다.</p><div id="essays"></div>';
-  h += '<h2 id="quiz">퀴즈</h2><p class="small muted">문제와 보기 순서는 매번 섞입니다. 80점 이상이면 통과.</p><div id="quizBox"></div>';
+  h += '<h2 id="quiz">퀴즈</h2><p class="small muted" id="quizInfo"></p><div id="quizBox"></div>';
   if (l.tasks) h += '<h2 id="tasks">실습 체크리스트</h2><p class="small muted">실습 환경에서 직접 한 단계만 체크하세요. 결과 화면·명령어 출력은 작업 로그에 남겨 산출물의 재료로 씁니다.</p><div id="taskBox"></div>';
   h += '<h2 id="finish">레슨 완료</h2><div id="finBox"></div>';
   h += pagerHTML(id);
@@ -79,35 +80,38 @@ function renderEssays(l, p) {
   });
 }
 
-/* 레슨 퀴즈: 즉시 피드백 */
-function renderLessonQuiz(l, p) {
-  const box = $('#quizBox');
-  const qs = shuffle(l.quiz.map((q, i) => ({ ...q, i })));
-  let answered = 0, correct = 0;
-  box.innerHTML = qs.map((q, n) => {
-    const opts = shuffle(q.o.map((t, k) => ({ t, ok: k === 0 })));
-    q._opts = opts;
-    return '<div class="q" data-n="' + n + '"><div class="q-h"><span class="qn">' + (n + 1) + '.</span><span>' + esc(q.q) + '</span></div><div class="opts">' +
-      opts.map((o, k) => '<button class="opt" data-k="' + k + '">' + esc(o.t) + '</button>').join('') + '</div><div class="expl" hidden></div></div>';
-  }).join('') + '<div id="qScore"></div>';
+/* 레슨 퀴즈: 문제 은행에서 QUIZ_N개 출제, 즉시 피드백.
+   LQ = 지금 풀고 있는 퀴즈 {lid, qs}. 같은 레슨 화면이 다시 그려져도(복습 완료 등) 문제와 답한 상태를 유지하고,
+   "다시 풀기"를 누르거나 다른 레슨에 갔다가 돌아오면 새로 뽑는다. */
+let LQ = null;
+function renderLessonQuiz(l, p, fresh) {
+  if (fresh || !LQ || LQ.lid !== l.id) LQ = { lid: l.id, qs: qDraw(lessonSlots(l), QUIZ_N).qs };
+  const qs = LQ.qs, box = $('#quizBox');
+  $('#quizInfo').textContent = '문제 은행 ' + l.quiz.length + '문제 중 ' + qs.length + '문제를 무작위로 출제합니다. 보기 순서도 매번 섞입니다. 80점 이상이면 통과.';
+  box.innerHTML = qs.map((q, n) => '<div class="q" data-n="' + n + '"><div class="q-h"><span class="qn">' + (n + 1) + '.</span><span>' + esc(q.q) + '</span></div><div class="opts">' +
+    q.opts.map((o, k) => '<button class="opt" data-k="' + k + '">' + esc(o.t) + '</button>').join('') + '</div><div class="expl" hidden></div></div>').join('') + '<div id="qScore"></div>';
+  const showAnswer = (el, q) => {
+    const ok = q.opts[q.pick].ok;
+    $$('.opt', el).forEach((x, j) => { x.disabled = true; if (q.opts[j].ok) x.classList.add('ok'); else if (j === q.pick) x.classList.add('no'); });
+    const ex = $('.expl', el); ex.hidden = false;
+    ex.innerHTML = (ok ? '<b class="ok">정답입니다.</b> ' : '<b class="no">아쉬워요.</b> ') + esc(q.e);
+  };
+  const showScore = () => {
+    const correct = qs.filter(q => q.opts[q.pick].ok).length, sc = Math.round(correct / qs.length * 100), pass = sc >= 80;
+    $('#qScore').innerHTML = '<div class="box" style="border-color:' + (pass ? 'var(--good)' : 'var(--bad)') + '"><div class="score"><span class="big">' + sc + '</span><div><b>' + correct + ' / ' + qs.length + ' 정답</b><br><span class="small">' + (pass ? '통과입니다. 틀린 문제의 해설은 손노트에 한 줄씩 적어 두세요.' : '80점 미만입니다. 틀린 문제와 관련된 본문을 다시 읽고 재도전하세요.') + '</span></div></div><div class="btn-row"><button class="btn sm" id="qAgain">다시 풀기 (새 문제)</button></div></div>';
+    $('#qAgain').onclick = () => { renderLessonQuiz(l, p, true); $('#quiz').scrollIntoView({ behavior: 'smooth' }); };
+    return sc;
+  };
   $$('.q', box).forEach(el => {
     const q = qs[+el.dataset.n];
+    if (q.pick != null) { showAnswer(el, q); return; }
     $$('.opt', el).forEach(b => b.onclick = () => {
-      const k = +b.dataset.k, ok = q._opts[k].ok;
-      $$('.opt', el).forEach((x, j) => { x.disabled = true; if (q._opts[j].ok) x.classList.add('ok'); });
-      if (!ok) b.classList.add('no');
-      const ex = $('.expl', el); ex.hidden = false;
-      ex.innerHTML = (ok ? '<b class="ok">정답입니다.</b> ' : '<b class="no">아쉬워요.</b> ') + esc(q.e);
-      answered++; if (ok) correct++;
-      if (answered === qs.length) {
-        const sc = Math.round(correct / qs.length * 100);
-        p.qlast = sc; p.quiz = Math.max(p.quiz || 0, sc); save(); renderFinish(l);
-        const pass = sc >= 80;
-        $('#qScore').innerHTML = '<div class="box" style="border-color:' + (pass ? 'var(--good)' : 'var(--bad)') + '"><div class="score"><span class="big">' + sc + '</span><div><b>' + correct + ' / ' + qs.length + ' 정답</b><br><span class="small">' + (pass ? '통과입니다. 틀린 문제의 해설은 손노트에 한 줄씩 적어 두세요.' : '80점 미만입니다. 틀린 문제와 관련된 본문을 다시 읽고 재도전하세요.') + '</span></div></div><div class="btn-row"><button class="btn sm" id="qAgain">다시 풀기 (순서 섞기)</button></div></div>';
-        $('#qAgain').onclick = () => { renderLessonQuiz(l, p); $('#quiz').scrollIntoView({ behavior: 'smooth' }); };
-      }
+      if (q.pick != null) return;
+      q.pick = +b.dataset.k; showAnswer(el, q);
+      if (qs.every(x => x.pick != null)) { const sc = showScore(); p.qlast = sc; p.quiz = Math.max(p.quiz || 0, sc); save(); renderFinish(l); }
     });
   });
+  if (qs.length && qs.every(x => x.pick != null)) showScore();
 }
 
 /* 실습 체크리스트: tasks:[{title, items:[...]}] , 체크 상태는 S.L[id].tk['그룹-항목'] */

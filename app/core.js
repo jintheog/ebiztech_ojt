@@ -12,6 +12,69 @@ const addDays = (ds, n) => { const [y, m, d] = ds.split('-').map(Number); return
 const niceD = ds => { const [y, m, d] = ds.split('-').map(Number); return m + '월 ' + d + '일'; };
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const INTERVALS = [1, 3, 7, 14];
+
+/* ---------- 문제 은행 ----------
+   레슨의 quiz 배열 = 문제 은행. 항목 하나 = 슬롯 하나. 슬롯 형식은 세 가지:
+     {q, o, e}                 기본 문제 (o[0]이 정답)
+     {v:[{q,o,e}, …]}          변형 문제: 출제할 때 버전 하나를 무작위로 고름
+     {gen(){ return {q,o,e} }} 생성 문제: 출제할 때마다 실행
+   슬롯에 x:1 이 있으면 종합시험에서 제외, 레슨에 exam:false 가 있으면 그 레슨 전체를 종합시험에서 제외. */
+const QUIZ_N = 10, EXAM_MIN = 3;
+function qCheck(x) {
+  if (!x || typeof x.q !== 'string' || !x.q.trim() || typeof x.e !== 'string' || !x.e.trim() || !Array.isArray(x.o) || x.o.length < 2) return null;
+  const o = x.o.map(String);
+  if (o.some(s => !s.trim()) || new Set(o).size !== o.length) return null;
+  return { q: x.q, o, e: x.e };
+}
+// 슬롯 하나를 실제 문제로 만든다. 만들 수 없으면(gen 오류, 보기 중복, 형식 오류) null.
+function qMake(item) {
+  try {
+    if (!item || typeof item !== 'object') return null;
+    if (Array.isArray(item.v)) { for (const ver of shuffle(item.v)) { const r = qCheck(ver); if (r) return r; } return null; }
+    if (typeof item.gen === 'function') return qCheck(item.gen());
+    return qCheck(item);
+  } catch (e) { return null; }
+}
+const lessonSlots = (l, forExam) => (l.quiz || []).map((item, i) => ({ item, lid: l.id, slot: i })).filter(s => !forExam || !(s.item && s.item.x));
+// 슬롯 목록에서 n개를 무작위로 출제. 실패한 슬롯은 건너뛰고 다음 슬롯으로 채운다. 한 슬롯은 한 번만 쓴다.
+// rest: 아직 시도하지 않은 슬롯
+function qDraw(slots, n) {
+  const order = shuffle(slots), qs = [];
+  let i = 0;
+  for (; i < order.length && qs.length < n; i++) {
+    const m = qMake(order[i].item);
+    if (!m) continue;
+    qs.push(Object.assign(m, { lid: order[i].lid, slot: order[i].slot, opts: shuffle(m.o.map((t, k) => ({ t, ok: k === 0 }))), pick: null }));
+  }
+  return { qs, rest: order.slice(i) };
+}
+// 종합시험 레슨별 출제 수: 레슨마다 최소 min(슬롯 수까지), 나머지는 슬롯 수에 비례, 남는 것은 무작위.
+// 최소 합계가 n보다 크면 n을 그만큼 올린다.
+function examQuota(sizes, n, min) {
+  const ids = Object.keys(sizes).filter(id => sizes[id] > 0);
+  const T = ids.reduce((a, id) => a + sizes[id], 0);
+  const q = {};
+  ids.forEach(id => { q[id] = Math.min(min, sizes[id]); });
+  let used = ids.reduce((a, id) => a + q[id], 0);
+  n = Math.max(Math.min(n, T), used);
+  const want = {}; ids.forEach(id => { want[id] = Math.max(0, n * sizes[id] / T - q[id]); });
+  const D = ids.reduce((a, id) => a + want[id], 0), R = n - used;
+  if (D > 0) ids.forEach(id => { const add = Math.min(sizes[id] - q[id], Math.floor(R * want[id] / D)); q[id] += add; used += add; });
+  while (used < n) { const c = ids.filter(id => q[id] < sizes[id]); const id = c[Math.floor(Math.random() * c.length)]; q[id]++; used++; }
+  return { quota: q, n };
+}
+// 종합시험 출제: lessons = 그 블록의 (로드된) 레슨 목록
+function examBuild(lessons, nCfg) {
+  const excluded = lessons.filter(l => l.exam === false);
+  const sl = {}, sizes = {};
+  lessons.filter(l => l.exam !== false).forEach(l => { sl[l.id] = lessonSlots(l, true); if (sl[l.id].length) sizes[l.id] = sl[l.id].length; });
+  const included = lessons.filter(l => sizes[l.id]);
+  const { quota, n } = examQuota(sizes, nCfg, EXAM_MIN);
+  let qs = [], rest = [];
+  included.forEach(l => { const r = qDraw(sl[l.id], quota[l.id]); qs = qs.concat(r.qs); rest = rest.concat(r.rest); });
+  if (qs.length < n) qs = qs.concat(qDraw(rest, n - qs.length).qs); // 생성 실패로 모자란 만큼 다른 슬롯에서 채움
+  return { qs: shuffle(qs), included, excluded, quota, n };
+}
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 2200); }
 
 /* ---------- curriculum index ---------- */
