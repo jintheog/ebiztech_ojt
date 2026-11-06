@@ -26,7 +26,7 @@ function vCards() {
   drawCard(); drawGloss('');
   $('#glQ').oninput = e => drawGloss(e.target.value);
   $('#glCopy').onclick = () => {
-    const txt = '용어\t영문\t한 줄 정의\t내 말로 설명\n' + ALLTERMS.map(t => t.term + '\t' + t.en + '\t' + t.def + '\t').join('\n');
+    const txt = '용어\t영문\t한 줄 정의\t내 말로 설명\n' + ALLTERMS.map(t => t.term + '\t' + t.en + '\t' + refPlain(t.def) + '\t').join('\n');
     const fb = () => { const ta = $('#glFallback'); ta.hidden = false; ta.value = txt; ta.focus(); ta.select(); toast('자동 복사가 안 되어 아래에 펼쳤습니다. Ctrl+C로 복사하세요'); };
     try { navigator.clipboard.writeText(txt).then(() => toast(ALLTERMS.length + '개 용어를 복사했습니다'), fb); } catch (e) { fb(); }
   };
@@ -48,8 +48,8 @@ function drawCard() {
     return;
   }
   const t = ALLTERMS.find(x => x.id === FC.order[FC.i]);
-  const front = FC.dir === 'term' ? '<div class="front">' + esc(t.term) + '</div><div class="small muted">' + esc(t.en) + '</div>' : '<div class="back">' + esc(t.def) + '</div>';
-  const back = FC.dir === 'term' ? '<div class="back">' + esc(t.def) + '</div>' : '<div class="front">' + esc(t.term) + '</div><div class="small muted">' + esc(t.en) + '</div>';
+  const front = FC.dir === 'term' ? '<div class="front">' + esc(t.term) + '</div><div class="small muted">' + esc(t.en) + '</div>' : '<div class="back">' + refHTML(t.def) + '</div>';
+  const back = FC.dir === 'term' ? '<div class="back">' + refHTML(t.def) + '</div>' : '<div class="front">' + esc(t.term) + '</div><div class="small muted">' + esc(t.en) + '</div>';
   const cur = S.cards[t.id];
   const curTxt = cur == null ? '' : ['<span class="chip bad">지난번: 몰라요</span>', '<span class="chip warn">지난번: 헷갈려요</span>', '<span class="chip good">지난번: 알아요</span>'][cur];
   area.innerHTML = '<div class="fc' + (FC.flipped ? ' flipped' : '') + '" id="fcCard" tabindex="0" role="button" aria-label="카드 뒤집기"><span class="side">' + (FC.i + 1) + ' / ' + FC.order.length + ' · ' + (FC.flipped ? '뒷면' : '앞면') + '</span><span class="from">' + curTxt + '</span>' +
@@ -71,5 +71,5 @@ document.addEventListener('keydown', e => {
 function drawGloss(q) {
   q = q.trim().toLowerCase();
   const list = ALLTERMS.filter(t => !q || (t.term + ' ' + t.en + ' ' + t.def).toLowerCase().includes(q));
-  $('#glList').innerHTML = list.length ? list.map(t => '<div class="gl-item"><div><b>' + esc(t.term) + '</b><div class="small muted">' + esc(t.en) + '</div></div><div>' + esc(t.def) + '</div><a class="small" href="#' + t.lid + '">레슨 ' + lessonNo(t.lid) + '</a></div>').join('') : '<div class="gl-item"><span class="muted">검색 결과가 없습니다.</span></div>';
+  $('#glList').innerHTML = list.length ? list.map(t => '<div class="gl-item"><div><b>' + esc(t.term) + '</b><div class="small muted">' + esc(t.en) + '</div></div><div>' + refHTML(t.def) + '</div><a class="small" href="#' + t.lid + '">레슨 ' + lessonNo(t.lid) + '</a></div>').join('') : '<div class="gl-item"><span class="muted">검색 결과가 없습니다.</span></div>';
 }

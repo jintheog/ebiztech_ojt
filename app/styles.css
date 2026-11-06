@@ -64,7 +64,7 @@ li{margin:.22rem 0}
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 80px}
 nav#nav{position:sticky;top:calc(env(safe-area-inset-top,0px) + 70px);align-self:start;max-height:calc(100vh - 90px);overflow:auto;padding-right:4px}
 .nav-g{margin-bottom:18px}
-.nav-g h4{margin:0 0 6px;font-size:.7rem;letter-spacing:.12em;color:var(--muted);font-family:var(--f-mono);font-weight:500;text-transform:uppercase}
+.nav-g h4{margin:0 0 6px;font-size:.86rem;letter-spacing:normal;color:var(--muted);font-family:var(--f-body);font-weight:700;line-height:1.4}
 .nav-a{display:flex;align-items:center;gap:9px;padding:6px 9px;border-radius:8px;color:var(--ink);text-decoration:none;font-size:.9rem;line-height:1.35}
 .nav-a:hover{background:var(--line-2)}
 .nav-a.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
@@ -74,7 +74,7 @@ nav#nav{position:sticky;top:calc(env(safe-area-inset-top,0px) + 70px);align-self
 main#view{min-width:0;max-width:780px}
 
 /* generic blocks */
-.eyebrow{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.1em;color:var(--accent);text-transform:uppercase;margin-bottom:6px}
+.eyebrow{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.1em;color:var(--accent);margin-bottom:6px}
 .lede{font-size:1.04rem;color:var(--muted);margin-top:.5rem}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px}
 .stack-v{display:flex;flex-direction:column;gap:14px}

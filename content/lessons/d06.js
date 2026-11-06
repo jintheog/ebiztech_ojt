@@ -27,10 +27,10 @@ body:`
 <p>새 디스크를 서버에 붙였다고 바로 파일을 저장할 수는 없습니다. Windows는 이 과정을 자동으로 해 주지만, 서버 엔지니어는 직접 합니다.</p>
 <div class="flow"><div class="n"><b>① 디스크</b><small>/dev/vdb</small></div><span class="ar">→</span><div class="n"><b>② 파티션</b><small>구역 나누기 (선택)</small></div><span class="ar">→</span><div class="n k"><b>③ 파일시스템</b><small>mkfs로 포맷</small></div><span class="ar">→</span><div class="n k"><b>④ 마운트</b><small>/data 에 연결</small></div></div>
 <div class="box analogy"><span class="lbl">비유로 보면 (땅과 건물)</span>① 새 디스크는 <b>빈 땅</b>입니다. ② 파티션은 땅에 <b>구획선</b>을 긋는 것. ③ 파일시스템은 그 위에 <b>건물을 짓고 호실 번호 체계</b>를 만드는 것(어디에 무엇을 둘지 찾을 수 있게). ④ 마운트는 그 건물을 <b>도로(디렉터리 트리)에 연결하는 출입문</b>을 내는 것입니다. 출입문이 없으면 건물이 있어도 들어갈 수 없습니다.</div>
-<p>일차 03에서 리눅스는 드라이브 문자(C:, D:) 없이 <code>/</code> 하나의 나무라고 배웠습니다. 새 디스크도 이 나무의 한 가지(<code>/data</code>)에 붙입니다. 그것이 마운트입니다.</p>
+<p><a data-lesson="d03"></a>에서 리눅스는 드라이브 문자(C:, D:) 없이 <code>/</code> 하나의 나무라고 배웠습니다. 새 디스크도 이 나무의 한 가지(<code>/data</code>)에 붙입니다. 그것이 마운트입니다.</p>
 
 <h2 id="s2">디스크: 장치 이름과 lsblk</h2>
-<p>리눅스에서 디스크는 <code>/dev</code> 아래 파일로 보입니다(일차 03 "모든 것은 파일").</p>
+<p>리눅스에서 디스크는 <code>/dev</code> 아래 파일로 보입니다(<a data-lesson="d03"></a> "모든 것은 파일").</p>
 <div class="tbl-wrap"><table><thead><tr><th>이름</th><th>어떤 디스크</th><th>파티션 이름</th></tr></thead><tbody>
 <tr><td><code>/dev/sda</code>, <code>/dev/sdb</code></td><td>SATA·SAS·SCSI 디스크, iSCSI로 붙인 디스크</td><td>sda1, sda2</td></tr>
 <tr><td><code>/dev/vda</code>, <code>/dev/vdb</code></td><td><b>KVM 가상 머신의 가상 디스크</b> (클라우드 VM에서 자주 봄)</td><td>vda1, vda2</td></tr>
@@ -45,7 +45,7 @@ vda    252:0    0   20G  0 disk
 vdb    252:16   0   10G  0 disk              <span class="c">← 새로 붙인 디스크. 파티션도, 마운트 위치도 없음</span></pre>
 <ul><li><b>TYPE</b>: disk(디스크 통째) / part(파티션)</li><li><b>SIZE</b>: 크기</li><li><b>MOUNTPOINTS</b>: 어디에 연결되어 있나. 비어 있으면 아직 쓸 수 없는 상태</li></ul>
 <p><code>lsblk -f</code>를 하면 파일시스템 종류(FSTYPE)와 UUID까지 보입니다.</p>
-<p>클라우드에서는 콘솔에서 <b>볼륨을 만들어 VM에 연결(Attach)</b>하면 VM 안에서 이렇게 새 디스크(vdb)가 나타납니다. 6주차 실습("Volume 연결")과 7주차 zStorage의 Block 볼륨 연결이 바로 이 상황입니다.</p>
+<p>클라우드에서는 콘솔에서 <b>볼륨을 만들어 VM에 연결(Attach)</b>하면 VM 안에서 이렇게 새 디스크(vdb)가 나타납니다. <a data-lesson="zc5"></a>의 실습("Volume 연결")과 <a data-lesson="zs2"></a>의 Block 볼륨 연결이 바로 이 상황입니다.</p>
 
 <h2 id="s3">파티션: 디스크를 구역으로 나누기</h2>
 <p>디스크 하나를 용도별로 나눕니다. 예를 들어 OS 디스크(vda)는 부팅용 <code>/boot</code>(vda1)와 나머지 <code>/</code>(vda2)로 나뉘어 있습니다.</p>
@@ -84,7 +84,7 @@ sudo umount /data                <span class="c"># 연결 해제 (u-mount, n이 
 <li><code>umount</code> 할 때 그 디렉터리 안에 내가 들어가 있거나 어떤 프로그램이 파일을 쓰고 있으면 <code>target is busy</code> 오류가 납니다. <code>cd</code>로 밖으로 나와서 다시 합니다.</li>
 <li><code>mount</code> 명령만 치면 지금 연결된 목록이 나옵니다.</li>
 </ul>
-<div class="box mem"><span class="lbl">중요: mount 명령은 재부팅하면 사라진다</span><p>mount로 연결한 것은 <b>지금만</b> 유효합니다. 재부팅해도 자동으로 연결되게 하려면 <b>/etc/fstab에 등록</b>해야 합니다. (일차 05의 start ≠ enable과 같은 이야기입니다.)</p></div>
+<div class="box mem"><span class="lbl">중요: mount 명령은 재부팅하면 사라진다</span><p>mount로 연결한 것은 <b>지금만</b> 유효합니다. 재부팅해도 자동으로 연결되게 하려면 <b>/etc/fstab에 등록</b>해야 합니다. (<a data-lesson="d05"></a>의 start ≠ enable과 같은 이야기입니다.)</p></div>
 
 <h2 id="s6">새 디스크 연결 전체 절차</h2>
 <p>실무 요청: <b>"웹 서버에 10GB 디스크를 추가해서 /data로 쓰게 해 주세요."</b> 이 순서를 손노트에 그대로 적으세요.</p>
@@ -112,7 +112,7 @@ df -h /data                                 <span class="c"># 11. 최종 확인 
 <tr><td>⑤ dump</td><td>옛 백업 도구용. 거의 0</td><td><code>0</code></td></tr>
 <tr><td>⑥ fsck 순서</td><td>부팅 때 검사 순서. / 는 1, 나머지 2, xfs는 보통 0</td><td><code>0</code></td></tr>
 </tbody></table></div>
-<div class="box warn"><span class="lbl">fstab을 틀리면 서버가 안 켜진다</span><p>UUID 오타, 없는 디렉터리, 잘못된 파일시스템 종류를 적고 재부팅하면, systemd가 마운트에 실패해 <b>emergency mode</b>로 들어갑니다(일차 03 부팅 장애 표). 클라우드 VM이면 SSH도 안 됩니다. 그래서 반드시 <b>① 백업 → ② 수정 → ③ <code>sudo mount -a</code>로 오류 없는지 검증</b> 후에만 재부팅합니다. 중요하지 않은 추가 디스크에는 <code>nofail</code> 옵션을 넣어 두면 그 디스크가 없어도 부팅은 됩니다.</p></div>
+<div class="box warn"><span class="lbl">fstab을 틀리면 서버가 안 켜진다</span><p>UUID 오타, 없는 디렉터리, 잘못된 파일시스템 종류를 적고 재부팅하면, systemd가 마운트에 실패해 <b>emergency mode</b>로 들어갑니다(<a data-lesson="d03"></a> 부팅 장애 표). 클라우드 VM이면 SSH도 안 됩니다. 그래서 반드시 <b>① 백업 → ② 수정 → ③ <code>sudo mount -a</code>로 오류 없는지 검증</b> 후에만 재부팅합니다. 중요하지 않은 추가 디스크에는 <code>nofail</code> 옵션을 넣어 두면 그 디스크가 없어도 부팅은 됩니다.</p></div>
 
 <h2 id="s8">디스크 용량 확인: df와 du</h2>
 <h3>df: 파일시스템별 용량</h3>
@@ -143,7 +143,7 @@ sudo du -sh /* 2&gt;/dev/null | sort -h   <span class="c"># 루트 아래 어디
 <tr><td>부팅 시 자동 연결 등록·검증</td><td><code>/etc/fstab</code> 수정 → <code>sudo mount -a</code></td></tr>
 <tr><td>용량 확인</td><td><code>df -h</code> (파일시스템별), <code>du -sh 경로</code> (디렉터리별)</td></tr>
 </tbody></table></div>
-<p>4주차(Storage 기초)에서는 이 디스크가 네트워크 너머의 스토리지(SAN, iSCSI)에서 올 때를, 7주차(zStorage)에서는 VPSA 볼륨을 VM에 연결해 마운트하는 실습을 합니다. <b>오늘 절차가 그대로 반복됩니다.</b></p>
+<p><a data-lesson="d11"></a>에서는 이 디스크가 네트워크 너머의 스토리지(SAN, iSCSI)에서 올 때를, <a data-lesson="zs2"></a>에서는 VPSA 볼륨을 VM에 연결해 마운트하는 실습을 합니다. <b>오늘 절차가 그대로 반복됩니다.</b></p>
 
 <h2 id="s10">직접 해 보기</h2>
 <p>연습 터미널의 <b>"미션 D: 디스크 연결"</b>에서 새 디스크 vdb를 포맷하고, /data에 마운트하고, fstab에 등록해 검증까지 해 봅니다.</p>
@@ -199,7 +199,7 @@ quiz:[
  {q:'sudo mount -a 의 역할로 맞는 것은?',o:['fstab에 적힌 모든 항목을 지금 마운트해 본다','모든 디스크를 포맷한다','모든 마운트를 해제한다','fstab 파일을 지운다'],e:'fstab을 고친 뒤 재부팅 전에 mount -a로 오류가 없는지 검증합니다.'}
 ]},
 {v:[
- {q:'fstab에 잘못된 내용이 있는 상태로 재부팅하면 흔히 생기는 일은?',o:['emergency mode로 들어가 정상 부팅되지 않는다','아무 일도 없다','디스크가 자동 포맷된다','BIOS가 초기화된다'],e:'일차 03 부팅 장애 표에서 본 바로 그 상황입니다.'},
+ {q:'fstab에 잘못된 내용이 있는 상태로 재부팅하면 흔히 생기는 일은?',o:['emergency mode로 들어가 정상 부팅되지 않는다','아무 일도 없다','디스크가 자동 포맷된다','BIOS가 초기화된다'],e:'[[d03]] 부팅 장애 표에서 본 바로 그 상황입니다.'},
  {q:'부팅 중 emergency mode로 들어가는 흔한 원인은?',o:['/etc/fstab에 잘못된 UUID나 장치를 적었다','df -h를 너무 자주 실행했다','로그 파일이 많다','메모리가 남는다'],e:'부팅 때 systemd가 fstab의 디스크를 찾지 못하면 emergency mode로 들어갑니다. 그래서 수정 후 mount -a로 검증합니다.'}
 ]},
 {v:[

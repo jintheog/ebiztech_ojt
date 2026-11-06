@@ -38,7 +38,7 @@ function initFS() {
     }),
     home: R('755', {
       trainee: mkD('trainee', 'trainee', '700', {
-        'memo.txt': mkF('trainee', 'trainee', '644', 'OJT 2주차: 리눅스 명령어 연습 중!\n모르는 건 질문 노트에 적기.\n'),
+        'memo.txt': mkF('trainee', 'trainee', '644', 'OJT: 리눅스 명령어 연습 중!\n모르는 건 질문 노트에 적기.\n'),
         '.bashrc': mkF('trainee', 'trainee', '644', '# 셸 설정 파일 (점으로 시작하면 숨김 파일)\nalias ll=\'ls -l\'\n'),
         '.ssh': mkD('trainee', 'trainee', '700', { authorized_keys: mkF('trainee', 'trainee', '600', 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA...(공개키=자물쇠) trainee@laptop\n') })
       })
@@ -864,7 +864,7 @@ function drawMissions() {
   const box = $('#mBox'); if (!box) return;
   const M = MISSIONS[TMSET], set = M.items, k = S.term[TMSET] || 0;
   box.innerHTML = '<div class="seg" id="mSet" style="margin-bottom:10px">' + MSETS.map(s => '<button data-v="' + s + '" class="' + (TMSET === s ? 'on' : '') + '">' + MISSIONS[s].name + ((S.term[s] || 0) >= MISSIONS[s].items.length ? ' ✓' : '') + '</button>').join('') + '</div>' +
-    '<div class="small muted" style="margin-bottom:6px">' + Math.min(k, set.length) + ' / ' + set.length + ' 완료 · <a href="#' + M.lesson + '">' + esc(LMAP[M.lesson].tag) + ' 레슨</a> 연습</div>' +
+    '<div class="small muted" style="margin-bottom:6px">' + Math.min(k, set.length) + ' / ' + set.length + ' 완료 · <a href="#' + M.lesson + '">' + esc(lessonLabel(M.lesson)) + '</a> 연습</div>' +
     set.map((m, i) => '<div class="mi ' + (i < k ? 'ok' : i === k ? 'cur' : 'todo') + '"><span class="ck">' + (i < k ? '✓' : i + 1) + '</span><div>' + esc(m.t) + (i === k ? '<div class="hint"><button class="btn sm" data-hint style="padding:2px 8px;font-size:.76rem">힌트 보기</button><span data-ht hidden> <code>' + esc(m.h) + '</code></span></div>' : '') + '</div></div>').join('') +
     '<div class="btn-row"><button class="btn sm" id="mReset">이 미션 처음부터</button></div>';
   $$('#mSet button').forEach(b => b.onclick = () => { TMSET = b.dataset.v; drawMissions(); $('#ttyIn').focus(); });
@@ -872,7 +872,7 @@ function drawMissions() {
   $('#mReset').onclick = () => { S.term[TMSET] = 0; save(); T = initT(); vTerm(); };
 }
 function vTerm() {
-  let h = '<div class="eyebrow">셀프 테스트 · 일차 03–06</div><h1>연습 터미널</h1><p class="lede">진짜 서버(Rocky Linux 9 VM)처럼 명령어를 입력해 보는 곳입니다. 이 페이지 안에서만 동작하는 가짜 리눅스라서 무엇을 지워도 괜찮습니다.</p>';
+  let h = '<div class="eyebrow">셀프 테스트 · Linux 레슨</div><h1>연습 터미널</h1><p class="lede">진짜 서버(Rocky Linux 9 VM)처럼 명령어를 입력해 보는 곳입니다. 이 페이지 안에서만 동작하는 가짜 리눅스라서 무엇을 지워도 괜찮습니다.</p>';
   h += '<p class="small muted">오른쪽 미션을 순서대로 하세요. 막히면 <code>help</code>, <code>man 명령어</code>, 또는 미션의 "힌트 보기". 명령어를 친 뒤 <kbd>Enter</kbd>, 이름 일부만 치고 <kbd>Tab</kbd>을 누르면 자동 완성됩니다. 파이프(<code>|</code>)와 <code>&gt;</code>도 됩니다.</p>';
   h += '<div class="term-wrap"><div class="tty" id="tty"><div class="tty-bar"><i></i><i></i><i></i><span style="margin-left:6px">trainee@ojt-web01 — 연습용 (Rocky Linux 9 · KVM VM)</span></div><div class="tty-out" id="ttyOut"></div><div class="tty-in"><span id="ttyPs"></span><input id="ttyIn" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="명령어 입력"></div></div><div class="missions" id="mBox"></div></div>';
   h += '<div class="btn-row"><button class="btn sm" id="tReset">터미널 초기화 (파일·서비스·디스크 원래대로)</button></div>';

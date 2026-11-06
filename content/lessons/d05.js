@@ -28,8 +28,8 @@ body:`
 <div class="box analogy"><span class="lbl">비유로 보면</span>프로그램은 <b>레시피 책</b>, 프로세스는 <b>지금 불 위에서 끓고 있는 냄비</b>입니다. 레시피 하나로 냄비 여러 개를 동시에 끓일 수 있습니다.</div>
 <ul>
 <li><b>PID</b>: 프로세스마다 붙는 고유 번호. 프로세스를 지목할 때 씁니다.</li>
-<li><b>PPID</b>: 나를 실행시킨 부모 프로세스의 번호. 모든 프로세스는 부모가 있고, 거슬러 올라가면 맨 위에 <b>PID 1 systemd</b>가 있습니다(일차 03 부팅 순서).</li>
-<li><b>소유자</b>: 프로세스도 어떤 사용자의 권한으로 돕니다. nginx는 nginx 계정, 내가 실행한 것은 내 계정(일차 04).</li>
+<li><b>PPID</b>: 나를 실행시킨 부모 프로세스의 번호. 모든 프로세스는 부모가 있고, 거슬러 올라가면 맨 위에 <b>PID 1 systemd</b>가 있습니다(<a data-lesson="d03"></a> 부팅 순서).</li>
+<li><b>소유자</b>: 프로세스도 어떤 사용자의 권한으로 돕니다. nginx는 nginx 계정, 내가 실행한 것은 내 계정(<a data-lesson="d04"></a>).</li>
 </ul>
 <div class="tree">systemd(1)
 ├── sshd(1021)              <span class="c"># SSH 접속을 기다리는 데몬</span>
@@ -140,8 +140,8 @@ sudo grep -i "fail" /var/log/secure        <span class="c"># 실패한 로그인
 <h3>로그 한 줄 읽기</h3>
 <pre class="code">Nov  4 09:20:13 ojt-web01 sshd[2210]: Failed password for invalid user admin from 203.0.113.50 port 40022 ssh2
 <span class="c">시각            서버이름  프로그램[PID]  메시지 → "없는 사용자 admin으로 203.0.113.50에서 비밀번호 로그인 시도 실패"</span></pre>
-<p>이런 줄이 수백 개 있다면 누군가 무작위로 비밀번호를 대입하고 있는 것입니다. 일차 04에서 배운 "비밀번호 로그인 끄기"가 필요한 이유입니다.</p>
-<p>로그는 계속 쌓이므로 <b>logrotate</b>가 날짜별로 잘라 보관하고(<code>messages-20261101</code>처럼) 오래된 것은 지웁니다. 그래도 로그가 디스크를 가득 채우는 일이 흔해서, 일차 06의 용량 확인과 연결됩니다.</p>
+<p>이런 줄이 수백 개 있다면 누군가 무작위로 비밀번호를 대입하고 있는 것입니다. <a data-lesson="d04"></a>에서 배운 "비밀번호 로그인 끄기"가 필요한 이유입니다.</p>
+<p>로그는 계속 쌓이므로 <b>logrotate</b>가 날짜별로 잘라 보관하고(<code>messages-20261101</code>처럼) 오래된 것은 지웁니다. 그래도 로그가 디스크를 가득 채우는 일이 흔해서, <a data-lesson="d06"></a>의 용량 확인과 연결됩니다.</p>
 
 <h2 id="s6">CPU와 메모리 모니터링</h2>
 <h3>uptime: 한 줄 건강 상태</h3>
@@ -163,7 +163,7 @@ MiB Swap:   2048.0 total,   2048.0 free,      0.0 used.   2481.0 avail Mem
 <div class="tbl-wrap"><table><thead><tr><th>줄</th><th>보는 법</th></tr></thead><tbody>
 <tr><td>1줄</td><td>uptime과 같음</td></tr>
 <tr><td>Tasks</td><td>프로세스 수. <b>zombie</b>가 계속 늘면 문제</td></tr>
-<tr><td>%Cpu(s)</td><td><b>us</b> 사용자 프로그램, <b>sy</b> 커널, <b>id</b> 놀고 있음(idle), <b>wa</b> 디스크를 기다리는 시간. <b>id가 낮으면 CPU가 바쁨</b>, <b>wa가 높으면 디스크가 느림</b>, <b>st</b>가 높으면 VM이 하이퍼바이저에게 CPU를 못 받는 중(일차 02의 계층)</td></tr>
+<tr><td>%Cpu(s)</td><td><b>us</b> 사용자 프로그램, <b>sy</b> 커널, <b>id</b> 놀고 있음(idle), <b>wa</b> 디스크를 기다리는 시간. <b>id가 낮으면 CPU가 바쁨</b>, <b>wa가 높으면 디스크가 느림</b>, <b>st</b>가 높으면 VM이 하이퍼바이저에게 CPU를 못 받는 중(<a data-lesson="d02"></a>의 계층)</td></tr>
 <tr><td>MiB Mem / Swap</td><td>메모리·스왑 요약. avail Mem이 실제로 더 쓸 수 있는 양</td></tr>
 <tr><td>목록</td><td>기본은 CPU 많이 쓰는 순서. 범인 프로세스를 찾는 곳</td></tr>
 </tbody></table></div>
@@ -173,7 +173,7 @@ MiB Swap:   2048.0 total,   2048.0 free,      0.0 used.   2481.0 avail Mem
                total        used        free      shared  buff/cache   available
 Mem:           3.8Gi       1.1Gi       1.6Gi        16Mi       1.2Gi       2.4Gi
 Swap:          2.0Gi          0B       2.0Gi</pre>
-<div class="box mem"><span class="lbl">free에서 볼 것은 available</span><p>리눅스는 남는 메모리를 파일 캐시(<b>buff/cache</b>)로 써서 <b>free</b>가 작게 보이는 게 정상입니다. 실제로 더 쓸 수 있는 양은 <b>available</b>입니다. available이 계속 줄고 <b>Swap used</b>가 늘어나면 메모리 부족 신호입니다(일차 02: 스왑 → OOM Killer).</p></div>
+<div class="box mem"><span class="lbl">free에서 볼 것은 available</span><p>리눅스는 남는 메모리를 파일 캐시(<b>buff/cache</b>)로 써서 <b>free</b>가 작게 보이는 게 정상입니다. 실제로 더 쓸 수 있는 양은 <b>available</b>입니다. available이 계속 줄고 <b>Swap used</b>가 늘어나면 메모리 부족 신호입니다(<a data-lesson="d02"></a>: 스왑 → OOM Killer).</p></div>
 <h3>그 밖의 확인 명령</h3>
 <div class="tbl-wrap"><table><thead><tr><th>명령</th><th>보는 것</th></tr></thead><tbody>
 <tr><td><code>nproc</code>, <code>lscpu</code></td><td>CPU 개수와 정보 (load와 비교할 기준)</td></tr>
@@ -189,7 +189,7 @@ Swap:          2.0Gi          0B       2.0Gi</pre>
 <li><code>journalctl -u nginx -n 50</code>, <code>sudo tail /var/log/nginx/error.log</code> → 오류 메시지 확인</li>
 <li><code>uptime</code>, <code>top</code> → CPU가 꽉 찼나? 어떤 프로세스가 범인인가?</li>
 <li><code>free -h</code> → available이 바닥났나? 스왑을 쓰고 있나?</li>
-<li><code>df -h</code> → 디스크가 꽉 찼나? (일차 06)</li>
+<li><code>df -h</code> → 디스크가 꽉 찼나? (<a data-lesson="d06"></a>)</li>
 <li>조치 후 <code>sudo systemctl restart nginx</code> → 다시 status 확인 → 작업 로그 기록 → 보고</li>
 </ol>
 <p class="small muted">재부팅 후 서비스가 안 올라왔다면 <code>systemctl is-enabled nginx</code>부터 확인합니다(start ≠ enable).</p>

@@ -116,6 +116,18 @@ function indexLessons() {
 }
 const lessonNo = id => ALL.findIndex(m => m.id === id) + 1;
 
+/* 레슨 참조: 레슨 파일에는 번호를 직접 적지 않고 id로 가리킵니다. 화면에 그릴 때 현재 순서와 제목으로 채웁니다.
+   - 본문 HTML: <a data-lesson="d07"></a>  → fillRefs(root)가 링크로 채움
+   - 글자만 들어가는 칸(용어·해설·모범 답안·핵심 정리·목표): [[d07]] → refHTML(문자열)이 링크로, refPlain(문자열)이 글자로 바꿈 */
+const lessonLabel = id => META[id] ? '레슨 ' + lessonNo(id) + ' 「' + (LMAP[id] || META[id]).title + '」' : id;
+const lessonLink = id => '<a class="lref" href="#' + id + '">' + esc(lessonLabel(id)) + '</a>';
+const REF_RE = /\[\[([a-z0-9-]+)\]\]/g;
+const refHTML = s => esc(s).replace(REF_RE, (_, id) => lessonLink(id));
+const refPlain = s => String(s).replace(REF_RE, (_, id) => lessonLabel(id));
+function fillRefs(root) {
+  $$('a[data-lesson]', root).forEach(a => { const id = a.dataset.lesson; a.href = '#' + id; a.classList.add('lref'); a.textContent = lessonLabel(id); });
+}
+
 /* ---------- state ---------- */
 const KEY = 'zadara-ojt-7w-v1';
 const defaults = () => ({ v: 1, guide: false, L: {}, cards: {}, exams: {}, term: { a: 0, b: 0, c: 0, d: 0 }, qn: [], ts: 0 });

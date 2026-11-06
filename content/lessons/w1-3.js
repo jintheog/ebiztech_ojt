@@ -9,10 +9,10 @@ terms:[
 ['코로케이션','Colocation, 코로','데이터센터 공간·전원·네트워크만 빌리고 장비는 자기 것을 넣는 방식.'],
 ['zCompute','Zadara Compute','Zadara의 컴퓨팅 서비스. VM, 가상 네트워크(VPC), 로드밸런서, 오토스케일링, 쿠버네티스, GPU 등.'],
 ['zStorage','Zadara Storage','Zadara의 스토리지 서비스. Block·File·Object 저장소를 서비스로 제공.'],
-['VPSA','Virtual Private Storage Array','고객마다 따로 할당되는 전용 가상 스토리지 장비. zStorage의 핵심 단위. 7주차에 실습.'],
+['VPSA','Virtual Private Storage Array','고객마다 따로 할당되는 전용 가상 스토리지 장비. zStorage의 핵심 단위. [[zs1]]에서 실습.'],
 ['Object Storage','오브젝트 스토리지','파일을 "객체" 단위로 저장하는 방식. S3 호환 API로 접근. Zadara에서는 NGOS라는 이름이 쓰인다.'],
 ['S3 호환','S3 compatible','AWS의 오브젝트 저장소 S3와 같은 방식(API)으로 쓸 수 있다는 뜻.'],
-['VPC','Virtual Private Cloud','클라우드 안에 만드는 나만의 가상 네트워크. 5주차에 실습.'],
+['VPC','Virtual Private Cloud','클라우드 안에 만드는 나만의 가상 네트워크. [[zc2]]에서 실습.'],
 ['MSP','Managed Service Provider','고객 대신 IT를 운영해 주는 서비스 회사. Zadara의 중요한 판매 파트너.'],
 ['SLA','Service Level Agreement','서비스 수준 약속. 예: "1년 중 99.999% 시간 동안 정상 동작을 보장한다".'],
 ['멀티테넌트','Multi-tenant','한 플랫폼을 여러 고객(테넌트)이 서로 격리된 채로 함께 쓰는 구조.'],
@@ -49,10 +49,10 @@ body:`
 <div><b>zStorage</b><span>VPSA(Block · File) · Object Storage(S3 호환)</span></div>
 <div class="l0"><b>물리 장비</b><span>서버 · 디스크 · 네트워크 (데이터센터)</span></div>
 </div>
-<h3>zCompute (5~6주차)</h3>
+<h3>zCompute</h3>
 <p>가상 서버(VM)를 만들고, 가상 네트워크(VPC)를 짜고, 방화벽 규칙(Security Group)과 로드밸런서를 붙이는 서비스입니다. AWS로 치면 EC2·VPC·ELB에 해당하는 영역입니다. 사용량에 따라 서버 수를 자동으로 늘리는 오토스케일링, 컨테이너를 위한 쿠버네티스, AI용 GPU도 제공합니다.</p>
-<h3>zStorage (7주차)</h3>
-<p>저장소를 서비스로 제공합니다. 핵심 단위는 <b>VPSA</b>(고객 전용 가상 스토리지 장비)입니다. 저장 방식 세 가지를 모두 다룹니다. 4주차에 자세히 배우니 지금은 이름만 눈에 익히세요.</p>
+<h3>zStorage</h3>
+<p>저장소를 서비스로 제공합니다. 핵심 단위는 <b>VPSA</b>(고객 전용 가상 스토리지 장비)입니다. 저장 방식 세 가지를 모두 다룹니다. <a data-lesson="d11"></a>, <a data-lesson="d12"></a>에서 자세히 배우니 지금은 이름만 눈에 익히세요.</p>
 <ul><li><b>Block</b>: 서버에 디스크처럼 붙여서 쓰는 방식 (iSCSI)</li><li><b>File</b>: 공유 폴더처럼 쓰는 방식 (NFS, SMB)</li><li><b>Object</b>: 인터넷 주소로 파일을 올리고 받는 방식 (S3 호환)</li></ul>
 <p>회사 자료(「Zadara Cloud Platform 기능 소개」 p14)에는 Full Stack Cloud Platform의 SLA가 99.99% 보장으로 소개되어 있습니다. 실제 계약 조건은 사내에서 확인하세요.</p>
 
@@ -67,19 +67,19 @@ body:`
 
 <h2 id="s6">내 OJT 일정과 연결하기</h2>
 <div class="tbl-wrap"><table><thead><tr><th>지금 배우는 개념</th><th>나중에 실습하는 곳</th></tr></thead><tbody>
-<tr><td>서버, VM, 가상화</td><td>5주차: zCompute에서 VM 만들기</td></tr>
-<tr><td>Linux, SSH, 계정·권한</td><td>5주차: VM에 SSH로 접속해 웹 서버 설치</td></tr>
-<tr><td>네트워크, Subnet, 방화벽</td><td>5~6주차: VPC·Subnet·Security Group 구성</td></tr>
-<tr><td>3-Tier, 이중화, 로드밸런서</td><td>6주차: 웹 서버 2대 + 로드밸런서 구성</td></tr>
-<tr><td>Block·File·Object, 스냅샷</td><td>7주차: VPSA 연결, 스냅샷·복구 실습</td></tr>
+<tr><td>서버, VM, 가상화</td><td><a data-lesson="zc3"></a>: zCompute에서 VM 만들기</td></tr>
+<tr><td>Linux, SSH, 계정·권한</td><td><a data-lesson="zc4"></a>: VM에 SSH로 접속해 웹 서버 설치</td></tr>
+<tr><td>네트워크, Subnet, 방화벽</td><td><a data-lesson="zc2"></a>: VPC·Subnet·Security Group 구성</td></tr>
+<tr><td>3-Tier, 이중화, 로드밸런서</td><td><a data-lesson="zc6"></a>: 웹 서버 2대 + 로드밸런서 구성</td></tr>
+<tr><td>Block·File·Object, 스냅샷</td><td><a data-lesson="zs2"></a>, <a data-lesson="zs5"></a>: VPSA 연결, 스냅샷·복구 실습</td></tr>
 </tbody></table></div>
-<p>지금 배우는 모든 기초가 <b>5~7주차에 실제 손으로 하는 작업</b>으로 이어집니다. 기초를 대충 넘기면 그때 막힙니다.</p>
+<p>지금 배우는 모든 기초가 <b>zCompute·zStorage 레슨에서 실제 손으로 하는 작업</b>으로 이어집니다. 기초를 대충 넘기면 그때 막힙니다.</p>
 
 <h2 id="s7">회사에서 자주 듣게 될 말</h2>
 <ul><li><b>고객사 / 파트너사</b>: 서비스를 쓰는 회사 / 함께 파는 회사.</li><li><b>PoC</b>: 계약 전에 고객 환경에서 시험 구축해 검증하는 것.</li><li><b>구축</b>: 처음 설치하고 설정하는 작업. <b>운영</b>: 구축 후 안정적으로 돌아가게 관리하는 일.</li><li><b>장애</b>: 서비스가 멈추거나 느려지는 문제. <b>장애 대응</b>: 원인을 찾고 복구하는 일.</li></ul>
 <p class="src">참고한 공개 자료: <a href="https://www.zadara.com/llms.txt" target="_blank" rel="noopener">zadara.com 사이트 안내</a> · <a href="https://www.zadara.com/wp-content/uploads/Zadara-Cloud-Technical-Overview.pdf" target="_blank" rel="noopener">Zadara Cloud Technical Overview</a> · <a href="https://www.zadara.com/wp-content/uploads/zadara-cloud-services.pdf" target="_blank" rel="noopener">Zadara Cloud Services 소개서</a> · <a href="https://www.zadara.com/blog/2022/11/03/zadara-and-kinx-enter-into-strategic-partnership-to-power-korean-multi-cloud-environments/" target="_blank" rel="noopener">Zadara–KINX 파트너십</a> · <a href="https://businesswire.com/news/home/20160302005032/en/Zadara-Expands-Enterprise-Storage-as-a-Service-Coverage-in-AWS-Seoul-Region-with-eBiztech" target="_blank" rel="noopener">AWS 서울 리전 지원 발표(2016)</a> · <a href="https://www.newswire.co.kr/newsRead.php?no=1032309" target="_blank" rel="noopener">한진정보통신 파트너십 보도</a></p>
 `,
-summary:['Zadara = 컴퓨트·스토리지·네트워킹을 완전 관리형·사용량 기반으로 제공하는 엣지 클라우드.','차이점: 원하는 위치에 설치(데이터 주권), 완전 관리형, 파트너 판매, AWS와 비슷한 개념 구조.','zStorage가 아래, zCompute가 위. 각각 따로 확장 가능.','zCompute = VM·VPC·SG·LB·오토스케일링·K8s·GPU (5~6주차).','zStorage = VPSA(Block·File) + Object(S3 호환) (7주차).'],
+summary:['Zadara = 컴퓨트·스토리지·네트워킹을 완전 관리형·사용량 기반으로 제공하는 엣지 클라우드.','차이점: 원하는 위치에 설치(데이터 주권), 완전 관리형, 파트너 판매, AWS와 비슷한 개념 구조.','zStorage가 아래, zCompute가 위. 각각 따로 확장 가능.','zCompute = VM·VPC·SG·LB·오토스케일링·K8s·GPU.','zStorage = VPSA(Block·File) + Object(S3 호환).'],
 essay:[
 {q:'Zadara가 어떤 회사인지 친구에게 30초 안에 설명해 보세요. (소리 내서 말해 보고 적기)',a:'Zadara는 서버·스토리지·네트워크 같은 IT 인프라를 클라우드 서비스로 빌려주는 회사다. AWS처럼 정해진 리전만 쓰는 게 아니라 고객 데이터센터나 지역 데이터센터 등 원하는 곳에 설치할 수 있고, 운영은 Zadara가 다 맡아 준다(완전 관리형). 요금은 쓴 만큼만 낸다. 제품은 컴퓨트(zCompute)와 스토리지(zStorage) 두 축이다.'},
 {q:'규제 때문에 해외 퍼블릭 클라우드를 쓰기 어려운 고객에게 Zadara가 줄 수 있는 장점을 설명해 보세요.',a:'Zadara는 고객 데이터센터나 국내 데이터센터에 설치할 수 있어서 데이터를 국내·사내에 둔 채 클라우드처럼 쓸 수 있다(데이터 주권). 그러면서도 완전 관리형이라 운영 인력 부담이 적고, 사용량 기반 과금이라 장비를 한꺼번에 살 필요가 없다.'},

@@ -7,7 +7,7 @@ terms:[
 ['온프레미스','On-Premises, 온프렘','회사가 서버를 직접 사서 자기 건물이나 데이터센터에 두고 직접 운영하는 방식.'],
 ['클라우드','Cloud','남의 데이터센터에 있는 IT 자원을 인터넷으로 필요한 만큼 빌려 쓰고, 쓴 만큼 돈을 내는 방식.'],
 ['CSP','Cloud Service Provider','클라우드 서비스를 제공하는 회사. AWS, Microsoft Azure, Google Cloud, KT Cloud, NAVER Cloud 등.'],
-['가상화','Virtualization','물리 서버 한 대를 소프트웨어로 쪼개 여러 대의 가상 서버(VM)처럼 쓰는 기술. 일차 02에서 자세히.'],
+['가상화','Virtualization','물리 서버 한 대를 소프트웨어로 쪼개 여러 대의 가상 서버(VM)처럼 쓰는 기술. [[d02]]에서 자세히.'],
 ['VM','Virtual Machine, 가상 머신','가상화로 만든 "소프트웨어로 된 컴퓨터". 클라우드에서는 인스턴스(Instance)라고도 부른다.'],
 ['CapEx','Capital Expenditure, 자본적 지출','장비를 사는 것처럼 처음에 크게 한 번 쓰는 투자 비용.'],
 ['OpEx','Operating Expenditure, 운영비','매달 쓴 만큼 내는 비용. 클라우드 요금이 대표적.'],
@@ -40,7 +40,7 @@ body:`
 </tbody></table></div>
 
 <h2 id="s3">어떻게 "몇 분 만에" 서버가 생길까: 가상화</h2>
-<p>클라우드 회사가 고객마다 진짜 서버를 새로 사서 꽂는 게 아닙니다. 아주 큰 물리 서버를 미리 많이 갖춰 두고, <b>가상화</b> 기술로 한 대를 여러 개의 <b>VM(가상 머신)</b>으로 쪼개서 나눠 줍니다. 그래서 빠릅니다. 가상화는 일차 02에서 제대로 배웁니다. 지금은 <mark>"클라우드 = 가상화로 쪼갠 자원을 빌려주는 것"</mark>까지만 기억하세요.</p>
+<p>클라우드 회사가 고객마다 진짜 서버를 새로 사서 꽂는 게 아닙니다. 아주 큰 물리 서버를 미리 많이 갖춰 두고, <b>가상화</b> 기술로 한 대를 여러 개의 <b>VM(가상 머신)</b>으로 쪼개서 나눠 줍니다. 그래서 빠릅니다. 가상화는 <a data-lesson="d02"></a>에서 제대로 배웁니다. 지금은 <mark>"클라우드 = 가상화로 쪼갠 자원을 빌려주는 것"</mark>까지만 기억하세요.</p>
 
 <h2 id="s4">돈의 관점: CapEx와 OpEx</h2>
 <p>회사 사람들(특히 고객사 결정권자)은 기술보다 돈으로 먼저 이해합니다. 영업·기술 미팅에서 자주 나오는 말이니 알아 두세요.</p>
@@ -57,7 +57,7 @@ body:`
 </tbody></table></div>
 <div class="box analogy"><span class="lbl">비유로 보면 (피자)</span><b>온프렘</b> = 재료 사서 집에서 직접 굽기 · <b>IaaS</b> = 반조리 피자 사서 내 오븐에 굽기 · <b>PaaS</b> = 배달 피자(식탁과 음료는 내가) · <b>SaaS</b> = 피자 가게에 가서 먹기(나는 먹기만)</div>
 <ul><li><b>IaaS 예</b>: AWS EC2, Zadara zCompute의 VM.</li><li><b>PaaS 예</b>: 관리형 데이터베이스, 관리형 쿠버네티스.</li><li><b>SaaS 예</b>: Gmail, Zoom, Notion, Microsoft 365.</li></ul>
-<p class="small muted">일차 14에서 배우는 "책임 공유 모델(Shared Responsibility)"이 바로 이 표의 이야기입니다. 미리 눈에 익혀 두세요.</p>
+<p class="small muted"><a data-lesson="d14"></a>에서 배우는 "책임 공유 모델(Shared Responsibility)"이 바로 이 표의 이야기입니다. 미리 눈에 익혀 두세요.</p>
 
 <h2 id="s6">배포 모델: 누구와 함께 쓰나</h2>
 <div class="tbl-wrap"><table><thead><tr><th>모델</th><th>뜻</th><th>예</th></tr></thead><tbody>

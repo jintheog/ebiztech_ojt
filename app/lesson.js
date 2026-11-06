@@ -14,8 +14,8 @@ function pagerHTML(id) {
 function vSoon(id) {
   LQ = null; // 다른 레슨으로 이동: 돌아오면 퀴즈를 새로 뽑는다
   const m = META[id];
-  let h = '<div class="eyebrow">' + esc(m.tag) + ' · 준비 중</div><h1>' + esc(m.title) + '</h1>';
-  h += '<div class="box" style="margin-top:16px"><b class="small">교육일정표' + (m.day ? ' 일차 ' + m.day : '') + '</b><ul style="margin-bottom:0">' +
+  let h = '<div class="eyebrow">레슨 ' + lessonNo(id) + ' · 준비 중</div><h1>' + esc(m.title) + '</h1>';
+  h += '<div class="box" style="margin-top:16px"><b class="small">회사 커리큘럼</b><ul style="margin-bottom:0">' +
     (m.items ? '<li><b>주요 학습 항목:</b> ' + esc(m.items) + '</li>' : '') + (m.act ? '<li><b>학습 확인 / 활동:</b> ' + esc(m.act) + '</li>' : '') + '</ul></div>';
   h += '<p class="muted">이 레슨은 아직 작성 중입니다. 파일이 <code>content/lessons/' + esc(id) + '.js</code> 에 추가되면 자동으로 나타납니다.</p>';
   h += pagerHTML(id);
@@ -24,25 +24,25 @@ function vSoon(id) {
 
 function vLesson(id) {
   const l = LMAP[id], st = lstat(id), p = st.p;
-  let h = '<div class="eyebrow">' + esc(l.tag) + (l.mins ? ' · ' + esc(l.mins) : '') + '</div><h1>' + esc(l.title) + '</h1>';
-  h += '<div class="box" style="margin-top:16px"><b class="small">오늘이 끝나면 할 수 있어야 하는 것</b><ul style="margin-bottom:0">' + l.goal.map(g => '<li>' + esc(g) + '</li>').join('') + '</ul></div>';
+  let h = '<div class="eyebrow">레슨 ' + lessonNo(id) + (l.mins ? ' · ' + esc(l.mins) : '') + '</div><h1>' + esc(l.title) + '</h1>';
+  h += '<div class="box" style="margin-top:16px"><b class="small">오늘이 끝나면 할 수 있어야 하는 것</b><ul style="margin-bottom:0">' + l.goal.map(g => '<li>' + refHTML(g) + '</li>').join('') + '</ul></div>';
   if (st.due) h += '<div class="box warn"><span class="lbl">오늘은 이 레슨의 복습일입니다 (' + (p.rv.stage + 1) + '번째 복습)</span><ol><li>빈 종이에 이 레슨에서 기억나는 것을 3분 동안 적기</li><li>아래 "핵심 정리"를 펼쳐 비교하고, 빠진 것만 본문에서 다시 읽기</li><li>퀴즈 다시 풀기 (80점 이상)</li></ol><div class="btn-row"><button class="btn pri" id="rvDone">복습 완료</button></div></div>';
-  if (l.cover) h += '<div class="box"><b class="small">교육일정표' + (l.day ? ' 일차 ' + l.day : '') + '에서 이 레슨이 다루는 항목</b> <span class="small muted">(누르면 해당 절로 이동)</span><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">' +
+  if (l.cover) h += '<div class="box"><b class="small">회사 커리큘럼에서 이 레슨이 다루는 항목</b> <span class="small muted">(누르면 해당 절로 이동)</span><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">' +
     l.cover.map(c => '<a class="chip acc" style="text-decoration:none" href="#' + id + '" data-jump="' + c[1] + '">' + esc(c[0]) + '</a>').join('') + '</div>' +
     (l.act ? '<p class="small" style="margin:10px 0 0"><b>학습 확인 / 활동:</b> ' + esc(l.act) + ' → 아래 <a href="#' + id + '" data-jump="essay">셀프체크</a>' + (l.tasks ? ' · <a href="#' + id + '" data-jump="tasks">실습 체크리스트</a>' : '') + (MISSION_OF[id] ? ' · 연습 터미널 <a href="#term">미션 ' + MISSION_OF[id].toUpperCase() + '</a>' : '') + '</p>' : '') + '</div>';
   const steps = [['terms', '용어 미리보기'], ['s1', '본문 읽기'], ['sum', '핵심 정리'], ['essay', '셀프체크'], ['quiz', '퀴즈']].concat(l.tasks ? [['tasks', '실습']] : [], [['finish', '완료']]);
   h += '<ol class="steps">' + steps.map(s => '<li><a href="#' + id + '" data-jump="' + s[0] + '">' + s[1] + '</a></li>').join('') + '</ol>';
   h += '<h2 id="terms">오늘 나오는 용어</h2><p class="small muted">본문을 읽기 전에 한 번 훑으세요. 지금 다 외울 필요는 없습니다. 본문에서 이 말들이 다시 설명됩니다.</p><dl class="terms">' +
-    l.terms.map(t => '<div class="term"><dt>' + esc(t[0]) + '<small>' + esc(t[1]) + '</small></dt><dd>' + esc(t[2]) + '</dd></div>').join('') + '</dl>';
+    l.terms.map(t => '<div class="term"><dt>' + esc(t[0]) + '<small>' + esc(t[1]) + '</small></dt><dd>' + refHTML(t[2]) + '</dd></div>').join('') + '</dl>';
   h += l.body || '';
   h += '<h2 id="sum">핵심 정리: 손노트에 옮겨 쓰기</h2><p>펼치기 <b>전에</b> 이 레슨의 핵심을 손노트에 먼저 떠올려 쓰세요. 그다음 펼쳐서 비교하고, 빠진 것을 파란 펜으로 보충합니다.</p>' +
-    '<div class="sum" id="sumBox"><span class="pen">손노트에 옮겨 쓸 것</span><div id="sumBody" hidden><ol>' + l.summary.map(s => '<li>' + esc(s) + '</li>').join('') + '</ol></div><div class="btn-row" id="sumBtnRow"><button class="btn" id="sumBtn">떠올려 썼어요, 펼치기</button></div></div>';
+    '<div class="sum" id="sumBox"><span class="pen">손노트에 옮겨 쓸 것</span><div id="sumBody" hidden><ol>' + l.summary.map(s => '<li>' + refHTML(s) + '</li>').join('') + '</ol></div><div class="btn-row" id="sumBtnRow"><button class="btn" id="sumBtn">떠올려 썼어요, 펼치기</button></div></div>';
   h += '<h2 id="essay">셀프체크: 말로 설명하기</h2><p>질문마다 <b>먼저 소리 내서 설명</b>해 보고, 짧게 적은 뒤, 모범 답안과 비교해 스스로 채점하세요. 단어가 조금 달라도 핵심이 같으면 ○입니다.</p><div id="essays"></div>';
   h += '<h2 id="quiz">퀴즈</h2><p class="small muted" id="quizInfo"></p><div id="quizBox"></div>';
   if (l.tasks) h += '<h2 id="tasks">실습 체크리스트</h2><p class="small muted">실습 환경에서 직접 한 단계만 체크하세요. 결과 화면·명령어 출력은 작업 로그에 남겨 산출물의 재료로 씁니다.</p><div id="taskBox"></div>';
   h += '<h2 id="finish">레슨 완료</h2><div id="finBox"></div>';
   h += pagerHTML(id);
-  const v = $('#view'); v.innerHTML = h;
+  const v = $('#view'); v.innerHTML = h; fillRefs(v);
 
   $$('[data-jump]', v).forEach(a => a.addEventListener('click', e => { e.preventDefault(); const t = document.getElementById(a.dataset.jump); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }));
   $('#sumBtn').onclick = () => { $('#sumBody').hidden = false; $('#sumBtnRow').hidden = true; };
@@ -61,11 +61,11 @@ function renderEssays(l, p) {
   const box = $('#essays');
   box.innerHTML = l.essay.map((e, i) => {
     const g = p.es[i];
-    return '<div class="q es" data-i="' + i + '"><div class="q-h"><span class="qn">Q' + (i + 1) + '</span><span>' + esc(e.q) + '</span></div>' +
+    return '<div class="q es" data-i="' + i + '"><div class="q-h"><span class="qn">Q' + (i + 1) + '</span><span>' + refHTML(e.q) + '</span></div>' +
       '<label class="small muted" for="et-' + l.id + '-' + i + '" style="display:block;margin-top:8px">내 답 (짧게, 내 말로)</label>' +
       '<textarea id="et-' + l.id + '-' + i + '" placeholder="소리 내서 설명해 본 뒤 적어 보세요">' + esc(p.et[i] || '') + '</textarea>' +
       '<div class="btn-row"><button class="btn sm" data-act="show">' + (g != null ? '모범 답안 다시 보기' : '모범 답안 보기') + '</button></div>' +
-      '<div class="model" hidden>' + esc(e.a) + '</div>' +
+      '<div class="model" hidden>' + refHTML(e.a) + '</div>' +
       '<div class="grade" ' + (g == null ? 'hidden' : '') + '><span class="small muted">스스로 채점:</span>' +
       [[2, '○ 설명할 수 있다'], [1, '△ 일부만'], [0, '× 못 했다']].map(([k, t]) => '<button class="g' + k + (g === k ? ' on' : '') + '" data-g="' + k + '">' + t + '</button>').join('') + '</div></div>';
   }).join('');
@@ -88,13 +88,13 @@ function renderLessonQuiz(l, p, fresh) {
   if (fresh || !LQ || LQ.lid !== l.id) LQ = { lid: l.id, qs: qDraw(lessonSlots(l), QUIZ_N).qs };
   const qs = LQ.qs, box = $('#quizBox');
   $('#quizInfo').textContent = '문제 은행 ' + l.quiz.length + '문제 중 ' + qs.length + '문제를 무작위로 출제합니다. 보기 순서도 매번 섞입니다. 80점 이상이면 통과.';
-  box.innerHTML = qs.map((q, n) => '<div class="q" data-n="' + n + '"><div class="q-h"><span class="qn">' + (n + 1) + '.</span><span>' + esc(q.q) + '</span></div><div class="opts">' +
+  box.innerHTML = qs.map((q, n) => '<div class="q" data-n="' + n + '"><div class="q-h"><span class="qn">' + (n + 1) + '.</span><span>' + refHTML(q.q) + '</span></div><div class="opts">' +
     q.opts.map((o, k) => '<button class="opt" data-k="' + k + '">' + esc(o.t) + '</button>').join('') + '</div><div class="expl" hidden></div></div>').join('') + '<div id="qScore"></div>';
   const showAnswer = (el, q) => {
     const ok = q.opts[q.pick].ok;
     $$('.opt', el).forEach((x, j) => { x.disabled = true; if (q.opts[j].ok) x.classList.add('ok'); else if (j === q.pick) x.classList.add('no'); });
     const ex = $('.expl', el); ex.hidden = false;
-    ex.innerHTML = (ok ? '<b class="ok">정답입니다.</b> ' : '<b class="no">아쉬워요.</b> ') + esc(q.e);
+    ex.innerHTML = (ok ? '<b class="ok">정답입니다.</b> ' : '<b class="no">아쉬워요.</b> ') + refHTML(q.e);
   };
   const showScore = () => {
     const correct = qs.filter(q => q.opts[q.pick].ok).length, sc = Math.round(correct / qs.length * 100), pass = sc >= 80;
@@ -120,8 +120,8 @@ function renderTasks(l, p) {
   box.innerHTML = l.tasks.map((g, gi) => {
     const doneN = g.items.filter((_, ii) => p.tk[gi + '-' + ii]).length;
     return '<div class="done-box" style="margin-bottom:14px"><p style="margin-top:0"><b>' + esc(g.title) + '</b> <span class="small muted">' + doneN + ' / ' + g.items.length + '</span></p>' +
-      g.items.map((t, ii) => { const k = gi + '-' + ii, on = !!p.tk[k]; return '<div class="cond' + (on ? ' ok' : '') + '"><span class="ck">' + (on ? '✓' : ii + 1) + '</span><div><label><input type="checkbox" data-tk="' + k + '" ' + (on ? 'checked' : '') + '> ' + esc(t) + '</label></div></div>'; }).join('') +
-      (g.note ? '<p class="small muted" style="margin-bottom:0">' + esc(g.note) + '</p>' : '') + '</div>';
+      g.items.map((t, ii) => { const k = gi + '-' + ii, on = !!p.tk[k]; return '<div class="cond' + (on ? ' ok' : '') + '"><span class="ck">' + (on ? '✓' : ii + 1) + '</span><div><label><input type="checkbox" data-tk="' + k + '" ' + (on ? 'checked' : '') + '> ' + refHTML(t) + '</label></div></div>'; }).join('') +
+      (g.note ? '<p class="small muted" style="margin-bottom:0">' + refHTML(g.note) + '</p>' : '') + '</div>';
   }).join('');
   $$('[data-tk]', box).forEach(c => c.onchange = () => { if (c.checked) p.tk[c.dataset.tk] = true; else delete p.tk[c.dataset.tk]; save(true); renderTasks(l, p); });
 }

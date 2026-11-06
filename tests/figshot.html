@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ko">
 <head><base href="../">
-<!-- 그림 스크린샷용 페이지. ?id=레슨<head>n=그 레슨의 몇 번째 .fig(0부터)<head>theme=light|dark<head>w=390(휴대폰 폭 흉내) , sel=tbl 이면 첫 .fig-ico가 든 표.
+<!-- 그림 스크린샷용 페이지. ?id=레슨<head>n=그 레슨의 몇 번째 .fig(0부터) 또는 h2=제목 일부(그 h2부터)<head>theme=light|dark<head>w=390(휴대폰 폭 흉내) , sel=tbl 이면 첫 .fig-ico가 든 표.
      headless 스크린샷은 스크롤하면 빈 화면이 찍히므로, 대상 앞의 본문 요소를 숨겨서 대상이 맨 위에 오게 한다. 사용법은 CLAUDE.md "검증 방법". -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -12,7 +12,7 @@
 </head>
 <body>
 <header class="top"><div class="top-in">
-  <div class="brand"><b>Zadara OJT 학습장</b><span>WEEK 1–7 · 신입사원 기술 OJT</span></div>
+  <div class="brand"><b>Zadara OJT 학습장</b><span>신입사원 기술 OJT</span></div>
   <div class="prog"><div class="bar" aria-hidden="true"><i id="pbar" style="width:0%"></i></div><span class="prog-num" id="pnum">0 레슨</span></div>
   <span class="sync" id="sync">이 브라우저에 저장</span>
   <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="nav">목차</button>
@@ -40,7 +40,7 @@
 const P=new URLSearchParams(location.search);document.documentElement.dataset.theme=P.get("theme")||"light";
 if(P.get("w")){document.documentElement.style.width=P.get("w")+"px";document.documentElement.style.overflow="hidden";}
 const go=()=>{ if(!LESSONS.length) return setTimeout(go,50); location.hash=P.get("id"); setTimeout(()=>{
-  const el=P.get("sel")==="tbl"?document.querySelector(".fig-ico").closest(".tbl-wrap"):document.querySelectorAll(".fig")[+(P.get("n")||0)];
+  const el=P.get("h2")?[...document.querySelectorAll("#view h2")].find(h=>h.textContent.includes(P.get("h2"))):P.get("sel")==="tbl"?document.querySelector(".fig-ico").closest(".tbl-wrap"):document.querySelectorAll(".fig")[+(P.get("n")||0)];
   let t=el; while(t.parentElement && t.parentElement.id!=="view") t=t.parentElement;
   let p=t.previousElementSibling; while(p){ p.style.display="none"; p=p.previousElementSibling; }
 },400);}; go();

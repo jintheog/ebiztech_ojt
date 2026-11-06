@@ -66,7 +66,7 @@ body:`
 <li>그래도 모자라면 디스크 일부를 메모리처럼 쓰는 <b>스왑(Swap)</b>을 씁니다. 디스크는 느려서 서버 전체가 굼떠집니다.</li>
 <li>스왑까지 모자라면 리눅스의 <b>OOM Killer</b>가 메모리를 많이 쓰는 프로그램을 강제로 종료시킵니다. 갑자기 서비스가 죽는 원인 중 하나입니다.</li>
 </ol>
-<p>메모리 사용량은 일차 05에서 <code>free -h</code>, <code>top</code> 명령으로 직접 확인합니다.</p>
+<p>메모리 사용량은 <a data-lesson="d05"></a>에서 <code>free -h</code>, <code>top</code> 명령으로 직접 확인합니다.</p>
 
 <h2 id="s5">디스크: 종류와 성능 지표</h2>
 <div class="tbl-wrap"><table><thead><tr><th>종류</th><th>원리</th><th>속도</th><th>용량당 가격</th><th>주 용도</th></tr></thead><tbody>
@@ -81,14 +81,14 @@ body:`
 <li><b>지연시간(Latency, ms)</b>: 요청 하나에 답이 오기까지 걸리는 시간. 짧을수록 좋음.</li>
 </ul>
 <div class="box analogy"><span class="lbl">비유로 보면 (택배)</span>IOPS는 하루에 배달하는 <b>건수</b>, 처리량은 하루에 나르는 <b>무게</b>, 지연시간은 주문부터 도착까지 <b>걸리는 시간</b>입니다.</div>
-<p>서버는 디스크 고장에 대비해 여러 디스크를 묶는 <b>RAID</b>를 씁니다(예: 두 디스크에 똑같이 기록하는 RAID 1). 4주차 Storage 기초에서 자세히 배웁니다.</p>
+<p>서버는 디스크 고장에 대비해 여러 디스크를 묶는 <b>RAID</b>를 씁니다(예: 두 디스크에 똑같이 기록하는 RAID 1). <a data-lesson="d11"></a>에서 자세히 배웁니다.</p>
 
 <h2 id="s6">NIC: 네트워크 연결 장치</h2>
 <ul>
 <li><b>속도</b>: 1Gbps, 10Gbps, 25Gbps, 100Gbps. 데이터센터 서버는 10G 이상이 흔합니다.</li>
 <li><b>포트 여러 개와 본딩</b>: NIC 포트 2개를 묶어(본딩) 하나가 끊겨도 통신이 이어지게 하거나, 속도를 합칩니다.</li>
 <li><b>망 분리</b>: 서비스용, 관리용(BMC), 스토리지용 네트워크를 서로 다른 NIC로 나누기도 합니다. 스토리지 트래픽이 서비스 트래픽을 방해하지 않게 하기 위해서입니다.</li>
-<li>NIC마다 고유한 하드웨어 주소(<b>MAC 주소</b>)가 있습니다. IP 주소와의 관계는 3주차에 배웁니다.</li>
+<li>NIC마다 고유한 하드웨어 주소(<b>MAC 주소</b>)가 있습니다. IP 주소와의 관계는 <a data-lesson="d08"></a>에서 배웁니다.</li>
 </ul>
 
 <h2 id="s7">서버 사양서 읽기: 물리 서버의 자원과 역할</h2>
@@ -137,12 +137,12 @@ body:`
 <tr><td>VM 설정</td><td><b>고객</b>이 콘솔에서 선택 (vCPU 수, 메모리, 디스크, 네트워크)</td></tr>
 <tr><td>하이퍼바이저, 물리 서버</td><td><b>클라우드 사업자</b>: 장비 교체, 하이퍼바이저 관리, 장애 시 VM 이동</td></tr>
 </tbody></table></div>
-<p>1주차에 배운 IaaS 표가 바로 이 이야기입니다. 이 경계가 4주차의 "책임 공유 모델"입니다.</p>
+<p><a data-lesson="w1-2"></a>에서 배운 IaaS 표가 바로 이 이야기입니다. 이 경계가 <a data-lesson="d14"></a>의 "책임 공유 모델"입니다.</p>
 
 <h2 id="s11">VM을 만들 때 고르는 것</h2>
 <ul>
 <li><b>vCPU 수와 메모리</b>: 클라우드에서는 <b>인스턴스 타입</b>이라는 규격으로 묶여 있습니다. 예: 2 vCPU + 4GB (작은 웹 서버), 8 vCPU + 32GB (DB).</li>
-<li><b>디스크(볼륨)</b>: OS가 들어갈 부팅 디스크 + 필요하면 데이터 디스크를 추가로 붙입니다. VM 입장에서는 <code>/dev/vda</code>, <code>/dev/vdb</code> 같은 진짜 디스크로 보입니다(일차 06).</li>
+<li><b>디스크(볼륨)</b>: OS가 들어갈 부팅 디스크 + 필요하면 데이터 디스크를 추가로 붙입니다. VM 입장에서는 <code>/dev/vda</code>, <code>/dev/vdb</code> 같은 진짜 디스크로 보입니다(<a data-lesson="d06"></a>).</li>
 <li><b>이미지</b>: 어떤 OS를 설치된 상태로 시작할지 고르는 틀 (Rocky Linux 9, Ubuntu 24.04 …).</li>
 <li><b>네트워크</b>: 어떤 가상 네트워크(VPC, Subnet)에 연결할지, 어떤 방화벽 규칙(Security Group)을 적용할지.</li>
 </ul>
@@ -151,9 +151,9 @@ body:`
 
 <h2 id="s12">가상화로 얻는 기능</h2>
 <div class="tbl-wrap"><table><thead><tr><th>기능</th><th>뜻</th><th>어디서 다시 나오나</th></tr></thead><tbody>
-<tr><td><b>빠른 생성</b></td><td>장비 주문 없이 몇 분 만에 VM 생성</td><td>5주차 VM 생성</td></tr>
-<tr><td><b>이미지·템플릿</b></td><td>잘 설치된 VM을 틀로 저장해 똑같이 찍어 냄</td><td>5주차 Image</td></tr>
-<tr><td><b>스냅샷</b></td><td>특정 시점의 상태를 저장하고 되돌리기</td><td>4주차, 7주차</td></tr>
+<tr><td><b>빠른 생성</b></td><td>장비 주문 없이 몇 분 만에 VM 생성</td><td><a data-lesson="zc3"></a></td></tr>
+<tr><td><b>이미지·템플릿</b></td><td>잘 설치된 VM을 틀로 저장해 똑같이 찍어 냄</td><td><a data-lesson="zc3"></a></td></tr>
+<tr><td><b>스냅샷</b></td><td>특정 시점의 상태를 저장하고 되돌리기</td><td><a data-lesson="d13"></a>, <a data-lesson="zs5"></a></td></tr>
 <tr><td><b>라이브 마이그레이션</b></td><td>실행 중인 VM을 멈추지 않고 다른 물리 서버로 옮김 (장비 점검 때)</td><td>클라우드 사업자 운영</td></tr>
 <tr><td><b>HA (고가용성)</b></td><td>물리 서버가 고장 나면 그 위의 VM을 다른 서버에서 자동 재시작</td><td>클라우드 사업자 운영</td></tr>
 </tbody></table></div>
@@ -170,7 +170,7 @@ body:`
 <h2 id="s14">계층으로 생각하기: "VM이 느려요"</h2>
 <p>고객이 "VM이 느리다"고 하면 엔지니어는 계층별로 나눠서 봅니다.</p>
 <ol>
-<li><b>앱·게스트 OS</b>: VM 안에서 <code>top</code>, <code>free</code>, <code>df</code>로 CPU·메모리·디스크 사용량 확인 (일차 05·06). 대부분 여기서 원인이 나옵니다.</li>
+<li><b>앱·게스트 OS</b>: VM 안에서 <code>top</code>, <code>free</code>, <code>df</code>로 CPU·메모리·디스크 사용량 확인 (<a data-lesson="d05"></a>, <a data-lesson="d06"></a>). 대부분 여기서 원인이 나옵니다.</li>
 <li><b>VM 설정</b>: vCPU·메모리가 서비스에 비해 너무 작은지 확인 → 인스턴스 타입 키우기(Scale-up).</li>
 <li><b>하이퍼바이저·물리 서버</b>: 같은 물리 서버의 다른 VM들이 자원을 많이 쓰는지, 디스크 지연이 큰지 → 클라우드 사업자(운영팀) 영역.</li>
 </ol>

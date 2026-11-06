@@ -26,7 +26,7 @@ function vExam(eid) {
 function startExam(eid, qs) {
   $('#exStart').parentElement.hidden = true;
   const box = $('#exBox');
-  box.innerHTML = qs.map((q, n) => '<div class="q exam-q" data-n="' + n + '"><div class="q-h"><span class="qn">' + (n + 1) + '.</span><span>' + esc(q.q) + '</span></div><div class="opts">' +
+  box.innerHTML = qs.map((q, n) => '<div class="q exam-q" data-n="' + n + '"><div class="q-h"><span class="qn">' + (n + 1) + '.</span><span>' + refHTML(q.q) + '</span></div><div class="opts">' +
     q.opts.map((o, k) => '<button class="opt" data-k="' + k + '">' + esc(o.t) + '</button>').join('') + '</div><div class="expl" hidden></div></div>').join('') +
     '<div class="btn-row"><button class="btn pri" id="exSubmit">제출하고 채점</button><span class="small muted" id="exLeft" style="align-self:center"></span></div><div id="exRes"></div>';
   const sel = new Array(qs.length).fill(null);
@@ -43,7 +43,7 @@ function startExam(eid, qs) {
       const el = $('.exam-q[data-n="' + n + '"]', box), pick = sel[n], ok = pick != null && q.opts[pick].ok;
       per[q.lid] = per[q.lid] || [0, 0]; per[q.lid][1]++; if (ok) { per[q.lid][0]++; correct++; }
       $$('.opt', el).forEach((x, j) => { x.disabled = true; x.classList.remove('sel'); if (q.opts[j].ok) x.classList.add('ok'); else if (j === pick) x.classList.add('no'); });
-      const ex = $('.expl', el); ex.hidden = false; ex.innerHTML = (ok ? '<b class="ok">정답</b> ' : '<b class="no">오답</b> ') + esc(q.e) + ' <a class="small" href="#' + q.lid + '">레슨 보기</a>';
+      const ex = $('.expl', el); ex.hidden = false; ex.innerHTML = (ok ? '<b class="ok">정답</b> ' : '<b class="no">오답</b> ') + refHTML(q.e) + ' <a class="small" href="#' + q.lid + '">레슨 보기</a>';
     });
     const sc = Math.round(correct / qs.length * 100);
     const pr = S.exams[eid] || { best: 0 };

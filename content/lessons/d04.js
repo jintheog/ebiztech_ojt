@@ -154,7 +154,7 @@ sudo chown -R nginx:nginx /usr/share/nginx/html   <span class="c"># 웹 파일�
 ssh -p 2222 trainee@10.0.1.10               <span class="c"># 22가 아닌 포트로 접속할 때</span>
 ssh -i ~/keys/ojt.pem rocky@203.0.113.10    <span class="c"># 개인키 파일을 지정해서 접속 (클라우드 VM)</span>
 exit                                        <span class="c"># 접속 끊기</span></pre>
-<p><b>포트</b>는 한 서버 안에서 여러 서비스를 구분하는 번호입니다(IP 주소가 건물 주소라면 포트는 호실 번호). SSH의 기본 포트는 <mark>22</mark>입니다. (웹 80·443, 3주차에 자세히)</p>
+<p><b>포트</b>는 한 서버 안에서 여러 서비스를 구분하는 번호입니다(IP 주소가 건물 주소라면 포트는 호실 번호). SSH의 기본 포트는 <mark>22</mark>입니다. (웹 80·443, <a data-lesson="d09"></a>에서 자세히)</p>
 <h3>인증 방법 두 가지</h3>
 <ol><li><b>비밀번호</b>: 간단하지만 무작위로 계속 대입하는 공격(Brute Force)에 약합니다. 인터넷에 열린 서버의 <code>/var/log/secure</code>를 보면 이런 시도가 끊임없이 찍혀 있습니다.</li><li><b>키(Key) 인증</b>: 실무와 클라우드의 표준. 비밀번호 로그인을 아예 꺼 두는 경우가 많습니다.</li></ol>
 <h3>키 인증의 원리: 공개키와 개인키</h3>
@@ -189,8 +189,8 @@ scp trainee@10.0.1.10:/var/log/app.log ./    <span class="c"># 서버 → 내 PC
 <h3>Windows에서 SSH 쓰기</h3>
 <p>Windows 10/11의 PowerShell이나 터미널에서 <code>ssh</code> 명령을 바로 쓸 수 있습니다. 회사에 따라 PuTTY, MobaXterm, Xshell 같은 프로그램도 씁니다. 팀에서 쓰는 도구를 사수에게 물어보세요.</p>
 <h3>클라우드와 연결하기</h3>
-<p>5주차에 zCompute에서 VM을 만들 때 <b>Key Pair</b>를 지정합니다. 클라우드가 VM을 만들면서 공개키를 VM 안의 authorized_keys에 넣어 주고, 나는 내려받은 개인키(.pem)로 <code>ssh -i</code> 접속합니다. 오늘 배운 원리 그대로입니다.</p>
-<div class="box warn"><span class="lbl">접속이 안 될 때 흔한 원인 (5주차에 꼭 다시 보기)</span><ul><li><code>Permission denied (publickey)</code>: 사용자명이 틀렸거나(이미지마다 기본 사용자가 다름: rocky, ubuntu 등), 다른 키를 썼거나, 개인키·authorized_keys 권한이 너무 열려 있음</li><li><code>Connection timed out</code>: 방화벽·Security Group에서 22번 포트가 막혀 있거나 IP가 틀림</li><li><code>Connection refused</code>: 서버에서 SSH 서비스(sshd)가 꺼져 있음 → <code>systemctl status sshd</code> (일차 05)</li></ul></div>
+<p><a data-lesson="zc3"></a>에서 VM을 만들 때 <b>Key Pair</b>를 지정합니다. 클라우드가 VM을 만들면서 공개키를 VM 안의 authorized_keys에 넣어 주고, 나는 내려받은 개인키(.pem)로 <code>ssh -i</code> 접속합니다. 오늘 배운 원리 그대로입니다.</p>
+<div class="box warn"><span class="lbl">접속이 안 될 때 흔한 원인 (<a data-lesson="zc4"></a>에서 꼭 다시 보기)</span><ul><li><code>Permission denied (publickey)</code>: 사용자명이 틀렸거나(이미지마다 기본 사용자가 다름: rocky, ubuntu 등), 다른 키를 썼거나, 개인키·authorized_keys 권한이 너무 열려 있음</li><li><code>Connection timed out</code>: 방화벽·Security Group에서 22번 포트가 막혀 있거나 IP가 틀림</li><li><code>Connection refused</code>: 서버에서 SSH 서비스(sshd)가 꺼져 있음 → <code>systemctl status sshd</code> (<a data-lesson="d05"></a>)</li></ul></div>
 
 <h2 id="s8">실습 시나리오: 계정 생성부터 SSH 접속까지</h2>
 <p>실무에서 자주 받는 요청입니다. <b>"신규 개발자 kim에게 서버 접속 권한을 주세요. 개발팀(dev) 공유 폴더 /srv/dev도 쓸 수 있게요."</b> 순서를 손노트에 그대로 적어 두세요.</p>
@@ -207,7 +207,7 @@ sudo chmod 600 /home/kim/.ssh/authorized_keys
 sudo chown -R kim:kim /home/kim/.ssh      <span class="c"># 10. 소유자를 kim으로</span>
 id kim                                    <span class="c"># 11. 확인: dev 그룹에 들어갔나</span>
 <span class="c"># 12. kim이 자기 PC에서: ssh kim@서버IP → 접속되면 완료</span></pre>
-<p class="small muted"><code>vi</code>는 리눅스의 기본 텍스트 편집기입니다. 기본 사용법(i로 입력, Esc 후 :wq로 저장·종료)은 3주차 전에 따로 연습해 두면 좋습니다.</p>
+<p class="small muted"><code>vi</code>는 리눅스의 기본 텍스트 편집기입니다. 기본 사용법(i로 입력, Esc 후 :wq로 저장·종료)은 <a data-lesson="d07"></a> 전에 따로 연습해 두면 좋습니다.</p>
 
 <h2 id="s9">직접 해 보기</h2>
 <p>연습 터미널의 <b>"미션 B: 계정과 권한"</b>을 끝까지 하세요. 사용자 만들기, 권한 바꾸기, sudo 쓰기, 키 만들기를 실제처럼 해 볼 수 있습니다.</p>

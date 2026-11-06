@@ -26,7 +26,7 @@ terms:[
 ],
 body:`
 <h2 id="s1">아키텍처와 구성도</h2>
-<p><b>아키텍처</b>는 "무엇이 있고, 서로 어떻게 연결되어 있나"를 정리한 설계입니다. 엔지니어는 이것을 그림으로 그린 <b>구성도</b>로 대화합니다. 고객의 구축 요청을 받으면 가장 먼저 그리는 것도, 장애가 나면 가장 먼저 펼쳐 보는 것도 구성도입니다. 6주차 산출물인 "인프라 아키텍처 구성도"도 오늘 배우는 내용으로 그립니다.</p>
+<p><b>아키텍처</b>는 "무엇이 있고, 서로 어떻게 연결되어 있나"를 정리한 설계입니다. 엔지니어는 이것을 그림으로 그린 <b>구성도</b>로 대화합니다. 고객의 구축 요청을 받으면 가장 먼저 그리는 것도, 장애가 나면 가장 먼저 펼쳐 보는 것도 구성도입니다. <a data-lesson="zc8"></a>의 산출물인 "인프라 아키텍처 구성도"도 오늘 배우는 내용으로 그립니다.</p>
 <p>구성도에는 보통 이런 약속이 있습니다. 회사마다 아이콘은 달라도 의미는 비슷합니다.</p>
 <div class="tbl-wrap"><table><thead><tr><th>그림</th><th>뜻</th></tr></thead><tbody>
 <tr><td><svg class="fig-ico" viewBox="0 0 96 48" role="img" aria-label="구름 모양"><use href="#i-cloud" x="16" y="4" width="64" height="40"/></svg>구름</td><td>인터넷(바깥 세상)</td></tr>
@@ -38,7 +38,7 @@ body:`
 <p>오늘의 목표는 이 레슨 맨 끝에 있는 구성도를 <mark>안 보고 손으로 다시 그릴 수 있게</mark> 되는 것입니다.</p>
 
 <h2 id="s2">인프라 3요소를 장비로 보기</h2>
-<p>1주차에 배운 서버·네트워크·스토리지를 이번에는 <b>실제 장비와 역할</b>로 구체적으로 봅니다.</p>
+<p><a data-lesson="w1-1"></a>에서 배운 서버·네트워크·스토리지를 이번에는 <b>실제 장비와 역할</b>로 구체적으로 봅니다.</p>
 <h3>서버: 일을 처리하는 컴퓨터</h3>
 <p>물리 서버일 수도 있고 VM일 수도 있습니다. 실무에서는 <b>하는 일</b>로 이름을 붙입니다. 웹 서버, WAS 서버, DB 서버, 배치 서버(정해진 시간에 작업 실행), 모니터링 서버처럼요. 같은 컴퓨터라도 무엇을 설치하느냐에 따라 역할이 정해집니다.</p>
 <h3>네트워크: 데이터를 실어 나르는 길</h3>
@@ -49,7 +49,7 @@ body:`
 <tr><td><b>로드밸런서</b> (L4/L7)</td><td>들어온 요청을 여러 서버에 나눠 줌</td></tr>
 </tbody></table></div>
 <div class="box analogy"><span class="lbl">비유로 보면</span>스위치는 한 건물 안의 복도, 라우터는 건물과 건물을 잇는 교차로와 표지판, 방화벽은 출입구 경비원, 로드밸런서는 은행 번호표 안내원입니다.</div>
-<p class="small muted">L2, L3 같은 숫자는 3주차에 배우는 "OSI 7계층"의 층 번호입니다. 지금은 "숫자가 클수록 더 많은 정보를 보고 판단한다" 정도로 알아 두세요.</p>
+<p class="small muted">L2, L3 같은 숫자는 <a data-lesson="d07"></a>에서 배우는 "OSI 7계층"의 층 번호입니다. 지금은 "숫자가 클수록 더 많은 정보를 보고 판단한다" 정도로 알아 두세요.</p>
 <h3>스토리지: 데이터를 오래 보관하는 곳</h3>
 <div class="tbl-wrap"><table><thead><tr><th>방식</th><th>뜻</th></tr></thead><tbody>
 <tr><td><b>DAS</b></td><td>서버에 직접 꽂힌 디스크</td></tr>
@@ -57,7 +57,7 @@ body:`
 <tr><td><b>SAN</b></td><td>전용 네트워크로 연결해 서버가 자기 디스크처럼 쓰는 저장소 (블록 단위)</td></tr>
 </tbody></table></div>
 <div class="box analogy"><span class="lbl">비유로 보면</span>DAS는 내 책상 서랍, NAS는 사무실 공용 캐비닛, SAN은 창고를 통째로 빌려 내 창고처럼 쓰는 것입니다.</div>
-<p class="small muted">4주차(Storage 기초)와 7주차(zStorage)에서 자세히 배웁니다. DB 서버는 빠른 스토리지가 특히 중요하다는 것만 기억하세요.</p>
+<p class="small muted"><a data-lesson="d11"></a>, <a data-lesson="d12"></a>, <a data-lesson="zs1"></a>에서 자세히 배웁니다. DB 서버는 빠른 스토리지가 특히 중요하다는 것만 기억하세요.</p>
 
 <h2 id="s3">요청과 응답: 웹사이트 하나가 동작하는 과정</h2>
 <p>쇼핑몰에서 "내 주문 내역" 버튼을 누르면 무슨 일이 일어날까요?</p>
@@ -83,11 +83,11 @@ body:`
 <li><b>요청 접수</b>: 80(HTTP), 443(HTTPS) 포트에서 요청을 기다립니다.</li>
 <li><b>정적 파일 제공</b>: 이미지, CSS, JavaScript, HTML 파일처럼 이미 만들어진 파일은 직접 빠르게 돌려줍니다.</li>
 <li><b>WAS로 전달 (리버스 프록시)</b>: 계산이 필요한 요청은 뒤쪽 WAS에 대신 전달하고, 받은 결과를 사용자에게 돌려줍니다. 사용자는 WAS가 있는지도 모릅니다.</li>
-<li><b>HTTPS 암호화 처리</b>: 인증서를 가지고 암호화·복호화를 맡습니다. (4주차 TLS)</li>
+<li><b>HTTPS 암호화 처리</b>: 인증서를 가지고 암호화·복호화를 맡습니다. (<a data-lesson="d10"></a>의 TLS)</li>
 <li><b>접속 기록</b>: 누가 언제 무엇을 요청했는지 access log, 오류는 error log에 남깁니다.</li>
 </ol>
 <div class="tbl-wrap"><table><thead><tr><th>대표 소프트웨어</th><th>특징</th></tr></thead><tbody>
-<tr><td><b>Nginx</b> (엔진엑스)</td><td>가볍고 동시 접속 처리에 강함. 요즘 가장 많이 씀. 5주차 실습에서 설치</td></tr>
+<tr><td><b>Nginx</b> (엔진엑스)</td><td>가볍고 동시 접속 처리에 강함. 요즘 가장 많이 씀. <a data-lesson="zc4"></a> 실습에서 설치</td></tr>
 <tr><td><b>Apache httpd</b></td><td>오래되고 기능이 많음. 리눅스 서비스 이름은 httpd</td></tr>
 <tr><td><b>WebtoB</b></td><td>국내(티맥스) 제품. 공공기관·금융권에서 자주 보임</td></tr>
 </tbody></table></div>
@@ -168,7 +168,7 @@ body:`
 <div><h5>PRIVATE 영역</h5><b>Web · WAS</b><br><span class="muted small">LB를 거친 요청만 받음</span></div>
 <div><h5>PRIVATE 영역 (가장 안쪽)</h5><b>DB</b><br><span class="muted small">WAS만 접근 가능</span></div>
 </div>
-<p class="small muted">이 Public/Private 구분은 3주차(네트워크)와 6주차 과제 3("Public/Private Subnet 구분")에서 직접 구성합니다.</p>
+<p class="small muted">이 Public/Private 구분은 <a data-lesson="d08"></a>와 <a data-lesson="zc8"></a>(실습 과제 3 "Public/Private Subnet 구분")에서 직접 구성합니다.</p>
 
 <h2 id="s9">이중화, SPOF, 로드밸런서</h2>
 <p>웹 서버가 1대뿐이면 그 서버가 고장 나는 순간 서비스 전체가 멈춥니다. 이렇게 <mark>하나가 망가지면 전체가 멈추는 지점을 SPOF</mark>라고 합니다. 해결책은 같은 역할을 2대 이상 두는 <b>이중화</b>입니다.</p>
@@ -202,7 +202,7 @@ body:`
 </tbody></table></div>
 <h3>Scale-up과 Scale-out</h3>
 <ul><li><b>Scale-up(수직 확장)</b>: 서버 한 대를 더 좋게(CPU·메모리 증설). 간단하지만 한계가 있고, 여전히 1대라 SPOF. DB에 자주 씀.</li><li><b>Scale-out(수평 확장)</b>: 같은 서버를 여러 대로. LB와 함께 쓰며, Web·WAS에 주로 씀. 클라우드의 오토스케일링이 이것을 자동으로 해 줍니다.</li></ul>
-<p>6주차 실습 과제 2가 정확히 이것입니다. "웹 서버 2대 + LB를 만들고, 1대를 멈춰도 서비스가 계속되는지 확인하기."</p>
+<p><a data-lesson="zc6"></a>의 실습 과제 2가 정확히 이것입니다. "웹 서버 2대 + LB를 만들고, 1대를 멈춰도 서비스가 계속되는지 확인하기."</p>
 
 <h2 id="s10">종합: 구성도 한 장으로 정리</h2>
 <p>아래는 오늘 배운 것을 모두 합친 전형적인 웹 서비스 구성도입니다. 손노트에 <b>직접 따라 그린 뒤, 다음 날 안 보고 다시 그려 보세요.</b></p>

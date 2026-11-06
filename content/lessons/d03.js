@@ -35,7 +35,7 @@ body:`
 <li><b>가볍다</b>: 화면(GUI) 없이 꼭 필요한 것만 설치할 수 있습니다.</li>
 <li><b>원격 관리와 자동화</b>: 모든 것을 명령어로 할 수 있어 SSH로 원격 관리하고 스크립트로 자동화하기 좋습니다.</li>
 </ul>
-<p>그래서 <mark>서버와 클라우드 VM 대부분이 리눅스</mark>입니다. 5주차에 zCompute에서 만드는 VM도 리눅스입니다.</p>
+<p>그래서 <mark>서버와 클라우드 VM 대부분이 리눅스</mark>입니다. <a data-lesson="zc3"></a>에서 만드는 VM도 리눅스입니다.</p>
 <h3>배포판</h3>
 <p>커널만으로는 쓸 수 없어서, 커널에 셸·명령어·패키지 관리자 등을 묶어 완성한 제품을 <b>배포판</b>이라고 합니다. 기업 서버에서 자주 보는 것은 두 계열입니다.</p>
 <div class="tbl-wrap"><table><thead><tr><th>계열</th><th>배포판</th><th>패키지 관리자</th><th>특징</th></tr></thead><tbody>
@@ -64,7 +64,7 @@ trainee@ojt-web01:~$    <span class="c">← Ubuntu 모양: 사용자명@서버�
 <p><code>~</code>는 내 홈 디렉터리를 뜻합니다. 맨 끝 기호가 <mark><code>$</code>면 일반 사용자, <code>#</code>면 root</mark>입니다.</p>
 
 <h2 id="s4">디렉터리 구조: 모든 것은 / 에서 시작한다</h2>
-<p>Windows는 <code>C:\\</code>, <code>D:\\</code>처럼 드라이브별로 시작하지만, 리눅스는 <b>단 하나의 꼭대기 <code>/</code>(루트)</b>에서 나무처럼 뻗어 나갑니다. 새 디스크를 붙여도 드라이브 문자가 생기지 않고, 이 나무의 한 가지(예: <code>/data</code>)에 연결합니다(일차 06 마운트). "디렉터리"는 폴더와 같은 말입니다.</p>
+<p>Windows는 <code>C:\\</code>, <code>D:\\</code>처럼 드라이브별로 시작하지만, 리눅스는 <b>단 하나의 꼭대기 <code>/</code>(루트)</b>에서 나무처럼 뻗어 나갑니다. 새 디스크를 붙여도 드라이브 문자가 생기지 않고, 이 나무의 한 가지(예: <code>/data</code>)에 연결합니다(<a data-lesson="d06"></a>의 마운트). "디렉터리"는 폴더와 같은 말입니다.</p>
 <div class="tree">/                <span class="c"># 루트: 모든 것의 시작</span>
 ├── <span class="d">bin</span>          <span class="c"># 기본 명령어 실행 파일 (ls, cp, cat …)</span>
 ├── <span class="d">sbin</span>         <span class="c"># 관리자용 명령어 (useradd, reboot, mkfs …)</span>
@@ -96,7 +96,7 @@ trainee@ojt-web01:~$    <span class="c">← Ubuntu 모양: 사용자명@서버�
 </tbody></table></div>
 <ul>
 <li><b>대소문자를 구분합니다.</b> <code>Memo.txt</code>와 <code>memo.txt</code>는 다른 파일입니다.</li>
-<li><b>확장자는 그냥 이름의 일부</b>입니다. Windows처럼 확장자로 프로그램이 정해지지 않습니다. 실행 가능 여부는 권한(x)이 정합니다(일차 04).</li>
+<li><b>확장자는 그냥 이름의 일부</b>입니다. Windows처럼 확장자로 프로그램이 정해지지 않습니다. 실행 가능 여부는 권한(x)이 정합니다(<a data-lesson="d04"></a>).</li>
 <li><b>점(.)으로 시작하면 숨김 파일</b>입니다. <code>.bashrc</code>, <code>.ssh</code> 같은 개인 설정이 숨김 파일로 되어 있고, <code>ls -a</code>로 봐야 보입니다.</li>
 <li>파일 이름에 띄어쓰기는 피합니다. 명령어에서 다루기 불편합니다. <code>my_file.txt</code>처럼 밑줄을 씁니다.</li>
 </ul>
@@ -105,17 +105,17 @@ trainee@ojt-web01:~$    <span class="c">← Ubuntu 모양: 사용자명@서버�
 <div class="tbl-wrap"><table><thead><tr><th>파일</th><th>내용</th><th>어디서 다시 나오나</th></tr></thead><tbody>
 <tr><td><code>/etc/hostname</code></td><td>이 서버의 이름</td><td></td></tr>
 <tr><td><code>/etc/os-release</code></td><td>배포판 이름과 버전</td><td>장애 문의 때 먼저 확인</td></tr>
-<tr><td><code>/etc/hosts</code></td><td>이름 → IP 주소를 직접 적어 두는 메모장</td><td>3주차 DNS</td></tr>
-<tr><td><code>/etc/resolv.conf</code></td><td>이름을 물어볼 DNS 서버 주소</td><td>3주차 DNS</td></tr>
-<tr><td><code>/etc/passwd</code></td><td>사용자 계정 목록 (비밀번호는 없음)</td><td>일차 04</td></tr>
-<tr><td><code>/etc/shadow</code></td><td>암호화된 비밀번호 (root만 읽기 가능)</td><td>일차 04</td></tr>
-<tr><td><code>/etc/group</code></td><td>그룹 목록</td><td>일차 04</td></tr>
-<tr><td><code>/etc/sudoers</code></td><td>누가 sudo를 쓸 수 있는지</td><td>일차 04</td></tr>
-<tr><td><code>/etc/ssh/sshd_config</code></td><td>SSH 접속 설정</td><td>일차 04</td></tr>
-<tr><td><code>/etc/fstab</code></td><td>부팅할 때 자동으로 연결할 디스크 목록</td><td>일차 06</td></tr>
-<tr><td><code>/etc/systemd/system/</code></td><td>서비스 설정(유닛 파일)</td><td>일차 05</td></tr>
-<tr><td><code>/var/log/messages</code> <span class="muted small">(Ubuntu: syslog)</span></td><td>시스템 전반 로그</td><td>일차 05</td></tr>
-<tr><td><code>/var/log/secure</code> <span class="muted small">(Ubuntu: auth.log)</span></td><td>로그인·인증·sudo 기록</td><td>일차 04, 05</td></tr>
+<tr><td><code>/etc/hosts</code></td><td>이름 → IP 주소를 직접 적어 두는 메모장</td><td><a data-lesson="d09"></a></td></tr>
+<tr><td><code>/etc/resolv.conf</code></td><td>이름을 물어볼 DNS 서버 주소</td><td><a data-lesson="d09"></a></td></tr>
+<tr><td><code>/etc/passwd</code></td><td>사용자 계정 목록 (비밀번호는 없음)</td><td><a data-lesson="d04"></a></td></tr>
+<tr><td><code>/etc/shadow</code></td><td>암호화된 비밀번호 (root만 읽기 가능)</td><td><a data-lesson="d04"></a></td></tr>
+<tr><td><code>/etc/group</code></td><td>그룹 목록</td><td><a data-lesson="d04"></a></td></tr>
+<tr><td><code>/etc/sudoers</code></td><td>누가 sudo를 쓸 수 있는지</td><td><a data-lesson="d04"></a></td></tr>
+<tr><td><code>/etc/ssh/sshd_config</code></td><td>SSH 접속 설정</td><td><a data-lesson="d04"></a></td></tr>
+<tr><td><code>/etc/fstab</code></td><td>부팅할 때 자동으로 연결할 디스크 목록</td><td><a data-lesson="d06"></a></td></tr>
+<tr><td><code>/etc/systemd/system/</code></td><td>서비스 설정(유닛 파일)</td><td><a data-lesson="d05"></a></td></tr>
+<tr><td><code>/var/log/messages</code> <span class="muted small">(Ubuntu: syslog)</span></td><td>시스템 전반 로그</td><td><a data-lesson="d05"></a></td></tr>
+<tr><td><code>/var/log/secure</code> <span class="muted small">(Ubuntu: auth.log)</span></td><td>로그인·인증·sudo 기록</td><td><a data-lesson="d04"></a>, <a data-lesson="d05"></a></td></tr>
 <tr><td><code>~/.bashrc</code></td><td>내 셸의 개인 설정 (별칭 등)</td><td></td></tr>
 </tbody></table></div>
 
@@ -144,7 +144,7 @@ trainee@ojt-web01:~$    <span class="c">← Ubuntu 모양: 사용자명@서버�
 <h3>③ 커널</h3>
 <p>커널이 실행되어 CPU·메모리·장치를 인식합니다. 아직 진짜 디스크를 읽을 드라이버가 준비되지 않았을 수 있어서, 임시 파일 시스템인 <b>initramfs</b>의 도움을 받아 드라이버를 올린 뒤, 진짜 <b>루트 파일 시스템(/)</b>을 연결합니다. 그리고 첫 번째 프로그램인 systemd를 실행합니다.</p>
 <h3>④ systemd</h3>
-<p>커널이 가장 먼저 실행하는 프로그램이라 프로세스 번호(PID)가 <b>1</b>입니다. 모든 프로세스의 조상입니다. <code>/etc/fstab</code>을 읽어 디스크를 연결하고, 네트워크, SSH(sshd), 웹 서버 같은 서비스를 <b>정해진 의존 순서대로</b> 실행합니다. 서비스 관리 명령(<code>systemctl</code>)은 일차 05에서 배웁니다.</p>
+<p>커널이 가장 먼저 실행하는 프로그램이라 프로세스 번호(PID)가 <b>1</b>입니다. 모든 프로세스의 조상입니다. <code>/etc/fstab</code>을 읽어 디스크를 연결하고, 네트워크, SSH(sshd), 웹 서버 같은 서비스를 <b>정해진 의존 순서대로</b> 실행합니다. 서비스 관리 명령(<code>systemctl</code>)은 <a data-lesson="d05"></a>에서 배웁니다.</p>
 <h3>⑤ target 도달과 로그인</h3>
 <p>systemd는 목표 상태(<b>target</b>)까지 서비스를 올리면 부팅을 마칩니다. 서버는 보통 <code>multi-user.target</code>입니다. 이제 로그인 프롬프트가 뜨고 SSH 접속도 받을 수 있습니다.</p>
 <div class="tbl-wrap"><table><thead><tr><th>target</th><th>뜻</th><th>예전 이름 (runlevel)</th></tr></thead><tbody>
@@ -161,10 +161,10 @@ trainee@ojt-web01:~$    <span class="c">← Ubuntu 모양: 사용자명@서버�
 <tr><td>아무 화면도 없음, 하드웨어 오류 메시지</td><td>① BIOS/UEFI</td><td>하드웨어 고장, 부팅 디스크를 못 찾음</td></tr>
 <tr><td><code>grub&gt;</code> 프롬프트에서 멈춤</td><td>② 부트로더</td><td>GRUB 설정·/boot 손상</td></tr>
 <tr><td><code>Kernel panic</code> 메시지</td><td>③ 커널</td><td>커널·initramfs 문제, 루트 디스크를 못 찾음</td></tr>
-<tr><td><code>emergency mode</code> 진입</td><td>④ systemd</td><td><b>/etc/fstab을 잘못 적어</b> 디스크 연결 실패 (일차 06에서 꼭 기억!)</td></tr>
-<tr><td>부팅은 됐는데 웹이 안 뜸</td><td>⑤ 이후</td><td>서비스가 자동 시작으로 설정되지 않음 (일차 05)</td></tr>
+<tr><td><code>emergency mode</code> 진입</td><td>④ systemd</td><td><b>/etc/fstab을 잘못 적어</b> 디스크 연결 실패 (<a data-lesson="d06"></a>에서 꼭 기억!)</td></tr>
+<tr><td>부팅은 됐는데 웹이 안 뜸</td><td>⑤ 이후</td><td>서비스가 자동 시작으로 설정되지 않음 (<a data-lesson="d05"></a>)</td></tr>
 </tbody></table></div>
-<p>부팅 관련 확인 명령 (일차 05에서 직접 써 봅니다): <code>uptime</code>(켜진 지 얼마나), <code>systemctl get-default</code>(기본 target), <code>journalctl -b</code>(이번 부팅의 로그), <code>dmesg</code>(커널 메시지).</p>
+<p>부팅 관련 확인 명령 (<a data-lesson="d05"></a>에서 직접 써 봅니다): <code>uptime</code>(켜진 지 얼마나), <code>systemctl get-default</code>(기본 target), <code>journalctl -b</code>(이번 부팅의 로그), <code>dmesg</code>(커널 메시지).</p>
 
 <h2 id="s9">직접 해 보기</h2>
 <p>디렉터리와 경로는 눈으로 읽는 것보다 직접 돌아다녀 보는 게 훨씬 빨리 외워집니다. <b>연습 터미널의 "미션 A: 파일 시스템 탐험"</b>을 끝까지 해 보세요. 이 페이지 안에서만 동작하니 마음껏 틀려도 됩니다.</p>
@@ -228,7 +228,7 @@ quiz:[
  {q:'복구용 최소 모드(root 혼자)로 부팅하는 systemd target은?',o:['rescue.target','multi-user.target','graphical.target','network.target'],e:'rescue.target은 복구용 최소 모드입니다. 서버의 일반 모드는 multi-user.target, 화면까지 켜면 graphical.target입니다.'}
 ]},
 {v:[
- {q:'/etc/fstab에 잘못된 내용을 적고 재부팅했을 때 흔히 보는 증상은?',o:['emergency mode로 들어간다','BIOS 화면에서 멈춘다','grub> 프롬프트가 뜬다','정상 부팅된다'],e:'systemd가 fstab의 디스크를 연결하다 실패하면 응급 모드로 들어갑니다. 일차 06에서 다시 다룹니다.'},
+ {q:'/etc/fstab에 잘못된 내용을 적고 재부팅했을 때 흔히 보는 증상은?',o:['emergency mode로 들어간다','BIOS 화면에서 멈춘다','grub> 프롬프트가 뜬다','정상 부팅된다'],e:'systemd가 fstab의 디스크를 연결하다 실패하면 응급 모드로 들어갑니다. [[d06]]에서 다시 다룹니다.'},
  {q:'부팅할 때 자동으로 연결할 디스크 목록이 적힌 파일은?',o:['/etc/fstab','/etc/hosts','/etc/passwd','/etc/hostname'],e:'/etc/fstab에 적힌 디스크를 systemd가 부팅 때 연결합니다. 잘못 적으면 emergency mode로 들어갑니다.'}
 ]},
 {v:[
