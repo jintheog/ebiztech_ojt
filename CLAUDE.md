@@ -107,7 +107,7 @@
 
 - **상세 계획 파일:** `C:\Users\user\.claude\plans\foamy-shimmying-widget.md` (폴더 구조, 레슨 형식, 단계, 검증 방법)
 - **원격 저장소:** https://github.com/jintheog/ebiztech_ojt.git (`main`)
-- **최종 갱신:** 2026-11-06, 보완 1 완료 시점
+- **최종 갱신:** 2026-11-06, 보완 2-2 완료 시점
 
 ## 진행 상황
 
@@ -128,9 +128,13 @@
 |---|---|---|
 | 1 | 퀴즈 문제 은행(10문제 출제), v·gen 형식, 종합시험 출제 범위(exam:false, x:1, 레슨별 최소 3문제) | ✅ 완료 |
 | 2 | 1주차 w1-1~w1-4 정리: 기술 외 문제 삭제, w1-3 회사 PDF 반영, 은행 20슬롯, 셀프체크 5~6 | ✅ 완료 |
+| 2-1 | 그림: 공통 그림 부품(`app/icons.js`)과 w1-1 s5 데이터센터, d01 s1·s9·s10 그림 교체 | ✅ 완료 |
+| 2-2 | 1주차 본문(body·terms·summary·goal·cover)을 보완 2 이전(`2cee30b`)으로 되돌림. 퀴즈·셀프체크는 유지하되 원래 본문으로 근거를 찾을 수 없는 것만 삭제. w1-2 s7 리전 그림 제거 | ✅ 완료 |
 | 3 | 일차 d01~d06 심화: 출력 해석·장애 시나리오 보강, 은행 20슬롯(gen 8 포함), 레슨 하나씩 진행 | ⏭ 다음 차례 |
 
-- 보완 2 결과: w1-1·w1-2는 20슬롯(gen 4·3개), w1-4는 13슬롯(gen 없음, `exam:false`). w1-3은 사용자 결정으로 최소 수정만 했다: 본문은 SLA 한 줄(회사 PDF p14, 99.99%)만 고쳤고, 일정 문제 1개를 지웠고, 기존 6문제는 v(버전 2개)로 바꿨다. w1-3은 6슬롯이다.
+- 보완 3에서는 그림을 바꾸지 않는다. 깨진 그림을 발견하면 알려만 준다. Linux 레슨(d03~d06)은 그림이 필요 없다. d01의 "6주차" 같은 주차 표현은 보완 3에서 정리한다.
+
+- 보완 2·2-2 결과: 1주차 본문은 원래(보완 2 이전) 내용이고, 일정 표현만 "일차 NN"으로 고쳤거나 지웠다. 문제 은행은 w1-1 17슬롯(gen 3: Mbps→MB/s, 다운로드 시간, MB/s→Mbps), w1-2 16슬롯(gen 없음), w1-3 6슬롯, w1-4 13슬롯(`exam:false`). w1-3은 본문의 SLA 한 줄(회사 PDF p14, 99.99%)만 고쳤다. 1주차 레슨에 문제를 추가할 때는 원래 본문으로 답할 수 있는 것만 넣는다.
 
 - 앱 개발 2단계 이후(`d07`~)의 새 레슨은 처음부터 새 기준(문제 은행 20슬롯, v·gen 형식, 아래 "문제 은행 규칙")으로 만듭니다.
 
@@ -147,6 +151,7 @@ app/
   core.js             공통 함수, 상태(localStorage), OJT.lesson() 등록, 레슨 로더, 목차, 라우터
   home.js             홈(진도·복습·대응표·7주 계획표·백업), 공부법
   lesson.js           레슨 화면, 셀프체크, 퀴즈, 실습 체크리스트(tasks), 완료·복습, 준비 중 화면(vSoon)
+  icons.js            공통 그림 부품(SVG symbol 묶음). 페이지를 열 때 body에 한 번 넣음
   cards.js exam.js qnote.js widgets.js terminal.js styles.css
 content/
   curriculum.js       블록 6개 · 레슨 31개 순서/메타(일차, 학습 항목, 활동) · 블록별 종합시험 · PLAN(7주 계획표)
@@ -173,7 +178,45 @@ tests/apptest.html    동작 테스트 페이지
      // exam:false   ← 선택. 이 레슨 문제 전체를 종합시험에서 제외 (레슨 퀴즈는 그대로)
    });
    ```
-2. 본문 박스는 `box analogy`(비유), `box mem`(외울 것), `box warn`(주의)를 씁니다. 그림은 `flow`, `layers`, 표는 `tbl-wrap`를 씁니다. 위젯은 `<div data-widget="이름"></div>`로 넣고 `app/widgets.js`의 `WIDGETS`에 등록합니다.
+2. 본문 박스는 `box analogy`(비유), `box mem`(외울 것), `box warn`(주의)를 씁니다. 간단한 흐름·계층은 `flow`, `layers`, 표는 `tbl-wrap`를 씁니다. 실제 모양이 필요한 그림은 아래 "그림 그리는 법"을 따릅니다. 위젯은 `<div data-widget="이름"></div>`로 넣고 `app/widgets.js`의 `WIDGETS`에 등록합니다.
+
+### 그림 그리는 법 (SVG)
+
+**언제 그리나.** 다음 세 경우에만 그립니다. 글자 상자(flow)나 표로 이미 이해되는 곳은 그대로 둡니다.
+- (a) 본문이 도형 모양을 글로만 설명하는 곳
+- (b) 장비의 연결·영역 배치·포함 관계가 핵심인 곳
+- (c) 지금 그림이 깨져 있는 곳
+
+**부품.** `app/icons.js`에 정의되어 있습니다.
+- `i-cloud`(인터넷), `i-server`, `i-lb`, `i-db`(원통), `i-storage`, `i-rack`(세로 40:96), `i-ups`, `i-gen`, `i-cool`, `i-lock`, `i-x`
+- 화살표 머리: `marker-end="url(#ar)"` / `#ar-acc`
+- 필요한 부품이 없으면 같은 선 스타일(stroke `currentColor`, 굵기 2, fill 없음)로 `icons.js`에 추가합니다.
+- 제품 로고와 회사 로고는 쓰지 않습니다. 사진도 넣지 않습니다(저장소가 public이라 저작권 문제). 실물이 궁금하면 "검색해서 보세요"라고 안내합니다.
+
+**작성 예시**
+```html
+<svg class="fig" viewBox="0 0 520 250" role="img" aria-label="그림 내용을 한두 문장으로">
+<use href="#i-cloud" x="0" y="90" width="88" height="56"/>
+<text x="44" y="168" class="c">사용자</text>
+<line x1="90" y1="120" x2="148" y2="120" class="ln" marker-end="url(#ar)"/>
+<use href="#i-server" x="152" y="92" width="56" height="56" class="bad"/>
+<rect x="8" y="8" width="300" height="200" rx="10" class="zone"/>   <!-- 점선 영역 -->
+</svg>
+```
+
+**클래스**
+- 글자: `c`(가운데), `e`(오른쪽 끝), `b`(굵게), `t-s`(작은 회색), `t-acc` / `t-bad` / `t-good`
+- 부품 색: `<use class="acc|bad|mut">`
+- 선: `ln`, `ln acc`, `ln bad`, `ln dash`
+- 영역: `zone`(점선 영역), `wall`(실선 테두리), `pair`(이중화 묶음 배경)
+- 번호표: `<g class="badge"><circle cx cy r="13"/><text x y>1</text></g>`
+- 표 칸 안의 작은 그림은 `<svg class="fig-ico" viewBox="0 0 96 48">`를 씁니다.
+
+**크기와 색**
+- 색은 모두 CSS 변수라서 다크 모드를 따라갑니다.
+- 그림 폭은 100%(최대 620px)입니다. 휴대폰(390px)에서 글자가 읽히도록 viewBox 폭은 520~560으로 잡고, 글자는 기본 19px(작은 글자 17px)을 씁니다.
+- 가로로 긴 구성도는 휴대폰에서 너무 작아지므로 세로로 쌓아서 그립니다(d01 s10 참고).
+- 그린 뒤에는 아래 "검증 방법"대로 라이트·다크와 데스크톱·휴대폰 폭 스크린샷을 찍어서 글자 겹침을 확인합니다.
 3. 분량과 문체는 기존 레슨에 맞춥니다: 용어 15~20개, 본문 8~10절, 셀프체크 5~6개, **문제 은행 20슬롯**, 쉬운 한국어와 비유.
 
 ### 문제 은행 규칙
@@ -227,6 +270,9 @@ CH="/c/Program Files/Google/Chrome/Application/chrome.exe"; P="<스크래치 폴
 - ⚠ `apptest.html?phase=1`은 localStorage를 지웁니다. 사용자의 평소 브라우저로 열지 말고, 반드시 별도 `--user-data-dir`로 실행합니다.
 - 페이지 콘솔 로그는 headless stderr에 잡히지 않습니다. JS 오류는 테스트 페이지의 `JSERROR` 줄로 확인합니다.
 - 현재 기준 결과는 phase 1 41개 PASS, phase 2 6개 PASS입니다(문제 은행 규칙 반영 후). `--virtual-time-budget`은 15000 이상으로 줍니다.
+- **그림 스크린샷:** `tests/figshot.html?id=레슨&n=몇번째그림&theme=light|dark`를 `--screenshot=파일.png --window-size=1280,600 --hide-scrollbars`로 찍습니다. 표 안의 아이콘은 `n` 대신 `sel=tbl`을 씁니다.
+  - headless 창은 최소 폭이 504px입니다. 그래서 휴대폰 폭은 `&w=390`을 붙이고 `--window-size=504,높이`로 찍은 뒤 `tests/crop-phone.ps1 -Dir 폴더`로 390px만 남깁니다(파일 이름에 `-phone-`이 들어 있어야 함).
+  - headless에서 스크롤한 뒤 찍으면 빈 화면이 나옵니다. 그래서 이 페이지는 스크롤 대신 대상 앞의 본문을 숨깁니다.
 - 테스트는 모든 레슨의 gen 슬롯을 각각 100번 실행해 오류, 보기 중복, 정답 개수를 검사합니다. v 슬롯은 모든 버전의 q·o·e를 검사하고, 모든 슬롯이 출제 가능한지도 검사합니다. 새 레슨을 추가한 뒤에는 이 테스트가 전부 PASS인지와 레슨 화면의 셀프체크·용어 개수를 확인합니다.
 
 ## git 규칙

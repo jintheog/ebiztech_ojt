@@ -29,11 +29,11 @@ body:`
 <p><b>아키텍처</b>는 "무엇이 있고, 서로 어떻게 연결되어 있나"를 정리한 설계입니다. 엔지니어는 이것을 그림으로 그린 <b>구성도</b>로 대화합니다. 고객의 구축 요청을 받으면 가장 먼저 그리는 것도, 장애가 나면 가장 먼저 펼쳐 보는 것도 구성도입니다. 6주차 산출물인 "인프라 아키텍처 구성도"도 오늘 배우는 내용으로 그립니다.</p>
 <p>구성도에는 보통 이런 약속이 있습니다. 회사마다 아이콘은 달라도 의미는 비슷합니다.</p>
 <div class="tbl-wrap"><table><thead><tr><th>그림</th><th>뜻</th></tr></thead><tbody>
-<tr><td>구름</td><td>인터넷(바깥 세상)</td></tr>
-<tr><td>사각형 + 이름</td><td>서버 (Web 01, WAS 01 …)</td></tr>
-<tr><td>원통</td><td>DB나 스토리지</td></tr>
-<tr><td>점선 상자</td><td>네트워크 영역 (Public, Private, VPC 등)</td></tr>
-<tr><td>화살표 + 숫자</td><td>요청이 가는 방향과 포트 번호 (예: → 443)</td></tr>
+<tr><td><svg class="fig-ico" viewBox="0 0 96 48" role="img" aria-label="구름 모양"><use href="#i-cloud" x="16" y="4" width="64" height="40"/></svg>구름</td><td>인터넷(바깥 세상)</td></tr>
+<tr><td><svg class="fig-ico" viewBox="0 0 96 48" role="img" aria-label="서버 상자와 이름 Web 01"><use href="#i-server" x="0" y="4" width="40" height="40"/><text x="44" y="30">Web 01</text></svg>사각형 + 이름</td><td>서버 (Web 01, WAS 01 …)</td></tr>
+<tr><td><svg class="fig-ico" viewBox="0 0 96 48" role="img" aria-label="원통 모양: DB와 스토리지"><use href="#i-db" x="8" y="4" width="40" height="40"/><use href="#i-storage" x="50" y="4" width="40" height="40"/></svg>원통</td><td>DB나 스토리지</td></tr>
+<tr><td><svg class="fig-ico" viewBox="0 0 96 48" role="img" aria-label="Private 이름표가 붙은 점선 상자"><rect x="3" y="5" width="90" height="38" rx="5" class="zone"/><text x="11" y="23">Private</text></svg>점선 상자</td><td>네트워크 영역 (Public, Private, VPC 등)</td></tr>
+<tr><td><svg class="fig-ico" viewBox="0 0 96 48" role="img" aria-label="443이 적힌 오른쪽 화살표"><line x1="6" y1="32" x2="86" y2="32" class="ln" marker-end="url(#ar)"/><text x="46" y="22" text-anchor="middle">443</text></svg>화살표 + 숫자</td><td>요청이 가는 방향과 포트 번호 (예: → 443)</td></tr>
 </tbody></table></div>
 <p>오늘의 목표는 이 레슨 맨 끝에 있는 구성도를 <mark>안 보고 손으로 다시 그릴 수 있게</mark> 되는 것입니다.</p>
 
@@ -171,7 +171,25 @@ body:`
 <h2 id="s9">이중화, SPOF, 로드밸런서</h2>
 <p>웹 서버가 1대뿐이면 그 서버가 고장 나는 순간 서비스 전체가 멈춥니다. 이렇게 <mark>하나가 망가지면 전체가 멈추는 지점을 SPOF</mark>라고 합니다. 해결책은 같은 역할을 2대 이상 두는 <b>이중화</b>입니다.</p>
 <p>서버가 2대면 사용자는 어디로 접속해야 할까요? 앞에 <b>로드밸런서(LB)</b>를 둡니다. LB는 요청을 서버들에 나눠 주고, 몇 초마다 각 서버에 "살아 있니?"라고 확인(<b>Health Check</b>)해서 응답이 없는 서버로는 보내지 않습니다.</p>
-<div class="flow"><div class="n"><b>사용자</b></div><span class="ar">→</span><div class="n k"><b>LB</b><small>나눠 주기</small></div><span class="ar">→</span><div class="n"><b>Web 1</b><small>정상</small></div><div class="n" style="opacity:.55"><b>Web 2</b><small>고장 → 제외</small></div></div>
+<svg class="fig" viewBox="0 0 520 250" role="img" aria-label="로드밸런서 그림: 사용자 요청이 LB로 가고, LB는 정상인 Web 1에만 요청을 보낸다. Health Check에 실패한 Web 2로 가는 선은 점선과 ✕로 표시되어 요청에서 제외된다.">
+<use href="#i-cloud" x="0" y="90" width="88" height="56"/>
+<text x="44" y="168" class="c">사용자</text>
+<line x1="90" y1="120" x2="148" y2="120" class="ln" marker-end="url(#ar)"/>
+<use href="#i-lb" x="152" y="92" width="56" height="56" class="acc"/>
+<text x="180" y="170" class="c b">LB</text>
+<text x="180" y="192" class="c t-s">나눠 주기</text>
+<line x1="212" y1="110" x2="372" y2="52" class="ln acc" marker-end="url(#ar-acc)"/>
+<text x="286" y="66" class="c t-acc">요청</text>
+<line x1="212" y1="132" x2="372" y2="170" class="ln bad dash"/>
+<use href="#i-x" x="280" y="139" width="24" height="24" class="bad"/>
+<text x="282" y="212" class="c t-bad">Health Check 실패</text>
+<use href="#i-server" x="380" y="20" width="56" height="56"/>
+<text x="408" y="98" class="c">Web 1</text>
+<text x="408" y="120" class="c t-good">정상</text>
+<use href="#i-server" x="380" y="142" width="56" height="56" class="bad"/>
+<text x="408" y="220" class="c">Web 2</text>
+<text x="408" y="242" class="c t-bad">고장 → 제외</text>
+</svg>
 <h3>계층마다 SPOF 점검하기</h3>
 <div class="tbl-wrap"><table><thead><tr><th>계층</th><th>SPOF를 없애는 방법</th></tr></thead><tbody>
 <tr><td>LB</td><td>LB 자체도 2대(또는 클라우드의 관리형 LB 사용)</td></tr>
@@ -186,26 +204,65 @@ body:`
 
 <h2 id="s10">종합: 구성도 한 장으로 정리</h2>
 <p>아래는 오늘 배운 것을 모두 합친 전형적인 웹 서비스 구성도입니다. 손노트에 <b>직접 따라 그린 뒤, 다음 날 안 보고 다시 그려 보세요.</b></p>
-<div class="tree">                 [ 인터넷 / 사용자 ]
-                          │  HTTPS 443
-               ┌──────────▼──────────┐   <span class="c">PUBLIC 영역</span>
-               │   Load Balancer     │
-               └─────┬─────────┬─────┘
-          ┌──────────┼─────────┼──────────────────────┐ <span class="c">PRIVATE 영역</span>
-          │    ┌─────▼───┐ ┌───▼─────┐                │
-          │    │ Web 01  │ │ Web 02  │  <span class="c">Nginx :80</span>     │
-          │    └─────┬───┘ └───┬─────┘                │
-          │          │  8080   │                      │
-          │    ┌─────▼───┐ ┌───▼─────┐                │
-          │    │ WAS 01  │ │ WAS 02  │  <span class="c">Tomcat :8080</span>  │
-          │    └─────┬───┘ └───┬─────┘                │
-          │          │  3306   │                      │
-          │    ┌─────▼─────────▼─────┐                │
-          │    │ DB (Active) ⇄ (Standby)│ <span class="c">MySQL :3306</span> │
-          │    └──────────┬──────────┘                │
-          │               │ 스토리지 연결 (Block)       │
-          │        [ 스토리지 / 백업 ]                  │
-          └───────────────────────────────────────────┘</div>
+<svg class="fig" viewBox="0 0 560 868" role="img" aria-label="3-Tier 웹 서비스 종합 구성도: 맨 위 인터넷/사용자 구름에서 HTTPS 443으로 PUBLIC 영역의 Load Balancer에 들어온다. LB는 80번 포트로 PRIVATE 영역의 Web 01과 Web 02에 요청을 나눈다. 각 Web은 8080번으로 WAS 01, WAS 02에, WAS는 3306번으로 DB Active에 연결된다. DB Active와 Standby는 서로 복제하고, DB는 Block 방식으로 스토리지/백업에 연결된다. Web·WAS·DB는 각각 2대로 이중화되어 있다. 그림의 번호 1~6은 아래 체크리스트 번호와 같다.">
+<use href="#i-cloud" x="248" y="8" width="104" height="64"/>
+<text x="300" y="94" class="c b">인터넷 / 사용자</text>
+<g class="badge"><circle cx="384" cy="42" r="13"/><text x="384" y="48">1</text></g>
+<line x1="300" y1="102" x2="300" y2="174" class="ln" marker-end="url(#ar)"/>
+<text x="312" y="140">HTTPS 443</text>
+<g class="badge"><circle cx="430" cy="134" r="13"/><text x="430" y="140">3</text></g>
+<rect x="16" y="156" width="528" height="122" rx="12" class="zone"/>
+<text x="32" y="184" class="b t-s">PUBLIC</text>
+<g class="badge"><circle cx="112" cy="178" r="13"/><text x="112" y="184">4</text></g>
+<use href="#i-lb" x="272" y="176" width="56" height="56" class="acc"/>
+<text x="340" y="210">Load Balancer</text>
+<line x1="284" y1="234" x2="210" y2="328" class="ln" marker-end="url(#ar)"/>
+<line x1="316" y1="234" x2="390" y2="328" class="ln" marker-end="url(#ar)"/>
+<text x="230" y="276" class="e">80</text>
+<text x="370" y="276">80</text>
+<rect x="16" y="298" width="528" height="558" rx="12" class="zone"/>
+<text x="32" y="326" class="b t-s">PRIVATE</text>
+<g class="badge"><circle cx="124" cy="320" r="13"/><text x="124" y="326">4</text></g>
+<rect x="138" y="332" width="324" height="90" rx="12" class="pair"/>
+<use href="#i-server" x="172" y="336" width="56" height="56"/>
+<use href="#i-server" x="372" y="336" width="56" height="56"/>
+<text x="200" y="412" class="c">Web 01</text>
+<text x="400" y="412" class="c">Web 02</text>
+<g class="badge"><circle cx="40" cy="364" r="13"/><text x="40" y="370">2</text></g>
+<text x="60" y="370" class="b">Web</text>
+<text x="60" y="394" class="t-s">2대</text>
+<g class="badge"><circle cx="488" cy="376" r="13"/><text x="488" y="382">5</text></g>
+<line x1="200" y1="422" x2="200" y2="474" class="ln" marker-end="url(#ar)"/>
+<line x1="400" y1="422" x2="400" y2="474" class="ln" marker-end="url(#ar)"/>
+<text x="212" y="454">8080</text>
+<text x="412" y="454">8080</text>
+<rect x="138" y="478" width="324" height="90" rx="12" class="pair"/>
+<use href="#i-server" x="172" y="482" width="56" height="56"/>
+<use href="#i-server" x="372" y="482" width="56" height="56"/>
+<text x="200" y="558" class="c">WAS 01</text>
+<text x="400" y="558" class="c">WAS 02</text>
+<text x="60" y="516" class="b">WAS</text>
+<text x="60" y="540" class="t-s">2대</text>
+<line x1="200" y1="568" x2="200" y2="630" class="ln" marker-end="url(#ar)"/>
+<line x1="392" y1="568" x2="214" y2="632" class="ln" marker-end="url(#ar)"/>
+<text x="188" y="606" class="e">3306</text>
+<text x="330" y="614">3306</text>
+<rect x="138" y="636" width="324" height="92" rx="12" class="pair"/>
+<use href="#i-db" x="172" y="640" width="56" height="56"/>
+<use href="#i-db" x="372" y="640" width="56" height="56"/>
+<line x1="234" y1="668" x2="366" y2="668" class="ln acc" marker-start="url(#ar-acc)" marker-end="url(#ar-acc)"/>
+<text x="300" y="658" class="c t-acc">복제</text>
+<text x="200" y="718" class="c">DB Active</text>
+<text x="400" y="718" class="c">DB Standby</text>
+<text x="60" y="674" class="b">DB</text>
+<text x="60" y="698" class="t-s">2대</text>
+<line x1="200" y1="728" x2="200" y2="766" class="ln" marker-end="url(#ar)"/>
+<text x="212" y="754">Block</text>
+<use href="#i-storage" x="172" y="770" width="56" height="56"/>
+<text x="200" y="846" class="c b">스토리지 / 백업</text>
+<g class="badge"><circle cx="262" cy="798" r="13"/><text x="262" y="804">6</text></g>
+</svg>
+<p class="fig-cap">Web·WAS·DB 뒤의 파란 배경은 같은 역할을 2대로 둔 이중화 묶음입니다. 번호는 아래 체크리스트와 같습니다.</p>
 <p>구성도를 그릴 때 빠뜨리지 말아야 할 것: <b>① 사용자 진입점 ② 계층별 서버와 대수 ③ 화살표 방향과 포트 ④ Public/Private 영역 ⑤ 이중화 표시 ⑥ 스토리지·백업</b>.</p>
 `,
 summary:['인프라 장비: 서버(역할별 이름) · 네트워크(스위치·라우터·방화벽·LB) · 스토리지(DAS·NAS·SAN).','요청 흐름: 사용자 → 인터넷 → Web(443) → WAS(8080) → DB(3306), 응답은 거꾸로. 상태 코드 200·404·500·502.','Web = 요청 접수, 정적 파일, WAS로 전달(리버스 프록시), HTTPS, 로그 (Nginx·Apache·WebtoB).','WAS = 비즈니스 로직, DB 연결 관리, 세션 (Tomcat·JEUS). DB = 테이블·SQL·트랜잭션, 백업과 Active-Standby (MySQL·PostgreSQL·Oracle).','3-Tier로 나누는 이유: 보안(DB는 가장 안쪽) · 확장 · 장애 격리 · 역할별 관리.','SPOF는 이중화로 없앤다. 여러 대 앞에 LB(Health Check). Scale-up = 한 대 키움, Scale-out = 대수 늘림.'],

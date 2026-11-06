@@ -301,3 +301,34 @@ body{margin:0}
 .nav-a.exam.on{color:var(--accent)}
 .lrow.soon .tt,.soon-row td{color:var(--muted)}
 h3 + .lesson-list{margin-top:6px}
+
+/* ---------- 그림 (app/icons.js 부품 + 레슨 본문의 <svg class="fig">) ---------- */
+.fig-sprite{position:absolute;width:0;height:0;overflow:hidden}
+.fig{display:block;width:100%;height:auto;max-width:620px;margin:1.2rem auto .4rem;color:var(--ink);overflow:visible}
+.fig text{font-family:var(--f-body);fill:var(--ink);font-size:19px}
+.fig .c{text-anchor:middle}
+.fig .e{text-anchor:end}
+.fig .b{font-weight:700}
+.fig .t-s{font-size:17px;fill:var(--muted)}
+.fig .t-acc{fill:var(--accent)}
+.fig .t-bad{fill:var(--bad)}
+.fig .t-good{fill:var(--good)}
+.fig .acc{color:var(--accent)}
+.fig .bad{color:var(--bad)}
+.fig .mut{color:var(--muted)}
+.fig .zone{fill:none;stroke:var(--muted);stroke-width:2;stroke-dasharray:8 6}
+.fig .wall{fill:none;stroke:var(--muted);stroke-width:2}
+.fig .pair{fill:var(--accent-soft);stroke:none}
+.fig .ln{fill:none;stroke:var(--muted);stroke-width:2.2}
+.fig .ln.acc{stroke:var(--accent)}
+.fig .ln.bad{stroke:var(--bad)}
+.fig .ln.dash{stroke-dasharray:7 6}
+.fig .badge circle{fill:var(--accent)}
+.fig .badge text{fill:var(--accent-ink);font-size:16px;font-weight:700;text-anchor:middle}
+.fig-sprite .mk{fill:var(--muted)}
+.fig-sprite .mk-acc{fill:var(--accent)}
+.fig-cap{font-size:.85rem;color:var(--muted);text-align:center;margin:0 0 1.2rem}
+.fig-ico{display:block;width:96px;height:48px;color:var(--ink);margin-bottom:2px}
+.fig-ico text{font-family:var(--f-body);fill:var(--ink);font-size:13px}
+.fig-ico .zone{fill:none;stroke:var(--muted);stroke-width:1.6;stroke-dasharray:5 4}
+.fig-ico .ln{stroke:var(--muted);stroke-width:2;fill:none}
