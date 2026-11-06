@@ -200,25 +200,76 @@ Swap:          2.0Gi          0B       2.0Gi</pre>
 `,
 summary:['프로그램 = 디스크의 실행 파일(레시피), 프로세스 = 실행 중인 상태(냄비). PID, PPID, 맨 위 조상은 systemd(1).','ps aux | grep 이름 으로 찾고, %CPU·%MEM·STAT을 본다. kill(15)이 먼저, kill -9는 마지막. 서비스는 systemctl stop.','데몬 = 뒤에서 계속 도는 서비스 프로세스(sshd, nginx, crond, chronyd). 관리자는 systemd.','systemctl status/start/stop/restart/reload/enable/disable. start(지금) ≠ enable(부팅 시 자동) → enable --now.','로그: journalctl -u 서비스 / -f / -b / -p err, /var/log/messages·secure·nginx. 로그 한 줄 = 시각·서버·프로그램[PID]·메시지.','uptime의 load average는 코어 수와 비교. top: id 낮으면 CPU 바쁨, wa 높으면 디스크 느림. free는 available을 본다.'],
 essay:[
-{q:'프로그램과 프로세스의 차이를 비유로 설명하고, PID와 PPID가 무엇인지 말해 보세요.',a:'프로그램은 디스크에 저장된 실행 파일(레시피 책)이고, 프로세스는 그것이 실행되어 메모리에서 CPU를 쓰며 일하는 상태(끓고 있는 냄비)다. 같은 프로그램으로 여러 프로세스를 만들 수 있다. PID는 프로세스마다 붙는 고유 번호이고, PPID는 그 프로세스를 실행시킨 부모 프로세스의 번호다. 맨 위 조상은 PID 1 systemd다.'},
+{q:'프로그램과 프로세스의 차이를 설명하고, PID와 PPID가 무엇인지 말해 보세요.',a:'프로그램은 디스크에 저장된 실행 파일이고, 프로세스는 그것이 실행되어 메모리에서 CPU를 쓰며 일하는 상태다. 같은 프로그램으로 여러 프로세스를 만들 수 있다. PID는 프로세스마다 붙는 고유 번호이고, PPID는 그 프로세스를 실행시킨 부모 프로세스의 번호다. 맨 위 조상은 PID 1 systemd다. (비유: 프로그램은 레시피 책, 프로세스는 지금 끓고 있는 냄비)'},
 {q:'systemctl start와 enable의 차이를 설명하고, 둘을 구분하지 않으면 생기는 실무 사고를 말해 보세요.',a:'start는 서비스를 지금 당장 실행하는 것이고, enable은 다음 부팅부터 자동으로 실행되도록 등록하는 것이다. start만 하고 enable을 안 하면 지금은 잘 돌지만 재부팅 후 서비스가 올라오지 않아 장애가 난다. 그래서 새 서비스는 sudo systemctl enable --now 로 둘 다 한다.'},
 {q:'systemctl status nginx 결과에서 확인해야 할 줄 3가지와 각각의 의미를 말해 보세요.',a:'① Loaded 줄의 enabled/disabled로 부팅 시 자동 시작 여부를 본다. ② Active 줄에서 active (running)이면 정상, inactive (dead)면 꺼짐, failed면 실패이며 언제부터인지도 본다. ③ 맨 아래 최근 로그 몇 줄에서 실패 원인을 찾는다. (Main PID로 메인 프로세스 번호도 확인)'},
 {q:'CPU가 2개인 서버에서 uptime이 load average: 3.90, 2.10, 0.80 이라면 어떤 상황인가요? 다음에 무엇을 확인하겠습니까?',a:'코어가 2개인데 최근 1분 부하가 3.9라서 CPU가 꽉 차고 작업이 거의 두 배로 밀려 있다. 15분 0.8, 5분 2.1, 1분 3.9로 부하가 빠르게 올라가는 중이다. top으로 CPU를 많이 쓰는 프로세스를 찾고(%CPU, id 값), wa가 높으면 디스크 문제도 의심한다. 원인 프로세스가 서비스면 로그를 확인하고, 불필요한 프로세스면 kill로 정상 종료를 요청한다.'},
 {q:'free -h 결과에서 free가 200Mi밖에 안 남았다고 메모리 부족이라고 판단하면 안 되는 이유는? 무엇을 봐야 하나요?',a:'리눅스는 남는 메모리를 파일 캐시(buff/cache)로 쓰기 때문에 free가 작게 보이는 것이 정상이다. 캐시는 필요하면 바로 내준다. 실제로 더 쓸 수 있는 양은 available이므로 available을 보고, Swap used가 늘고 있는지도 함께 본다. available이 바닥나고 스왑이 늘면 메모리 부족이다.'}
 ],
 quiz:[
-{q:'디스크에 저장된 실행 파일이 실행되어 메모리에서 동작하고 있는 상태를 무엇이라 하나요?',o:['프로세스','프로그램','패키지','유닛 파일'],e:'프로그램(레시피)이 실행되면 프로세스(냄비)가 됩니다.'},
-{q:'모든 프로세스의 맨 위 조상이며 PID가 1인 것은?',o:['systemd','bash','sshd','kernel.log'],e:'커널이 가장 먼저 실행하는 systemd가 PID 1입니다.'},
-{q:'nginx 프로세스가 떠 있는지 찾는 가장 흔한 명령은?',o:['ps aux | grep nginx','ls nginx','cat nginx','chmod nginx'],e:'ps aux로 전체 목록을 뽑고 파이프로 grep에 넘겨 nginx가 들어간 줄만 봅니다.'},
-{q:'프로세스를 종료할 때 먼저 시도해야 하는 것은?',o:['kill PID (시그널 15, 정상 종료 요청)','kill -9 PID (강제 종료)','서버 재부팅','rm 로 프로그램 파일 삭제'],e:'-9는 정리할 기회 없이 죽여서 데이터가 깨질 수 있습니다. 마지막 수단입니다.'},
-{q:'데몬(Daemon)에 대한 설명으로 맞는 것은?',o:['화면 없이 백그라운드에서 계속 돌며 서비스를 제공하는 프로세스','사용자가 직접 입력하는 명령어','로그 파일의 다른 이름','삭제된 프로세스'],e:'sshd, crond, nginx처럼 요청을 기다리며 계속 돕니다.'},
-{q:'재부팅 후에도 nginx가 자동으로 실행되게 하려면?',o:['sudo systemctl enable nginx','sudo systemctl start nginx','sudo systemctl status nginx','sudo systemctl reload nginx'],e:'start는 지금만, enable은 부팅 시 자동입니다. enable --now로 둘 다 할 수 있습니다.'},
-{q:'systemctl status 결과에서 서비스가 정상 실행 중임을 뜻하는 것은?',o:['Active: active (running)','Active: inactive (dead)','Active: failed','Loaded: not-found'],e:'inactive(dead)는 꺼짐, failed는 실행 실패입니다.'},
-{q:'서비스를 끊지 않고 설정 파일만 다시 읽게 하는 명령은?',o:['systemctl reload','systemctl restart','systemctl stop','systemctl disable'],e:'restart는 껐다 켜서 잠깐 끊기고, reload는 지원하는 서비스에서 끊김 없이 설정만 반영합니다.'},
-{q:'nginx 서비스의 로그만 골라 보는 명령은?',o:['journalctl -u nginx','journalctl -b','dmesg','free -h'],e:'-u는 유닛(서비스)을 지정합니다. -f를 붙이면 실시간으로 계속 봅니다.'},
-{q:'Rocky Linux에서 로그인·SSH·sudo 기록이 남는 로그 파일은?',o:['/var/log/secure','/var/log/dnf.log','/etc/passwd','/var/log/cron'],e:'Ubuntu에서는 /var/log/auth.log입니다.'},
-{q:'CPU 코어가 4개인 서버의 load average가 1.0이라면?',o:['여유 있는 상태 (코어 4개 중 1개 분량만 바쁨)','CPU가 꽉 차서 위험하다','메모리가 부족하다','디스크가 가득 찼다'],e:'load는 코어 수와 비교합니다. 4코어에서 4.0이 꽉 찬 상태입니다.'},
-{q:'top의 %Cpu(s) 줄에서 wa 값이 높다면 무엇을 의심하나요?',o:['디스크(I/O)가 느려서 CPU가 기다리고 있다','CPU가 놀고 있다','메모리가 너무 많다','네트워크가 빠르다'],e:'wa = I/O wait. 디스크나 스토리지 성능 문제를 의심합니다.'},
-{q:'free -h 결과에서 "실제로 더 쓸 수 있는 메모리"를 보려면 어느 칸을 보나요?',o:['available','free','shared','total'],e:'buff/cache는 필요하면 내주므로, 실제 여유는 available입니다.'}
+{v:[
+ {q:'디스크에 저장된 실행 파일이 실행되어 메모리에서 동작하고 있는 상태를 무엇이라 하나요?',o:['프로세스','프로그램','패키지','유닛 파일'],e:'디스크에 저장된 실행 파일이 프로그램이고, 그것이 실행되어 메모리에서 CPU를 쓰며 동작하는 상태가 프로세스입니다. (비유: 레시피 책과 지금 끓고 있는 냄비)'},
+ {q:'프로그램과 프로세스의 차이로 맞는 것은?',o:['프로그램은 디스크에 저장된 실행 파일이고, 프로세스는 그것이 실행되어 메모리에서 동작하는 상태다','프로그램은 실행 중인 상태이고, 프로세스는 디스크에 저장된 파일이다','둘은 같은 말이다','프로세스는 설치 패키지의 다른 이름이다'],e:'같은 프로그램을 세 번 실행하면 프로세스가 세 개 생깁니다.'}
+]},
+{v:[
+ {q:'모든 프로세스의 맨 위 조상이며 PID가 1인 것은?',o:['systemd','bash','sshd','kernel.log'],e:'커널이 가장 먼저 실행하는 systemd가 PID 1입니다.'},
+ {q:'systemd의 PID가 1인 이유는?',o:['커널이 가장 먼저 실행하는 프로그램이기 때문에','가장 중요한 사용자가 실행하기 때문에','가장 메모리를 많이 쓰기 때문에','가장 마지막에 실행되기 때문에'],e:'커널이 부팅 때 가장 먼저 systemd를 실행하므로 PID 1이고, 모든 프로세스의 조상이 됩니다.'}
+]},
+{v:[
+ {q:'nginx 프로세스가 떠 있는지 찾는 가장 흔한 명령은?',o:['ps aux | grep nginx','ls nginx','cat nginx','chmod nginx'],e:'ps aux로 전체 목록을 뽑고 파이프로 grep에 넘겨 nginx가 들어간 줄만 봅니다.'},
+ {q:'실행 중인 모든 프로세스 목록을 자세히 보는 명령은?',o:['ps aux','ls -la','cat /proc','systemctl enable'],e:'ps aux는 모든 사용자의 프로세스를 자세히 보여 줍니다. 특정 프로세스는 ps aux | grep 이름 으로 찾습니다.'}
+]},
+{v:[
+ {q:'프로세스를 종료할 때 먼저 시도해야 하는 것은?',o:['kill PID (시그널 15, 정상 종료 요청)','kill -9 PID (강제 종료)','서버 재부팅','rm 로 프로그램 파일 삭제'],e:'-9는 정리할 기회 없이 죽여서 데이터가 깨질 수 있습니다. 마지막 수단입니다.'},
+ {q:'kill -9 PID 의 의미는?',o:['정리할 기회 없이 프로세스를 강제로 종료한다','프로세스에게 정상 종료를 요청한다','프로세스를 잠시 멈춘다','프로세스의 우선순위를 높인다'],e:'kill PID(시그널 15)는 정상 종료 요청이고, 듣지 않을 때만 kill -9로 강제 종료합니다.'}
+]},
+{v:[
+ {q:'데몬(Daemon)에 대한 설명으로 맞는 것은?',o:['화면 없이 백그라운드에서 계속 돌며 서비스를 제공하는 프로세스','사용자가 직접 입력하는 명령어','로그 파일의 다른 이름','삭제된 프로세스'],e:'sshd, crond, nginx처럼 요청을 기다리며 계속 돕니다.'},
+ {q:'다음 중 데몬(Daemon)에 해당하는 것은?',o:['sshd','ls','cd','pwd'],e:'sshd, nginx, crond처럼 백그라운드에서 계속 돌며 요청을 기다리는 프로세스가 데몬입니다. 이름 끝에 d가 붙는 경우가 많습니다.'}
+]},
+{v:[
+ {q:'재부팅 후에도 nginx가 자동으로 실행되게 하려면?',o:['sudo systemctl enable nginx','sudo systemctl start nginx','sudo systemctl status nginx','sudo systemctl reload nginx'],e:'start는 지금만, enable은 부팅 시 자동입니다. enable --now로 둘 다 할 수 있습니다.'},
+ {q:'systemctl start와 enable의 차이로 맞는 것은?',o:['start는 지금 바로 실행하고, enable은 부팅할 때 자동으로 실행되게 한다','start는 부팅 때 자동 실행, enable은 지금 바로 실행','둘 다 같은 기능이다','enable은 서비스를 삭제한다'],e:'둘은 별개입니다. 지금 켜고 부팅 때도 켜지게 하려면 둘 다 해야 합니다(enable --now).'}
+]},
+{v:[
+ {q:'systemctl status 결과에서 서비스가 정상 실행 중임을 뜻하는 것은?',o:['Active: active (running)','Active: inactive (dead)','Active: failed','Loaded: not-found'],e:'inactive(dead)는 꺼짐, failed는 실행 실패입니다.'},
+ {q:'systemctl status 결과에서 부팅 때 자동 시작 여부(enabled/disabled)를 보여 주는 줄은?',o:['Loaded','Active','Main PID','Memory'],e:'Loaded 줄에 enabled/disabled가, Active 줄에 지금 실행 상태(active (running) 등)가 나옵니다.'}
+]},
+{v:[
+ {q:'서비스를 끊지 않고 설정 파일만 다시 읽게 하는 명령은?',o:['systemctl reload','systemctl restart','systemctl stop','systemctl disable'],e:'restart는 껐다 켜서 잠깐 끊기고, reload는 지원하는 서비스에서 끊김 없이 설정만 반영합니다.'},
+ {q:'systemctl reload와 restart의 차이로 맞는 것은?',o:['reload는 서비스를 끊지 않고 설정만 다시 읽고, restart는 껐다 켜서 잠깐 끊긴다','reload는 껐다 켜고, restart는 설정만 다시 읽는다','둘 다 같은 기능이다','reload는 서비스를 삭제한다'],e:'설정 파일만 바꿨다면 reload로 끊김 없이 적용할 수 있습니다.'}
+]},
+{v:[
+ {q:'nginx 서비스의 로그만 골라 보는 명령은?',o:['journalctl -u nginx','journalctl -b','dmesg','free -h'],e:'-u는 유닛(서비스)을 지정합니다. -f를 붙이면 실시간으로 계속 봅니다.'},
+ {q:'journalctl에서 새 로그를 실시간으로 계속 보는 옵션은?',o:['-f','-b','-u','-p'],e:'-f는 실시간(follow), -b는 이번 부팅 이후, -u는 특정 서비스, -p는 심각도 지정입니다.'}
+]},
+{v:[
+ {q:'Rocky Linux에서 로그인·SSH·sudo 기록이 남는 로그 파일은?',o:['/var/log/secure','/var/log/dnf.log','/etc/passwd','/var/log/cron'],e:'Ubuntu에서는 /var/log/auth.log입니다.'},
+ {q:'Ubuntu에서 로그인·SSH·sudo 기록이 남는 로그 파일은?',o:['/var/log/auth.log','/var/log/secure','/var/log/syslog','/var/log/apt/'],e:'같은 내용이 Rocky에서는 /var/log/secure, Ubuntu에서는 /var/log/auth.log에 남습니다.'}
+]},
+{v:[
+ {q:'CPU 코어가 4개인 서버의 load average가 1.0이라면?',o:['여유 있는 상태 (코어 4개 중 1개 분량만 바쁨)','CPU가 꽉 차서 위험하다','메모리가 부족하다','디스크가 가득 찼다'],e:'load는 코어 수와 비교합니다. 4코어에서 4.0이 꽉 찬 상태입니다.'},
+ {q:'CPU 코어가 2개인 서버의 load average가 4.0이라면?',o:['작업이 코어 수의 두 배로 밀려 있다','CPU가 절반만 바쁘다','CPU가 완전히 놀고 있다','메모리가 부족하다'],e:'코어가 2개라면 load 2.0이 꽉 찬 상태이고, 4.0이면 작업이 두 배로 밀려 있는 상태입니다.'}
+]},
+{v:[
+ {q:'top의 %Cpu(s) 줄에서 wa 값이 높다면 무엇을 의심하나요?',o:['디스크(I/O)가 느려서 CPU가 기다리고 있다','CPU가 놀고 있다','메모리가 너무 많다','네트워크가 빠르다'],e:'wa = I/O wait. 디스크나 스토리지 성능 문제를 의심합니다.'},
+ {q:'top의 %Cpu(s) 줄에서 id 값이 낮다면?',o:['CPU가 바쁘다','CPU가 놀고 있다','디스크가 느리다','메모리가 남는다'],e:'id는 idle(놀고 있음)입니다. id가 낮으면 CPU가 바쁘고, wa가 높으면 디스크를 기다리는 것입니다.'}
+]},
+{v:[
+ {q:'free -h 결과에서 "실제로 더 쓸 수 있는 메모리"를 보려면 어느 칸을 보나요?',o:['available','free','shared','total'],e:'buff/cache는 필요하면 내주므로, 실제 여유는 available입니다.'},
+ {q:'free -h 결과의 buff/cache는 무엇인가?',o:['리눅스가 남는 메모리를 파일 캐시로 쓴 것으로, 필요하면 비워서 내준다','이미 다 써서 다시 쓸 수 없는 메모리','스왑으로 옮겨진 메모리','고장 난 메모리'],e:'그래서 free가 작아 보여도 정상일 수 있고, 실제 여유는 available을 봅니다.'}
+]},
+{v:[
+ {q:'uptime 결과의 load average: 1.95, 1.60, 1.02 에서 세 숫자의 뜻은?',o:['최근 1분, 5분, 15분 동안의 부하 평균','CPU 1, 2, 3번의 사용률','최근 1시간, 5시간, 15시간의 부하 평균','현재·최대·최소 CPU 사용률'],e:'세 숫자는 최근 1분·5분·15분 평균입니다. 1분 값이 15분 값보다 크면 최근에 부하가 늘고 있는 것입니다.'},
+ {q:'load average와 비교할 기준인 CPU(논리 CPU) 개수를 보는 명령은?',o:['nproc','free -h','df -h','journalctl'],e:'load average는 코어 수와 비교해서 판단합니다. nproc나 lscpu로 CPU 개수를 확인합니다.'}
+]},
+{v:[
+ {q:'Rocky Linux에서 시스템 전반의 로그가 쌓이는 파일은?',o:['/var/log/messages','/var/log/secure','/var/log/dnf.log','/var/log/cron'],e:'시스템 전반은 /var/log/messages(Ubuntu는 /var/log/syslog), 로그인 기록은 /var/log/secure, 설치 기록은 /var/log/dnf.log입니다.'},
+ {q:'nginx 웹 서버의 오류 로그가 쌓이는 파일은?',o:['/var/log/nginx/error.log','/var/log/nginx/access.log','/var/log/secure','/var/log/dnf.log'],e:'access.log에는 웹 접속 기록, error.log에는 웹 오류가 쌓입니다.'}
+]},
+{v:[
+ {q:'"웹이 안 돼요" 점검 순서에서 가장 먼저 실행하는 명령은?',o:['systemctl status nginx','free -h','df -h','sudo reboot'],e:'먼저 서비스가 active (running)인지 보고, 그다음 로그(journalctl, error.log) → CPU(uptime, top) → 메모리(free -h) → 디스크(df -h) 순서로 봅니다.'},
+ {q:'재부팅 후 서비스가 자동으로 올라오지 않았을 때 먼저 확인하는 명령은?',o:['systemctl is-enabled nginx','systemctl reload nginx','free -h','ps aux'],e:'start와 enable은 다릅니다. 부팅 때 자동 시작이 설정(enable)되어 있는지부터 확인합니다.'}
+]}
 ]
 });
