@@ -252,7 +252,7 @@ body:`
 <h2 id="s8">왜 굳이 나눌까</h2>
 <ol>
 <li><b>보안(망 분리)</b>: 네트워크를 구역으로 나누고, 구역 사이마다 방화벽(허용한 통신만 통과시키는 장비)을 둡니다. 인터넷에서 직접 닿는 것은 로드밸런서뿐이고, Web·WAS는 그 안쪽 내부망(Private)에 둡니다. 가장 중요한 데이터가 있는 DB는 가장 안쪽에 두고, WAS만 DB에 접근하게 합니다.<br>허용 규칙 예: 인터넷 → LB는 443만, LB → Web은 80만, Web → WAS는 8080만, WAS → DB는 1521만 엽니다. 그래서 <b>Web 서버가 뚫려도 DB로 바로 가지 못합니다.</b><br>브라우저는 HTTPS(443)로 보내지만, 보통 로드밸런서에서 암호화를 풀고 안쪽에서는 HTTP(80)로 주고받습니다.</li>
-<li><b>확장</b>: 손님이 몰리면 부족한 층만 늘리면 됩니다. 예: Web·WAS 서버만 2대에서 4대로(Scale-out: 서버 대수를 늘리는 확장). DB는 데이터를 한곳에서 정확히 맞춰야 해서 늘리기 어렵고, 보통 <b>Active-Standby</b>(한 대가 일하고 다른 한 대가 대기하며 데이터를 복제받음)로 이중화합니다.</li>
+<li><b>확장</b>: 손님이 몰리면 부족한 층만 늘리면 됩니다. 예: Web·WAS 서버만 2대에서 4대로(Scale-out: 서버 대수를 늘리는 확장). DB는 데이터를 한곳에서 정확히 맞춰야 해서 늘리기 어렵고, 보통 <b>Active-Standby</b>(한 대가 일하고 다른 한 대가 대기하며 데이터를 복제받음)로 이중화합니다. 자세한 차이와 흔한 오해는 아래 <a href="#d01" data-sec="scale">「Scale-up과 Scale-out」</a>에서 봅니다.</li>
 <li><b>장애 격리</b>: 한 층에 문제가 생겨도 원인을 찾기 쉽고 다른 층에 영향이 덜 갑니다. 예: 502 오류 → WAS 쪽부터 확인. WAS 한 대가 죽어도 웹 서버나 내부 로드밸런서가 나머지 WAS로 요청을 보냅니다.</li>
 <li><b>역할별 관리·유지보수</b>: 웹, 애플리케이션, DB 담당이 각자 맡은 부분을 관리합니다. Web 서버만 패치하거나 WAS 프로그램만 새로 배포하는 식으로, 나눠서 작업할 수 있습니다.</li>
 </ol>
@@ -294,8 +294,105 @@ body:`
 <tr><td>DB</td><td>Active–Standby 2대 + 데이터 복제, 정기 백업</td></tr>
 <tr><td>네트워크·전원</td><td>스위치·회선·전원 이중화 (데이터센터·클라우드가 담당)</td></tr>
 </tbody></table></div>
-<h3>Scale-up과 Scale-out</h3>
-<ul><li><b>Scale-up(수직 확장)</b>: 서버 한 대를 더 좋게(CPU·메모리 증설). 간단하지만 한계가 있고, 여전히 1대라 SPOF. DB에 자주 씀.</li><li><b>Scale-out(수평 확장)</b>: 같은 서버를 여러 대로. LB와 함께 쓰며, Web·WAS에 주로 씀. 클라우드의 오토스케일링이 이것을 자동으로 해 줍니다.</li></ul>
+<h3 id="scale">Scale-up과 Scale-out</h3>
+<p>접속이 늘어 서버가 버거워질 때 처리 능력을 키우는 방법은 크게 두 가지입니다.</p>
+<p><b>Scale-up(수직 확장)</b></p>
+<ul>
+<li>서버 대수는 <b>1대 그대로</b> 두고, CPU·메모리를 더 좋게 바꾸거나 늘립니다.</li>
+<li>간단하지만 한 대에 꽂을 수 있는 부품에는 한계가 있고, 부품을 바꾸려면 보통 서버를 잠시 멈춰야 합니다. 여전히 1대라 SPOF(그 하나가 멈추면 전체가 멈추는 지점)입니다.</li>
+<li>DB에 자주 씁니다. 단, DB는 <b>성능은 Scale-up으로 올리고, 장애 대비는 Active-Standby 이중화로 따로</b> 합니다. Standby 서버는 평소 일을 나눠 받지 않으므로 Scale-out이 아닙니다.</li>
+</ul>
+<p><b>Scale-out(수평 확장)</b></p>
+<ul>
+<li><b>같은 역할의 서버를 여러 대로</b> 늘리고, 로드밸런서(LB)가 요청을 나눠 줍니다. Web·WAS에 주로 씁니다.</li>
+<li>단점: 서버가 많아져 관리할 것이 늘고, 서버끼리 로그인 정보(세션)를 맞춰야 합니다. 세션은 앞의 <a href="#d01" data-sec="s5">「WAS: 계산하고 판단하는 층」</a>에서 봤습니다.</li>
+<li>물리 서버든 VM이든 상관없습니다. 핵심은 "같은 역할의 서버를 여러 대로 늘려 일을 나눈다"는 점입니다.</li>
+</ul>
+<div class="tier-cmp">
+<figure>
+<svg class="fig" viewBox="0 0 220 322" role="img" aria-label="Scale-up: 서버 1대의 CPU와 메모리를 더 좋게 바꿔서, 같은 1대가 더 커진다. 대수는 1대 그대로다.">
+<text x="110" y="22" class="c b">Scale-up</text>
+<rect x="45" y="36" width="130" height="80" rx="10" class="wall"/><text x="110" y="60" class="c b t-s">서버 1대</text>
+<g class="tc tc-n tc-sm"><rect x="54" y="74" width="54" height="28" rx="14"/><text x="81" y="94" class="c">CPU</text></g>
+<g class="tc tc-n tc-sm"><rect x="112" y="74" width="54" height="28" rx="14"/><text x="139" y="94" class="c">메모리</text></g>
+<line x1="110" y1="120" x2="110" y2="152" class="ln" marker-end="url(#ar)"/>
+<rect x="20" y="156" width="180" height="134" rx="10" class="wall"/><text x="110" y="182" class="c b t-s">같은 서버 1대</text>
+<g class="tc tc-n"><rect x="35" y="196" width="150" height="34" rx="17"/><text x="110" y="219" class="c">CPU 더 많이</text></g>
+<g class="tc tc-n"><rect x="35" y="240" width="150" height="34" rx="17"/><text x="110" y="263" class="c">메모리 더 많이</text></g>
+<text x="110" y="314" class="c t-s">대수: 1대 그대로</text>
+</svg>
+<figcaption>같은 1대가 더 커짐</figcaption>
+</figure>
+<figure>
+<svg class="fig" viewBox="0 0 220 366" role="img" aria-label="Scale-out: 사용자 요청이 로드밸런서로 가고, 로드밸런서가 VM-1(물리 서버 A), VM-2(물리 서버 B), VM-3(물리 서버 C)에 나눠 준다. 같은 역할의 서버가 서로 다른 물리 서버에서 따로 돈다.">
+<text x="110" y="22" class="c b">Scale-out</text>
+<rect x="30" y="34" width="160" height="34" rx="8" class="wall"/><text x="110" y="57" class="c t-s">사용자</text>
+<line x1="110" y1="70" x2="110" y2="96" class="ln" marker-end="url(#ar)"/>
+<rect x="30" y="100" width="160" height="36" rx="8" class="wall"/><text x="110" y="124" class="c b">로드밸런서</text>
+<path d="M40 136 V325" class="ln"/>
+<line x1="40" y1="189" x2="58" y2="189" class="ln" marker-end="url(#ar)"/>
+<line x1="40" y1="257" x2="58" y2="257" class="ln" marker-end="url(#ar)"/>
+<line x1="40" y1="325" x2="58" y2="325" class="ln" marker-end="url(#ar)"/>
+<rect x="62" y="160" width="148" height="58" rx="8" class="zone"/><text x="136" y="178" class="c t-s">물리 서버 A</text>
+<g class="tc tc-n tc-sm"><rect x="80" y="186" width="112" height="26" rx="13"/><text x="136" y="205" class="c">VM-1</text></g>
+<rect x="62" y="228" width="148" height="58" rx="8" class="zone"/><text x="136" y="246" class="c t-s">물리 서버 B</text>
+<g class="tc tc-n tc-sm"><rect x="80" y="254" width="112" height="26" rx="13"/><text x="136" y="273" class="c">VM-2</text></g>
+<rect x="62" y="296" width="148" height="58" rx="8" class="zone"/><text x="136" y="314" class="c t-s">물리 서버 C</text>
+<g class="tc tc-n tc-sm"><rect x="80" y="322" width="112" height="26" rx="13"/><text x="136" y="341" class="c">VM-3</text></g>
+</svg>
+<figcaption>같은 역할 여러 대 + LB (각자 다른 물리 서버)</figcaption>
+</figure>
+<figure>
+<svg class="fig" viewBox="0 0 220 300" role="img" aria-label="가상화: 물리 서버 1대를 VM 4개로 나눈다. 나눠 쓸 뿐 처리 능력의 합은 1대 분량 그대로다.">
+<text x="110" y="22" class="c b">가상화</text>
+<rect x="20" y="36" width="180" height="200" rx="10" class="wall"/><text x="110" y="60" class="c b t-s">물리 서버 1대</text>
+<g class="tc tc-n tc-sm"><rect x="32" y="76" width="74" height="66" rx="8"/><text x="69" y="115" class="c">VM-1</text></g>
+<g class="tc tc-n tc-sm"><rect x="114" y="76" width="74" height="66" rx="8"/><text x="151" y="115" class="c">VM-2</text></g>
+<g class="tc tc-n tc-sm"><rect x="32" y="152" width="74" height="66" rx="8"/><text x="69" y="191" class="c">VM-3</text></g>
+<g class="tc tc-n tc-sm"><rect x="114" y="152" width="74" height="66" rx="8"/><text x="151" y="191" class="c">VM-4</text></g>
+<text x="110" y="264" class="c b">합은 그대로</text>
+<text x="110" y="288" class="c t-s">= 1대 분량</text>
+</svg>
+<figcaption>1대를 VM으로 나눔 (합은 그대로)</figcaption>
+</figure>
+</div>
+<div class="tbl-wrap"><table><thead><tr><th></th><th>Scale-up (수직 확장)</th><th>Scale-out (수평 확장)</th></tr></thead><tbody>
+<tr><td class="nw"><b>대수</b></td><td>1대 그대로</td><td>여러 대로 늘림</td></tr>
+<tr><td class="nw"><b>방법</b></td><td>CPU·메모리를 더 좋게 바꾸거나 늘림</td><td>같은 역할의 서버를 추가하고 LB가 요청을 나눠 줌</td></tr>
+<tr><td class="nw"><b>장점</b></td><td>구성이 간단함</td><td>한 대가 멈춰도 나머지가 일함(SPOF 감소), 계속 늘릴 수 있음</td></tr>
+<tr><td class="nw"><b>단점</b></td><td>부품 한계가 있고, 바꿀 때 보통 잠시 멈춤, 여전히 SPOF</td><td>관리할 서버가 늘고, 서버끼리 세션을 맞춰야 함</td></tr>
+<tr><td class="nw"><b>주 사용처</b></td><td>DB</td><td>Web·WAS</td></tr>
+</tbody></table></div>
+<div class="box analogy"><span class="lbl">비유로 보면 (식당)</span><b>Scale-up</b>은 요리사 1명을 더 실력 좋은 요리사로 바꾸는 것입니다. 그 사람이 아프면 가게가 멈춥니다. <b>Scale-out</b>은 요리사를 여러 명 고용하고 매니저(LB)가 주문을 나눠 주는 것입니다.</div>
+<div class="box warn"><span class="lbl">흔한 오해 ① 서버를 VM으로 쪼개는 것은 Scale-out이 아닙니다</span><ul>
+<li>서버 1대를 VM 여러 개로 나누는 것은 <b>가상화</b>(물리 서버 1대를 소프트웨어로 나눠 여러 대의 서버처럼 쓰는 기술)라는 별개 개념입니다. 원래 자원을 나눠 쓰는 것뿐이라 <b>전체 처리 능력은 늘지 않습니다.</b> 물리 서버가 1대라 그 서버가 멈추면 VM도 다 같이 멈춥니다.</li>
+<li>가상화 자체는 남는 자원을 알뜰하게 쓰는 데 유용합니다. 자세한 내용은 <a data-lesson="d02"></a>에서 배웁니다.</li>
+<li>비교: "내 서버 1대를 VM 4개로 쪼갬"은 능력 그대로인 <b>가상화</b>이고, "남는 자원이 있는 곳에 VM을 새로 3대 만들어 같은 역할 4대로 운영"은 능력이 늘어나는 <b>Scale-out</b>입니다. 이미 꽉 찬 같은 물리 서버에 VM만 더 만들면, 처리 능력은 늘지 않고 더 잘게 나눠 쓰는 것일 뿐입니다.</li>
+<li>비유: 피자 1판을 8조각으로 잘라도 피자는 늘지 않습니다. Scale-out은 피자를 1판 더 주문하는 것입니다.</li>
+</ul></div>
+<div class="box warn"><span class="lbl">흔한 오해 ② 새 VM은 어디서 오고, 어떻게 같이 일하나</span><ul>
+<li>새 VM은 같은 데이터센터(또는 같은 리전: 클라우드 데이터센터가 모여 있는 지역)의 <b>다른 물리 서버</b>(베어메탈: 가상화하기 전의 실제 서버) 위에 만들어지는 경우가 많습니다. 어느 물리 서버에 놓을지는 내가 고르는 것이 아니라, 클라우드(또는 가상화 관리 소프트웨어)가 남는 자원을 보고 정합니다.</li>
+<li>새 VM은 기존 서버로 옮겨 오거나 기존 VM과 하나로 합쳐지지 <b>않습니다</b>. 만들어진 그 물리 서버에서 그대로 독립적으로 돌아갑니다.</li>
+<li>같이 일하는 방법: 네트워크로 연결되고, <b>로드밸런서가 요청을 나눠 줍니다</b>. 위 그림의 Scale-out 칸처럼, Scale-out은 "서버를 한 곳에 모아 합치는 것"이 아니라 "여러 곳에 흩어진 서버들이 로드밸런서 뒤에서 같은 일을 나눠 맡는 것"입니다.</li>
+<li>장애 대비: VM이 서로 다른 물리 서버나 다른 가용 영역(한 리전 안의 독립된 데이터센터 묶음)에 흩어져 있으면, 물리 서버 하나가 고장 나도 나머지 VM은 계속 일합니다. 이것이 Scale-out이 SPOF를 줄이는 이유입니다. 단, 클라우드가 자리를 정하다 보면 같은 물리 서버에 놓일 수도 있어서, 실무에서는 "서로 다른 곳에 흩어 놓으라"는 분산 배치 설정을 따로 합니다. 리전과 가용 영역은 <a data-lesson="w1-2"></a>에서 봤습니다.</li>
+<li>비유: 서로 다른 층에 있는 직원들이 한 책상에 모일 필요 없이 각자 자리에서 일하고, 매니저(LB)가 들어온 일을 나눠 줍니다.</li>
+</ul></div>
+
+<h3>클라우드와 오토스케일링</h3>
+<p>클라우드에서 말하는 '서버'는 보통 물리 서버가 아니라 VM입니다(AWS에서는 <b>인스턴스</b>라고 부릅니다). 클라우드 회사는 거대한 데이터센터에 물리 서버를 이미 대량으로 갖추고 있습니다. 그래서 새 VM을 만들면 남는 자원에서 새 몫을 받아 오는 것이라 처리 능력이 실제로 늘어납니다.</p>
+<p><b>오토스케일링</b>(사용량에 따라 VM 수를 자동으로 늘리고 줄이는 기능)은 이렇게 동작합니다.</p>
+<ol>
+<li><b>설정</b>: 서버 설계도(이미지·템플릿: 새 VM을 똑같이 찍어 낼 틀), 늘리고 줄일 규칙(예: CPU 70%를 넘으면 늘리고 30% 아래면 줄이기), 최소·최대 대수를 정합니다.</li>
+<li><b>감시</b>: CPU 사용률 같은 지표를 계속 확인합니다.</li>
+<li><b>늘리기</b>: 기준을 넘으면 설계도대로 새 VM을 자동으로 만들고, 정상인지 확인(헬스 체크)된 뒤 LB에 등록되어 요청을 받기 시작합니다.</li>
+<li><b>줄이기</b>: 한가해지면 LB에서 먼저 뺀 다음 VM을 자동으로 삭제해 비용을 줄입니다.</li>
+</ol>
+<ul>
+<li>새 VM이 켜지는 데 몇 분이 걸려서, 갑작스러운 폭주에는 바로 대응하지 못합니다.</li>
+<li>세일 시작처럼 사람이 몰릴 시간을 미리 알 때는, 그 시간 전에 대수를 늘려 두도록 예약하는 방식(예약 스케일링)도 함께 씁니다.</li>
+<li>오토스케일링은 주로 Web·WAS에 쓰고, DB에는 잘 쓰지 않습니다.</li>
+</ul>
+<p><b>온프레미스와 비교</b>: 온프레미스도 가상화 환경에 남는 자원이 있으면 VM은 금방 만들 수 있습니다. 하지만 물리 자원이 바닥나면 서버를 사서 들여오고 설치하느라 며칠~몇 주가 걸립니다. 클라우드는 그 물리 자원을 미리 갖춰 두었기 때문에 몇 분 만에 늘리고 줄일 수 있습니다. 클라우드는 <a data-lesson="d14"></a>에서 더 자세히 배웁니다.</p>
 <p><a data-lesson="zc6"></a>의 실습 과제 2가 정확히 이것입니다. "웹 서버 2대 + LB를 만들고, 1대를 멈춰도 서비스가 계속되는지 확인하기."</p>
 
 <h2 id="s10">종합: 구성도 한 장으로 정리</h2>
@@ -444,6 +541,18 @@ quiz:[
 {v:[
  {q:'인터넷에서 DB 포트로 직접 접속하지 못하게 막는 것은?',o:['방화벽(망 분리)','로드밸런서','리버스 프록시','Health Check'],e:'망을 구역으로 나누고 구역 사이에 방화벽을 둬서 허용한 통신만 통과시킵니다(예: 인터넷→LB 443, LB→Web 80, Web→WAS 8080, WAS→DB 1521). 그래서 인터넷에서 DB로 바로 갈 수 없습니다.'},
  {q:'인터넷에서 직접 접근할 수 있는 구역(PUBLIC)에 두는 것은?',o:['로드밸런서','Web 서버','WAS','DB'],e:'로드밸런서만 PUBLIC 영역에 두어 외부 요청의 유일한 입구로 씁니다. Web·WAS는 PRIVATE 영역, DB는 가장 안쪽 PRIVATE 영역에 둡니다.'}
+]},
+{v:[
+ {q:'서버 1대를 VM 4개로 나누면 전체 처리 능력은?',o:['그대로다','4배가 된다','2배가 된다','절반이 된다'],e:'VM으로 나누는 것은 가상화입니다. 원래 자원을 나눠 쓰는 것뿐이라 처리 능력의 합은 1대 분량 그대로입니다. (비유: 피자를 8조각으로 잘라도 피자는 늘지 않음)'},
+ {q:'물리 서버 1대를 소프트웨어로 나눠 VM 여러 개처럼 쓰는 것을 무엇이라 하나?',o:['가상화','Scale-out','Scale-up','오토스케일링'],e:'가상화는 자원을 나눠 쓰는 기술이고, Scale-out은 같은 역할의 서버를 여러 대로 늘려 처리 능력을 키우는 것입니다. 둘은 다른 개념입니다.'}
+]},
+{v:[
+ {q:'쇼핑몰 세일로 접속이 몰릴 때, 서비스를 멈추지 않고 WAS 처리 능력을 늘리는 방식은?',o:['Scale-out (오토스케일링으로 WAS 대수를 늘림)','Scale-up (WAS 서버를 멈추고 CPU·메모리를 교체)','WAS 서버 1대를 VM 여러 개로 나눔','DB의 Standby 서버를 늘림'],e:'Web·WAS는 같은 역할의 서버를 여러 대로 늘리는 Scale-out을 주로 쓰고, 클라우드에서는 오토스케일링이 이것을 자동으로 합니다. Scale-up은 부품을 바꾸려면 보통 서버를 잠시 멈춰야 합니다.'},
+ {q:'오토스케일링이 자동으로 해 주는 확장 방식은?',o:['Scale-out','Scale-up','가상화','Active-Standby'],e:'오토스케일링은 기준을 넘으면 같은 설계도로 VM을 새로 만들어 LB에 등록하고, 한가해지면 줄입니다. 서버 대수를 늘리고 줄이는 Scale-out입니다.'}
+]},
+{v:[
+ {q:'Scale-out으로 새로 만든 VM은 어떻게 기존 서버와 함께 일할까?',o:['만들어진 물리 서버에서 따로 돌고, 로드밸런서가 요청을 나눠 준다','기존 물리 서버로 옮겨 와 합쳐진다','기존 VM과 하나의 큰 VM으로 합쳐진다','사용자가 새 VM의 주소를 직접 골라 접속한다'],e:'새 VM은 옮겨 오거나 합쳐지지 않고, 만들어진 물리 서버에서 독립적으로 돌아갑니다. 네트워크로 연결되고 로드밸런서가 요청을 나눠 줍니다.'},
+ {q:'Scale-out에서 새 VM이 놓일 물리 서버는 누가 정하나?',o:['클라우드(또는 가상화 관리 소프트웨어)가 남는 자원을 보고 정한다','사용자가 매번 직접 고른다','로드밸런서가 정한다','항상 기존 VM과 같은 물리 서버에 놓인다'],e:'자리는 클라우드가 남는 자원을 보고 정합니다. 같은 물리 서버에 놓일 수도 있어서, 실무에서는 서로 다른 곳에 흩어 놓도록 분산 배치 설정을 따로 합니다.'}
 ]}
 ]
 });
