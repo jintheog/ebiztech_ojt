@@ -352,4 +352,3 @@ h3 + .lesson-list{margin-top:6px}
 .tchip.proc{color:var(--tier-proc);border-color:var(--tier-proc);background:var(--tier-proc-soft)}
 .tchip.store{color:var(--tier-store);border-color:var(--tier-store);background:var(--tier-store-soft)}
 @media (max-width:560px){.tier-cmp{grid-template-columns:minmax(0,1fr);gap:6px}.tier-cmp .fig{max-width:240px}}
-.flow.tight{gap:6px}.flow.tight .n{flex:1 1 64px;min-width:58px;padding:8px 6px}.flow.tight .ar{font-size:.85rem}
