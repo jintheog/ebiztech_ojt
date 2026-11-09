@@ -144,17 +144,119 @@ body:`
 </ul>
 
 <h2 id="s7">1-Tier, 2-Tier, 3-Tier 비교</h2>
-<div class="tbl-wrap"><table><thead><tr><th>구조</th><th>모양</th><th>장점</th><th>단점</th><th>예</th></tr></thead><tbody>
-<tr><td><b>1-Tier</b></td><td>한 대에 화면·로직·데이터 전부</td><td>단순, 저렴</td><td>한 대가 죽으면 끝, 확장 불가</td><td>개인 PC 프로그램, 테스트 서버</td></tr>
-<tr><td><b>2-Tier</b></td><td>클라이언트(또는 Web+WAS 한 대) ↔ DB</td><td>데이터는 분리됨</td><td>앞단이 무겁고 보안·확장에 한계</td><td>소규모 사내 시스템</td></tr>
-<tr><td><b>3-Tier</b></td><td>Web ↔ WAS ↔ DB</td><td>보안·확장·장애 격리</td><td>구성이 복잡, 서버가 많음</td><td>대부분의 기업 웹 서비스</td></tr>
+<h3>서버가 하는 일 세 가지</h3>
+<p>쇼핑몰에서 "주문 내역 보기"를 누르면, 서버 쪽에서는 크게 세 가지 일이 일어납니다.</p>
+<ul>
+<li><b>입구</b>: 요청을 처음 받습니다. 사진·CSS(화면 모양을 정하는 파일)처럼 이미 만들어진 파일은 바로 돌려주고, 계산이 필요한 요청은 안쪽으로 넘깁니다.</li>
+<li><b>처리</b>: 로그인했는지 확인하고, 이 회원의 주문만 골라 응답을 만듭니다.</li>
+<li><b>저장</b>: 주문 기록을 보관했다가 요청이 오면 꺼내 줍니다.</li>
+</ul>
+<p class="small muted">화면을 실제로 그리는 것은 서버가 아니라 사용자의 <b>브라우저</b>입니다. 서버는 화면에 쓸 파일과 데이터를 보내 줄 뿐입니다.</p>
+
+<h3>Tier란</h3>
+<div class="box mem"><span class="lbl">정의</span><p><b>Tier(계층)</b> = 이 세 가지 일(입구·처리·저장)을 <b>서버 몇 대(몇 층)로 나눠 놓았는가</b>.</p></div>
+<div class="tier-cmp">
+<figure>
+<svg class="fig" viewBox="0 0 220 290" role="img" aria-label="1-Tier: 사용자(브라우저)의 요청이 서버 1대로 가고, 그 서버 한 대 안에 입구·처리·저장이 모두 있다.">
+<text x="110" y="22" class="c b">1-Tier</text>
+<rect x="30" y="34" width="160" height="36" rx="8" class="wall"/><text x="110" y="58" class="c t-s">사용자(브라우저)</text>
+<line x1="110" y1="72" x2="110" y2="100" class="ln" marker-end="url(#ar)"/>
+<rect x="20" y="104" width="180" height="176" rx="10" class="zone"/><text x="110" y="130" class="c b t-s">서버 1대</text>
+<g class="tc tc-in"><rect x="45" y="144" width="130" height="34" rx="17"/><text x="110" y="167" class="c">입구</text></g>
+<g class="tc tc-proc"><rect x="45" y="186" width="130" height="34" rx="17"/><text x="110" y="209" class="c">처리</text></g>
+<g class="tc tc-store"><rect x="45" y="228" width="130" height="34" rx="17"/><text x="110" y="251" class="c">저장</text></g>
+</svg>
+<figcaption>한 대가 전부 처리</figcaption>
+</figure>
+<figure>
+<svg class="fig" viewBox="0 0 220 366" role="img" aria-label="2-Tier: 사용자(브라우저)의 요청이 Web+WAS 서버(입구·처리)로 가고, 그 서버가 DB 서버(저장)에 데이터를 요청한다.">
+<text x="110" y="22" class="c b">2-Tier</text>
+<rect x="30" y="34" width="160" height="36" rx="8" class="wall"/><text x="110" y="58" class="c t-s">사용자(브라우저)</text>
+<line x1="110" y1="72" x2="110" y2="100" class="ln" marker-end="url(#ar)"/>
+<rect x="20" y="104" width="180" height="134" rx="10" class="zone"/><text x="110" y="130" class="c b t-s">Web+WAS 서버</text>
+<g class="tc tc-in"><rect x="45" y="144" width="130" height="34" rx="17"/><text x="110" y="167" class="c">입구</text></g>
+<g class="tc tc-proc"><rect x="45" y="186" width="130" height="34" rx="17"/><text x="110" y="209" class="c">처리</text></g>
+<line x1="110" y1="240" x2="110" y2="262" class="ln" marker-end="url(#ar)"/>
+<rect x="20" y="266" width="180" height="92" rx="10" class="zone"/><text x="110" y="292" class="c b t-s">DB 서버</text>
+<g class="tc tc-store"><rect x="45" y="306" width="130" height="34" rx="17"/><text x="110" y="329" class="c">저장</text></g>
+</svg>
+<figcaption>저장만 떼어 냄</figcaption>
+</figure>
+<figure>
+<svg class="fig" viewBox="0 0 220 444" role="img" aria-label="3-Tier: 사용자(브라우저)의 요청이 Web 서버(입구), WAS 서버(처리), DB 서버(저장)를 차례로 거친다. 역할마다 서버가 따로 있다.">
+<text x="110" y="22" class="c b">3-Tier</text>
+<rect x="30" y="34" width="160" height="36" rx="8" class="wall"/><text x="110" y="58" class="c t-s">사용자(브라우저)</text>
+<line x1="110" y1="72" x2="110" y2="100" class="ln" marker-end="url(#ar)"/>
+<rect x="20" y="104" width="180" height="92" rx="10" class="zone"/><text x="110" y="130" class="c b t-s">Web 서버</text>
+<g class="tc tc-in"><rect x="45" y="144" width="130" height="34" rx="17"/><text x="110" y="167" class="c">입구</text></g>
+<line x1="110" y1="198" x2="110" y2="220" class="ln" marker-end="url(#ar)"/>
+<rect x="20" y="224" width="180" height="92" rx="10" class="zone"/><text x="110" y="250" class="c b t-s">WAS 서버</text>
+<g class="tc tc-proc"><rect x="45" y="264" width="130" height="34" rx="17"/><text x="110" y="287" class="c">처리</text></g>
+<line x1="110" y1="318" x2="110" y2="340" class="ln" marker-end="url(#ar)"/>
+<rect x="20" y="344" width="180" height="92" rx="10" class="zone"/><text x="110" y="370" class="c b t-s">DB 서버</text>
+<g class="tc tc-store"><rect x="45" y="384" width="130" height="34" rx="17"/><text x="110" y="407" class="c">저장</text></g>
+</svg>
+<figcaption>역할마다 따로</figcaption>
+</figure>
+</div>
+<p class="tier-legend"><span><span class="tchip in">입구</span> 받고 넘기기</span><span><span class="tchip proc">처리</span> 계산·판단</span><span><span class="tchip store">저장</span> 보관·조회</span></p>
+<div class="tbl-wrap"><table><thead><tr><th>구조</th><th>서버 배치</th><th>장점</th><th>단점</th><th>예</th></tr></thead><tbody>
+<tr><td><b>1-Tier</b></td><td>서버 1대가 입구·처리·저장을 모두 함</td><td>구성이 단순하고 저렴</td><td>그 한 대가 고장 나면 서비스 전체가 멈춤, 바쁜 역할만 따로 늘릴 수 없음</td><td>개인 PC 프로그램, 테스트 서버</td></tr>
+<tr><td><b>2-Tier</b></td><td>입구·처리 서버 1대 + DB 서버 1대</td><td>데이터를 따로 보관·백업하기 쉬움</td><td>입구와 처리가 한 서버라 부하가 몰리고, 인터넷에 닿는 서버가 처리까지 맡아 보안·확장에 한계</td><td>소규모 사내 시스템</td></tr>
+<tr><td><b>3-Tier</b></td><td>Web 서버, WAS 서버, DB 서버를 따로 둠</td><td>보안(망 분리)·확장·장애 격리, 나눠서 유지보수</td><td>서버와 구성이 늘어 복잡하고, 서버 사이 통신이 한 단계 더 생김</td><td>대부분의 기업 웹 서비스</td></tr>
 </tbody></table></div>
-<div class="box analogy"><span class="lbl">비유로 보면 (식당)</span><b>홀 직원(Web)</b>이 주문을 받고, 물·반찬처럼 이미 준비된 것은 바로 가져다줍니다(정적). 요리가 필요한 주문은 <b>주방(WAS)</b>에 넘깁니다. 주방은 <b>창고·냉장고(DB)</b>에서 재료를 꺼내 요리합니다. 손님은 주방이나 창고에 직접 들어갈 수 없습니다. 1-Tier는 혼자 주문받고 요리하고 장보는 포장마차입니다.</div>
-<div class="tbl-wrap"><table><thead><tr><th>계층</th><th>다른 이름</th><th>하는 일</th><th>대표 SW</th><th>기본 포트</th></tr></thead><tbody>
-<tr><td><b>Web</b></td><td>Presentation</td><td>요청 접수, 정적 파일, WAS 전달</td><td>Nginx, Apache, WebtoB</td><td>80, 443</td></tr>
-<tr><td><b>WAS</b></td><td>Application</td><td>비즈니스 로직 실행</td><td>Tomcat, JEUS</td><td>8080 (흔한 값)</td></tr>
-<tr><td><b>DB</b></td><td>Data</td><td>데이터 저장·조회</td><td>MySQL, PostgreSQL, Oracle</td><td>3306, 5432, 1521</td></tr>
+
+<h3>요청 한 번 따라가기</h3>
+<ol>
+<li>브라우저가 <code>https://shop.example.com/orders</code>를 요청합니다. (HTTPS, 기본 포트 443)</li>
+<li>요청이 <b>방화벽</b>(허용한 통신만 통과시키는 장비)을 지나면, <b>로드밸런서(L4)</b>(IP 주소와 포트를 보고 요청을 나눠 주는 장비)가 여러 대의 Web 서버 중 한 대로 보냅니다.</li>
+<li><b>Web 서버</b>: 로고·CSS 같은 정적 파일이면 바로 응답합니다. <code>/orders</code>는 계산이 필요하므로 WAS로 넘깁니다. (Tomcat 기본 포트 8080)</li>
+<li><b>WAS</b>: 로그인 세션(이 사용자가 로그인한 상태라는 기록)을 확인하고, DB에 <b>SQL</b>(DB에 일을 시키는 언어)로 "회원 123의 최근 주문 줘"라고 질의합니다.</li>
+<li><b>DB</b>: 스토리지(디스크)에서 찾아 결과를 돌려줍니다. (Oracle 기본 포트 1521, MySQL 기본 포트 3306)<br><span class="small muted">DB의 데이터는 결국 스토리지에 저장됩니다. 스토리지는 <a data-lesson="d11"></a>에서 자세히 배웁니다.</span></li>
+<li><b>WAS</b>: 결과로 HTML 또는 <b>JSON</b>(데이터만 담은 텍스트 형식) 응답을 만듭니다.</li>
+<li><b>Web 서버</b>가 그 응답을 받아 브라우저에 돌려주고, <b>브라우저</b>가 화면을 그립니다.</li>
+</ol>
+
+<h3>왜 나누나</h3>
+<ul>
+<li><b>보안(망 분리)</b>: 네트워크를 구역으로 나누고, 구역 사이마다 방화벽을 둡니다. <b>DMZ</b>는 인터넷과 내부망 사이에 두는 완충 구역으로, 인터넷에서 들어온 요청을 받는 Web 서버를 여기에 둡니다.</li>
+</ul>
+<div class="flow tight"><div class="n"><b>인터넷</b></div><span class="ar">→</span><div class="n"><b>방화벽</b></div><span class="ar">→</span><div class="n k"><b>DMZ</b><small>Web</small></div><span class="ar">→</span><div class="n"><b>방화벽</b></div><span class="ar">→</span><div class="n k"><b>내부망</b><small>WAS</small></div><span class="ar">→</span><div class="n"><b>방화벽</b></div><span class="ar">→</span><div class="n k"><b>DB 구역</b><small>DB</small></div></div>
+<p>허용 규칙 예: 인터넷 → Web은 443만, Web → WAS는 8080만, WAS → DB는 1521만 엽니다. 그래서 <b>Web 서버가 뚫려도 DB로 바로 가지 못합니다.</b></p>
+<ul>
+<li><b>확장</b>: 접속이 몰리면 Web·WAS 서버만 더 붙입니다(Scale-out: 서버 대수를 늘리는 확장). DB는 데이터를 한곳에서 정확히 맞춰야 해서 늘리기 어렵고, 보통 <b>Active-Standby</b>(한 대가 일하고 다른 한 대가 대기하며 데이터를 복제받음)로 이중화합니다.</li>
+<li><b>장애 격리</b>: WAS 한 대가 죽어도 로드밸런서가 나머지 서버로 보냅니다.</li>
+<li><b>유지보수</b>: Web 서버만 패치하거나 WAS 프로그램만 새로 배포하는 식으로, 나눠서 작업할 수 있습니다.</li>
+</ul>
+
+<h3>실무에서 보는 제품</h3>
+<div class="tbl-wrap"><table><thead><tr><th>계층</th><th>대표 제품</th><th>기본 포트</th></tr></thead><tbody>
+<tr><td><b>Web</b></td><td>Apache, Nginx, WebtoB, IIS</td><td>80(HTTP), 443(HTTPS)</td></tr>
+<tr><td><b>WAS</b></td><td>Tomcat, JEUS, WebLogic, JBoss</td><td>8080 (Tomcat 기본값)</td></tr>
+<tr><td><b>DB</b></td><td>Oracle, MySQL, MariaDB, PostgreSQL, Tibero</td><td>Oracle 1521, MySQL·MariaDB 3306, PostgreSQL 5432</td></tr>
 </tbody></table></div>
+<p class="small muted">국내 기업에서는 TmaxSoft의 WebtoB(Web)·JEUS(WAS)·Tibero(DB)를 자주 보게 됩니다.</p>
+
+<div class="box warn"><span class="lbl">헷갈리기 쉬운 점</span><ul>
+<li><b>2-Tier는 뜻이 두 가지입니다.</b> (가) PC에 설치한 프로그램이 DB에 직접 붙는 옛 방식, (나) Web과 WAS를 한 서버에 합친 방식. 둘 다 "저장만 떨어져 있다"는 공통점이 있습니다.</li>
+<li><b>3-Tier가 곧 서버 3대는 아닙니다.</b> Tier마다 이중화하면 6대, 10대가 되고, 개발용으로는 VM 한 대에 셋을 다 올리기도 합니다.</li>
+<li><b>교과서의 3계층(Presentation-Application-Data)과 1:1로 맞지 않습니다.</b> Presentation(표현 계층)은 원래 사용자 쪽, 즉 브라우저입니다. 실무의 Web-WAS-DB 구분은 서버 배치 기준입니다. Web 서버를 "표현 계층"이라고 부르는 자료도 있지만 단순화한 표현입니다.</li>
+<li><b>요즘 웹(SPA, 한 페이지에서 내용만 바꿔 가며 보여 주는 방식)</b>은 WAS가 JSON 데이터만 주고, 화면은 브라우저의 JavaScript가 그립니다. 예전 JSP 방식에서는 WAS가 HTML을 직접 만들었습니다.</li>
+</ul></div>
+
+<div class="box analogy"><span class="lbl">비유로 보면 (식당)</span>
+<div class="tbl-wrap"><table><thead><tr><th>식당</th><th>3-Tier</th></tr></thead><tbody>
+<tr><td>입구 안내 데스크</td><td>로드밸런서</td></tr>
+<tr><td>홀 직원 (주문을 받고, 물·반찬처럼 준비된 건 바로 주고, 요리는 주방에 넘긴 뒤 완성된 요리를 손님에게 가져다줌)</td><td>Web 서버</td></tr>
+<tr><td>물·반찬·메뉴판</td><td>정적 파일</td></tr>
+<tr><td>주방</td><td>WAS</td></tr>
+<tr><td>레시피</td><td>WAS의 프로그램 코드</td></tr>
+<tr><td>창고·냉장고</td><td>DB</td></tr>
+<tr><td>"관계자 외 출입금지" 문</td><td>방화벽</td></tr>
+<tr><td>손님이 몰려 직원·요리사를 추가</td><td>Scale-out</td></tr>
+<tr><td>혼자 주문받고 요리하고 장보는 포장마차</td><td>1-Tier</td></tr>
+</tbody></table></div>
+<p style="margin-bottom:0">손님은 주방이나 창고에 직접 들어갈 수 없습니다.</p></div>
 
 <h2 id="s8">왜 굳이 나눌까</h2>
 <ol>
@@ -338,6 +440,18 @@ quiz:[
 {v:[
  {q:'로드밸런서가 서버들이 살아 있는지 주기적으로 확인하는 기능은?',o:['Health Check','트랜잭션','리버스 프록시','Scale-up'],e:'LB는 몇 초마다 각 서버에 응답을 확인(Health Check)하고, 응답이 없는 서버로는 요청을 보내지 않습니다.'},
  {q:'Health Check에 응답하지 않는 서버에 대해 로드밸런서는 어떻게 하나?',o:['그 서버로는 요청을 보내지 않는다','그 서버에 요청을 더 많이 보낸다','모든 서버로 가는 요청을 멈춘다','그 서버를 자동으로 새로 산다'],e:'응답이 없는 서버는 분배 대상에서 빼고, 정상인 서버로만 요청을 보냅니다.'}
+]},
+{v:[
+ {q:'쇼핑몰의 상품 사진처럼 이미 만들어진 파일을 요청하면, 보통 어느 서버에서 응답이 끝나나?',o:['Web 서버','WAS','DB 서버','로드밸런서'],e:'사진·CSS 같은 정적 파일은 Web 서버가 바로 돌려주고, WAS까지 가지 않습니다. 계산이 필요한 요청만 WAS로 넘깁니다.'},
+ {q:'로고 이미지나 CSS 파일 요청을 WAS로 넘기지 않고 직접 돌려주는 곳은?',o:['Web 서버','WAS','DB 서버','방화벽'],e:'Web 서버는 요청을 처음 받는 입구입니다. 이미 만들어진 파일은 직접 응답하고, 나머지는 WAS로 넘긴 뒤 응답을 받아 돌려줍니다.'}
+]},
+{v:[
+ {q:'로그인할 때 입력한 비밀번호가 맞는지 판단하는 곳은?',o:['WAS','Web 서버','DB 서버','브라우저'],e:'WAS가 DB에서 저장된 값을 꺼내 입력값과 비교해 판단합니다. DB는 값을 보관하고 꺼내 줄 뿐 판단하지 않습니다.'},
+ {q:'로그인 과정에서 회원의 저장된 비밀번호 값을 보관하고, 요청하면 꺼내 주는 곳은?',o:['DB 서버','WAS','Web 서버','로드밸런서'],e:'저장(보관·조회)은 DB의 일입니다. 꺼낸 값으로 맞는지 판단하는 것은 WAS입니다.'}
+]},
+{v:[
+ {q:'인터넷에서 DB 포트로 직접 접속하지 못하게 막는 것은?',o:['방화벽(망 분리)','로드밸런서','리버스 프록시','Health Check'],e:'망을 구역으로 나누고 구역 사이에 방화벽을 둬서 허용한 통신만 통과시킵니다(예: 인터넷→Web 443, Web→WAS 8080, WAS→DB 1521). 그래서 인터넷에서 DB로 바로 갈 수 없습니다.'},
+ {q:'망 분리 구성에서 인터넷에서 들어온 요청을 받는 Web 서버를 두는, 인터넷과 내부망 사이의 완충 구역은?',o:['DMZ','DB 구역','내부망','스토리지'],e:'DMZ는 인터넷과 내부망 사이의 완충 구역입니다. WAS는 내부망, DB는 가장 안쪽 DB 구역에 둡니다.'}
 ]}
 ]
 });

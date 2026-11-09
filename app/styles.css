@@ -332,3 +332,24 @@ h3 + .lesson-list{margin-top:6px}
 .fig-ico text{font-family:var(--f-body);fill:var(--ink);font-size:13px}
 .fig-ico .zone{fill:none;stroke:var(--muted);stroke-width:1.6;stroke-dasharray:5 4}
 .fig-ico .ln{stroke:var(--muted);stroke-width:2;fill:none}
+
+/* ---------- Tier 비교 그림 (레슨 d01 s7): 입구(보라)·처리(청록)·저장(코랄) ---------- */
+:root{--tier-in:#6A46C8;--tier-in-soft:#EEE8FB;--tier-proc:#0E7A76;--tier-proc-soft:#DDF2F0;--tier-store:#C04A2B;--tier-store-soft:#FCE7E0}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--tier-in:#B9A2FF;--tier-in-soft:#2A2344;--tier-proc:#5FD4CC;--tier-proc-soft:#12322F;--tier-store:#FF9E80;--tier-store-soft:#3A221B}}
+:root[data-theme="dark"]{--tier-in:#B9A2FF;--tier-in-soft:#2A2344;--tier-proc:#5FD4CC;--tier-proc-soft:#12322F;--tier-store:#FF9E80;--tier-store-soft:#3A221B}
+.tier-cmp{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:start;margin:1.2rem 0 .4rem}
+.tier-cmp figure{margin:0}
+.tier-cmp .fig{margin:0 auto;max-width:250px}
+.tier-cmp figcaption{text-align:center;font-size:.88rem;color:var(--muted);margin-top:2px}
+.fig .tc rect{stroke-width:2}
+.fig .tc text{font-weight:700;font-size:18px}
+.fig .tc-in rect{fill:var(--tier-in-soft);stroke:var(--tier-in)} .fig .tc-in text{fill:var(--tier-in)}
+.fig .tc-proc rect{fill:var(--tier-proc-soft);stroke:var(--tier-proc)} .fig .tc-proc text{fill:var(--tier-proc)}
+.fig .tc-store rect{fill:var(--tier-store-soft);stroke:var(--tier-store)} .fig .tc-store text{fill:var(--tier-store)}
+.tier-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;font-size:.88rem;color:var(--muted);margin:.4rem 0 1.2rem}
+.tchip{display:inline-block;padding:0 10px;border-radius:999px;border:1.5px solid;font-weight:700;font-size:.82rem;margin-right:4px}
+.tchip.in{color:var(--tier-in);border-color:var(--tier-in);background:var(--tier-in-soft)}
+.tchip.proc{color:var(--tier-proc);border-color:var(--tier-proc);background:var(--tier-proc-soft)}
+.tchip.store{color:var(--tier-store);border-color:var(--tier-store);background:var(--tier-store-soft)}
+@media (max-width:560px){.tier-cmp{grid-template-columns:minmax(0,1fr);gap:6px}.tier-cmp .fig{max-width:240px}}
+.flow.tight{gap:6px}.flow.tight .n{flex:1 1 64px;min-width:58px;padding:8px 6px}.flow.tight .ar{font-size:.85rem}
