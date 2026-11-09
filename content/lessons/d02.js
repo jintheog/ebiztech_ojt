@@ -12,8 +12,8 @@ terms:[
 ['ECC 메모리','Error Correcting Code','작은 데이터 오류를 스스로 찾아 고치는 서버용 메모리.'],
 ['스왑','Swap','메모리가 모자랄 때 디스크 일부를 메모리 대신 쓰는 공간. 아주 느리다.'],
 ['디스크','Disk','데이터를 오래 보관하는 장치. 전원이 꺼져도 남는다(비휘발성).'],
-['HDD / SSD / NVMe','저장 장치 종류','회전 원판(느리고 쌈) / 반도체(빠름) / PCIe로 연결한 아주 빠른 SSD.'],
-['IOPS / 처리량 / 지연시간','IOPS / Throughput / Latency','1초에 읽고 쓰는 횟수 / 1초에 옮기는 양(MB/s) / 요청 하나에 걸리는 시간(ms).'],
+['HDD / SSD / NVMe','Hard Disk Drive / Solid State Drive / Non-Volatile Memory Express','회전 원판(느리고 쌈) / 반도체(빠름) / PCIe로 연결한 아주 빠른 SSD.'],
+['IOPS / 처리량 / 지연시간','Input/Output Operations Per Second / Throughput / Latency','1초에 읽고 쓰는 횟수 / 1초에 옮기는 양(MB/s) / 요청 하나에 걸리는 시간(ms).'],
 ['NIC','Network Interface Card','서버를 네트워크에 연결하는 카드. 속도는 1G·10G·25Gbps 등.'],
 ['본딩','Bonding, Teaming','NIC 여러 개를 하나처럼 묶어 이중화하거나 속도를 합치는 것.'],
 ['BMC','Baseboard Management Controller','서버가 꺼져 있어도 원격으로 전원·화면·상태를 관리하는 관리 전용 장치. 제조사별로 iDRAC, iLO 등.'],
@@ -21,7 +21,7 @@ terms:[
 ['가상화','Virtualization','물리 자원을 소프트웨어로 나누거나 묶어서, 여러 대의 가상 장비처럼 쓰는 기술.'],
 ['하이퍼바이저','Hypervisor','물리 서버의 자원을 나눠 여러 VM을 만들고 실행·격리·관리하는 소프트웨어. KVM, VMware ESXi, Hyper-V.'],
 ['호스트 / 게스트','Host / Guest','VM을 실행시키는 실제 물리 서버 / 그 위에서 도는 VM과 그 안의 OS.'],
-['vCPU / vRAM / vNIC','가상 자원','VM에 나눠 준 가상 CPU / 가상 메모리 / 가상 네트워크 카드.'],
+['vCPU / vRAM / vNIC','virtual CPU / virtual RAM / virtual NIC','VM에 나눠 준 가상 CPU / 가상 메모리 / 가상 네트워크 카드.'],
 ['오버커밋','Overcommit','실제 물리 자원보다 많은 양을 VM들에게 나눠 주는 것. 모두가 동시에 다 쓰지 않는다는 가정.'],
 ['라이브 마이그레이션','Live Migration','실행 중인 VM을 멈추지 않고 다른 물리 서버로 옮기는 기능.'],
 ['컨테이너','Container','OS는 공유하고 앱 실행 환경만 격리하는 가벼운 가상화. Docker, Kubernetes.']
@@ -36,6 +36,7 @@ body:`
 <tr><td>관리</td><td>앞에 앉아서</td><td>원격으로. 꺼져 있어도 BMC(iDRAC·iLO)로 켜고 화면을 봄</td></tr>
 <tr><td>모양</td><td>노트북</td><td>랙에 꽂는 납작한 형태. 높이는 1U(≈4.45cm), 2U …</td></tr>
 </tbody></table></div>
+<p class="small muted">PSU: Power Supply Unit(전원 장치) · NIC: Network Interface Card(네트워크 카드) · ECC: Error Correcting Code(오류 정정 코드) · BMC: Baseboard Management Controller(원격 관리 장치) · iDRAC: integrated Dell Remote Access Controller(Dell의 BMC) · iLO: Integrated Lights-Out(HPE의 BMC) · U: Rack Unit(랙 높이 단위)</p>
 
 <h2 id="s2">4대 부품: CPU·메모리·디스크·NIC</h2>
 <div class="tbl-wrap"><table><thead><tr><th>부품</th><th>하는 일</th><th>주로 보는 숫자</th><th>부족하면</th></tr></thead><tbody>
@@ -44,6 +45,7 @@ body:`
 <tr><td><b>디스크</b></td><td>데이터를 오래 보관</td><td>용량(GB·TB), IOPS, 처리량</td><td>저장이 안 되거나, 읽기·쓰기가 느리다</td></tr>
 <tr><td><b>NIC</b></td><td>네트워크 연결</td><td>속도(Gbps), 포트 수</td><td>통신이 느리거나 끊긴다</td></tr>
 </tbody></table></div>
+<p class="small muted">CPU: Central Processing Unit(중앙 처리 장치) · IOPS: Input/Output Operations Per Second(초당 읽기·쓰기 횟수)</p>
 <div class="box analogy"><span class="lbl">비유로 보면</span><b>CPU</b>는 요리사, <b>메모리</b>는 조리대, <b>디스크</b>는 냉장고·창고, <b>NIC</b>는 주문이 들어오고 음식이 나가는 배달 창구입니다.</div>
 
 <h2 id="s3">CPU: 소켓, 코어, 스레드</h2>
@@ -51,11 +53,11 @@ body:`
 <ul>
 <li><b>소켓</b>: 메인보드에 CPU를 꽂는 자리. 서버는 CPU를 1~2개(소켓 1~2개) 꽂습니다.</li>
 <li><b>코어</b>: CPU 안에 들어 있는 실제 계산 단위. 서버 CPU는 한 개에 16~64코어 이상도 흔합니다.</li>
-<li><b>스레드</b>: 코어 하나가 동시에 처리하는 작업 흐름. 하이퍼스레딩(SMT) 기술로 보통 코어 1개 = 스레드 2개.</li>
+<li><b>스레드</b>: 코어 하나가 동시에 처리하는 작업 흐름. 하이퍼스레딩(SMT<span class="small muted">, Simultaneous Multithreading</span>) 기술로 보통 코어 1개 = 스레드 2개.</li>
 <li><b>클럭(GHz)</b>: CPU가 1초에 박자를 치는 횟수(동작 속도). 3.0GHz는 1초에 30억 번 박자를 칩니다.</li>
 </ul>
 <div class="box analogy"><span class="lbl">비유로 보면</span>코어는 요리사의 수, 스레드는 요리사 한 명이 양손을 쓰는 것, 클럭은 요리사의 손 빠르기입니다.</div>
-<div class="box mem"><span class="lbl">계산해 보기</span><p>CPU 2개(소켓 2) × 각 16코어 × 코어당 2스레드 = <b>논리 CPU 64개</b>. 리눅스의 <code>nproc</code>, <code>lscpu</code> 명령으로 보이는 숫자가 이 "논리 CPU" 수입니다. 클라우드의 <b>vCPU 1개는 보통 이 논리 CPU(스레드) 1개</b>에 해당합니다.</p></div>
+<div class="box mem"><span class="lbl">계산해 보기</span><p>CPU 2개(소켓 2) × 각 16코어 × 코어당 2스레드 = <b>논리 CPU 64개</b>. 리눅스의 <code>nproc</code>, <code>lscpu</code> 명령으로 보이는 숫자가 이 "논리 CPU" 수입니다. 클라우드의 <b>vCPU</b><span class="small muted">(virtual CPU, 가상 CPU)</span> <b>1개는 보통 이 논리 CPU(스레드) 1개</b>에 해당합니다.</p></div>
 <p>서버용 CPU는 Intel <b>Xeon</b>, AMD <b>EPYC</b>가 대표적입니다. 요즘은 ARM 계열 서버 CPU도 쓰입니다.</p>
 
 <h2 id="s4">메모리: 작업 중인 데이터를 올려 두는 곳</h2>
@@ -64,16 +66,17 @@ body:`
 <ol>
 <li>리눅스는 남는 메모리를 파일 캐시(buff/cache)로 쓰다가, 필요하면 비워서 내줍니다. 여기까지는 정상입니다.</li>
 <li>그래도 모자라면 디스크 일부를 메모리처럼 쓰는 <b>스왑(Swap)</b>을 씁니다. 디스크는 느려서 서버 전체가 굼떠집니다.</li>
-<li>스왑까지 모자라면 리눅스의 <b>OOM Killer</b>가 메모리를 많이 쓰는 프로그램을 강제로 종료시킵니다. 갑자기 서비스가 죽는 원인 중 하나입니다.</li>
+<li>스왑까지 모자라면 리눅스의 <b>OOM Killer</b><span class="small muted">(OOM = Out Of Memory, 메모리 부족)</span>가 메모리를 많이 쓰는 프로그램을 강제로 종료시킵니다. 갑자기 서비스가 죽는 원인 중 하나입니다.</li>
 </ol>
 <p>메모리 사용량은 <a data-lesson="d05"></a>에서 <code>free -h</code>, <code>top</code> 명령으로 직접 확인합니다.</p>
 
 <h2 id="s5">디스크: 종류와 성능 지표</h2>
-<div class="tbl-wrap"><table><thead><tr><th>종류</th><th>원리</th><th>속도</th><th>용량당 가격</th><th>주 용도</th></tr></thead><tbody>
+<div class="tbl-wrap"><table class="wide"><thead><tr><th>종류</th><th>원리</th><th>속도</th><th>용량당 가격</th><th>주 용도</th></tr></thead><tbody>
 <tr><td><b>HDD</b></td><td>회전하는 원판에 자기로 기록</td><td>느림</td><td>쌈</td><td>대용량 보관, 백업</td></tr>
-<tr><td><b>SSD (SATA/SAS)</b></td><td>반도체(플래시)에 기록</td><td>빠름</td><td>중간</td><td>일반 서버, OS</td></tr>
-<tr><td><b>NVMe SSD</b></td><td>PCIe로 CPU에 가깝게 연결한 SSD</td><td>매우 빠름</td><td>비쌈</td><td>DB, 고성능 스토리지</td></tr>
+<tr><td class="nw"><b>SSD (SATA/SAS)</b></td><td>반도체(플래시)에 기록</td><td>빠름</td><td>중간</td><td>일반 서버, OS</td></tr>
+<tr><td class="nw"><b>NVMe SSD</b></td><td>PCIe로 CPU에 가깝게 연결한 SSD</td><td>매우 빠름</td><td>비쌈</td><td>DB, 고성능 스토리지</td></tr>
 </tbody></table></div>
+<p class="small muted">HDD: Hard Disk Drive(하드디스크) · SSD: Solid State Drive(반도체 저장 장치) · SATA: Serial AT Attachment · SAS: Serial Attached SCSI(둘 다 디스크 연결 방식, SAS는 서버용) · NVMe: Non-Volatile Memory Express(플래시용 고속 연결 규격) · PCIe: Peripheral Component Interconnect Express(고속 확장 연결 통로) · OS: Operating System(운영체제) · DB: Database(데이터베이스)</p>
 <p>스토리지 성능은 용량만으로 말하지 않습니다. 이 세 숫자를 함께 봅니다.</p>
 <ul>
 <li><b>IOPS</b>: 1초에 몇 번 읽고 쓸 수 있나. 작은 데이터를 자주 읽고 쓰는 DB에 중요.</li>
@@ -81,14 +84,14 @@ body:`
 <li><b>지연시간(Latency, ms)</b>: 요청 하나에 답이 오기까지 걸리는 시간. 짧을수록 좋음.</li>
 </ul>
 <div class="box analogy"><span class="lbl">비유로 보면 (택배)</span>IOPS는 하루에 배달하는 <b>건수</b>, 처리량은 하루에 나르는 <b>무게</b>, 지연시간은 주문부터 도착까지 <b>걸리는 시간</b>입니다.</div>
-<p>서버는 디스크 고장에 대비해 여러 디스크를 묶는 <b>RAID</b>를 씁니다(예: 두 디스크에 똑같이 기록하는 RAID 1). <a data-lesson="d11"></a>에서 자세히 배웁니다.</p>
+<p>서버는 디스크 고장에 대비해 여러 디스크를 묶는 <b>RAID</b><span class="small muted">(Redundant Array of Independent Disks)</span>를 씁니다(예: 두 디스크에 똑같이 기록하는 RAID 1). <a data-lesson="d11"></a>에서 자세히 배웁니다.</p>
 
 <h2 id="s6">NIC: 네트워크 연결 장치</h2>
 <ul>
 <li><b>속도</b>: 1Gbps, 10Gbps, 25Gbps, 100Gbps. 데이터센터 서버는 10G 이상이 흔합니다.</li>
 <li><b>포트 여러 개와 본딩</b>: NIC 포트 2개를 묶어(본딩) 하나가 끊겨도 통신이 이어지게 하거나, 속도를 합칩니다.</li>
 <li><b>망 분리</b>: 서비스용, 관리용(BMC), 스토리지용 네트워크를 서로 다른 NIC로 나누기도 합니다. 스토리지 트래픽이 서비스 트래픽을 방해하지 않게 하기 위해서입니다.</li>
-<li>NIC마다 고유한 하드웨어 주소(<b>MAC 주소</b>)가 있습니다. IP 주소와의 관계는 <a data-lesson="d08"></a>에서 배웁니다.</li>
+<li>NIC마다 고유한 하드웨어 주소(<b>MAC 주소</b><span class="small muted">, MAC = Media Access Control</span>)가 있습니다. IP<span class="small muted">(Internet Protocol)</span> 주소와의 관계는 <a data-lesson="d08"></a>에서 배웁니다.</li>
 </ul>
 
 <h2 id="s7">서버 사양서 읽기: 물리 서버의 자원과 역할</h2>
@@ -101,6 +104,7 @@ body:`
 <tr><td>NIC</td><td>25GbE × 2 (본딩), 1GbE 관리 포트</td><td>서비스용 25G 2개 이중화 + BMC 관리용</td></tr>
 <tr><td>전원</td><td>PSU 1600W × 2 (이중화)</td><td>전원 장치 하나가 고장 나도 계속 동작</td></tr>
 </tbody></table></div>
+<p class="small muted">DDR5: Double Data Rate 5(5세대 메모리 규격) · GbE: Gigabit Ethernet(기가비트 이더넷) · VM: Virtual Machine(가상 머신)</p>
 <p>이런 서버 한 대를 <b>통째로 웹 서버 하나에 쓰면 대부분 놉니다.</b> 그래서 등장한 것이 가상화입니다.</p>
 
 <h2 id="s8">가상화가 왜 필요할까</h2>
@@ -116,10 +120,11 @@ body:`
 <li><b>가상 장치 제공</b>: 각 VM에게 가상 CPU(vCPU), 가상 메모리, 가상 디스크, 가상 NIC를 진짜 장치처럼 보여 줍니다. VM끼리는 하이퍼바이저 안의 <b>가상 스위치</b>로 연결됩니다.</li>
 <li><b>생명주기 관리</b>: VM 생성, 시작, 정지, 삭제, 스냅샷, 다른 서버로 이동.</li>
 </ol>
-<div class="tbl-wrap"><table><thead><tr><th>종류</th><th>설치 위치</th><th>예</th><th>주로 쓰는 곳</th></tr></thead><tbody>
-<tr><td><b>Type 1</b> (베어메탈)</td><td>물리 서버 위에 바로. 하이퍼바이저가 곧 OS 역할</td><td>KVM, VMware ESXi, Microsoft Hyper-V, Xen</td><td>데이터센터, 클라우드</td></tr>
-<tr><td><b>Type 2</b> (호스트형)</td><td>Windows·macOS 같은 OS 위에 프로그램처럼</td><td>VirtualBox, VMware Workstation</td><td>개인 PC에서 연습·테스트</td></tr>
+<div class="tbl-wrap"><table class="wide"><thead><tr><th>종류</th><th>설치 위치</th><th>예</th><th>주로 쓰는 곳</th></tr></thead><tbody>
+<tr><td><b>Type 1</b> (베어메탈)</td><td>물리 서버 위에 바로. 하이퍼바이저가 곧 OS 역할</td><td><span class="nw">KVM</span>, <span class="nw">VMware ESXi</span>, <span class="nw">Microsoft Hyper-V</span>, Xen</td><td>데이터센터, 클라우드</td></tr>
+<tr><td><b>Type 2</b> (호스트형)</td><td>Windows·macOS 같은 OS 위에 프로그램처럼</td><td><span class="nw">VirtualBox</span>, <span class="nw">VMware Workstation</span></td><td>개인 PC에서 연습·테스트</td></tr>
 </tbody></table></div>
+<p class="small muted">KVM: Kernel-based Virtual Machine(리눅스 커널에 들어 있는 하이퍼바이저. 키보드·모니터를 전환하는 KVM 스위치와는 다름) · PC: Personal Computer(개인용 컴퓨터)</p>
 <p><b>KVM</b>은 리눅스 커널에 들어 있는 오픈소스 하이퍼바이저로, 많은 클라우드와 오픈소스 가상화 플랫폼의 기반입니다. <b>VMware ESXi</b>는 기업 데이터센터에서 오래 쓰여 온 상용 제품입니다.</p>
 
 <h2 id="s10">계층 구조: 서버 · Hypervisor · VM</h2>
@@ -130,6 +135,7 @@ body:`
 <div class="l1"><b>하이퍼바이저</b><span>KVM, VMware ESXi, Hyper-V</span></div>
 <div class="l0"><b>물리 서버 (호스트)</b><span>CPU · 메모리 · 디스크 · NIC</span></div>
 </div>
+<p class="small muted">vRAM: virtual RAM(가상 메모리, RAM = Random Access Memory) · vNIC: virtual NIC(가상 네트워크 카드)</p>
 <div class="box analogy"><span class="lbl">비유로 보면</span><b>건물</b>(물리 서버) 안에 <b>관리사무소</b>(하이퍼바이저)가 있고, 관리사무소가 공간과 전기·수도를 나눠 <b>여러 호실</b>(VM)을 만듭니다. 각 호실에는 <b>입주자</b>(게스트 OS와 앱)가 따로 삽니다. 옆 호실 사람이 내 방에 들어올 수 없습니다(격리).</div>
 <h3>계층마다 누가 관리할까 (클라우드 기준)</h3>
 <div class="tbl-wrap"><table><thead><tr><th>계층</th><th>관리 주체 (IaaS, 예: Zadara zCompute)</th></tr></thead><tbody>
@@ -137,6 +143,7 @@ body:`
 <tr><td>VM 설정</td><td><b>고객</b>이 콘솔에서 선택 (vCPU 수, 메모리, 디스크, 네트워크)</td></tr>
 <tr><td>하이퍼바이저, 물리 서버</td><td><b>클라우드 사업자</b>: 장비 교체, 하이퍼바이저 관리, 장애 시 VM 이동</td></tr>
 </tbody></table></div>
+<p class="small muted">IaaS: Infrastructure as a Service(인프라를 빌려 쓰는 서비스)</p>
 <p><a data-lesson="w1-2"></a>에서 배운 IaaS 표가 바로 이 이야기입니다. 이 경계가 <a data-lesson="d14"></a>의 "책임 공유 모델"입니다.</p>
 
 <h2 id="s11">VM을 만들 때 고르는 것</h2>
@@ -144,7 +151,7 @@ body:`
 <li><b>vCPU 수와 메모리</b>: 클라우드에서는 <b>인스턴스 타입</b>이라는 규격으로 묶여 있습니다. 예: 2 vCPU + 4GB (작은 웹 서버), 8 vCPU + 32GB (DB).</li>
 <li><b>디스크(볼륨)</b>: OS가 들어갈 부팅 디스크 + 필요하면 데이터 디스크를 추가로 붙입니다. VM 입장에서는 <code>/dev/vda</code>, <code>/dev/vdb</code> 같은 진짜 디스크로 보입니다(<a data-lesson="d06"></a>).</li>
 <li><b>이미지</b>: 어떤 OS를 설치된 상태로 시작할지 고르는 틀 (Rocky Linux 9, Ubuntu 24.04 …).</li>
-<li><b>네트워크</b>: 어떤 가상 네트워크(VPC, Subnet)에 연결할지, 어떤 방화벽 규칙(Security Group)을 적용할지.</li>
+<li><b>네트워크</b>: 어떤 가상 네트워크(VPC<span class="small muted"> = Virtual Private Cloud, 클라우드 안의 전용 가상 네트워크</span>, Subnet)에 연결할지, 어떤 방화벽 규칙(Security Group)을 적용할지.</li>
 </ul>
 <p><b>오버커밋</b>: 하이퍼바이저는 실제 물리 자원보다 많은 vCPU를 나눠 줄 수 있습니다. 모든 VM이 동시에 CPU를 100% 쓰지는 않는다는 가정입니다. 너무 많이 나누면 모든 VM이 함께 느려집니다.</p>
 <div class="box warn"><span class="lbl">헷갈리기 쉬운 점</span><p>VM을 많이 만든다고 물리 CPU 성능이 늘어나는 것은 아닙니다. 물리 서버의 자원을 <b>나눠 쓰는 것</b>일 뿐입니다.</p></div>
@@ -155,7 +162,7 @@ body:`
 <tr><td><b>이미지·템플릿</b></td><td>잘 설치된 VM을 틀로 저장해 똑같이 찍어 냄</td><td><a data-lesson="zc3"></a></td></tr>
 <tr><td><b>스냅샷</b></td><td>특정 시점의 상태를 저장하고 되돌리기</td><td><a data-lesson="d13"></a>, <a data-lesson="zs5"></a></td></tr>
 <tr><td><b>라이브 마이그레이션</b></td><td>실행 중인 VM을 멈추지 않고 다른 물리 서버로 옮김 (장비 점검 때)</td><td>클라우드 사업자 운영</td></tr>
-<tr><td><b>HA (고가용성)</b></td><td>물리 서버가 고장 나면 그 위의 VM을 다른 서버에서 자동 재시작</td><td>클라우드 사업자 운영</td></tr>
+<tr><td><b>HA</b> <span class="small muted">(High Availability, 고가용성)</span></td><td>물리 서버가 고장 나면 그 위의 VM을 다른 서버에서 자동 재시작</td><td>클라우드 사업자 운영</td></tr>
 </tbody></table></div>
 
 <h2 id="s13">VM과 컨테이너</h2>
@@ -165,7 +172,7 @@ body:`
 <tr><td>대표 기술</td><td>KVM, ESXi</td><td>Docker, Kubernetes</td></tr>
 </tbody></table></div>
 <div class="box analogy"><span class="lbl">비유로 보면</span>VM은 아파트 각 호실(벽, 수도, 전기가 따로), 컨테이너는 공유 오피스의 칸막이 자리(건물 설비는 공유)입니다.</div>
-<p class="small muted">Zadara zCompute는 VM과 함께 Kubernetes도 제공합니다. 컨테이너는 OJT 이후에 따로 배웁니다.</p>
+<p class="small muted">Zadara zCompute는 VM과 함께 Kubernetes도 제공합니다. 컨테이너는 OJT(On-the-Job Training, 현장 직무 교육) 이후에 따로 배웁니다.</p>
 
 <h2 id="s14">계층으로 생각하기: "VM이 느려요"</h2>
 <p>고객이 "VM이 느리다"고 하면 엔지니어는 계층별로 나눠서 봅니다.</p>
