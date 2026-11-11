@@ -7,7 +7,7 @@ goal:['CPU·메모리·디스크·NIC 각각의 역할, 성능 단위, 부족할
 terms:[
 ['CPU','Central Processing Unit','계산을 하는 두뇌. 소켓·코어·스레드 수와 클럭(GHz)으로 성능을 말한다.'],
 ['소켓 / 코어 / 스레드','Socket / Core / Thread','메인보드의 CPU 꽂는 자리 / CPU 안의 실제 계산 단위 / 코어 하나가 동시에 처리하는 작업 흐름(보통 코어당 2개).'],
-['클럭','Clock, GHz','CPU가 1초에 박자를 몇 번 치는지. 높을수록 한 코어가 빠르다.'],
+['클럭','Clock, GHz','CPU가 1초에 박자를 몇 번 치는지. 클럭만으로 성능을 비교할 수는 없다.'],
 ['메모리 (RAM)','Random Access Memory','지금 작업 중인 데이터를 잠시 올려 두는 빠른 공간. 전원이 꺼지면 사라진다(휘발성).'],
 ['ECC 메모리','Error Correcting Code','작은 데이터 오류를 스스로 찾아 고치는 서버용 메모리.'],
 ['스왑','Swap','메모리가 모자랄 때 디스크 일부를 메모리 대신 쓰는 공간. 아주 느리다.'],
@@ -52,16 +52,16 @@ body:`
 <p>CPU 성능은 "몇 명이(코어), 얼마나 빨리(클럭)" 일하느냐로 봅니다.</p>
 <ul>
 <li><b>소켓</b>: 메인보드에 CPU를 꽂는 자리. 서버는 CPU를 1~2개(소켓 1~2개) 꽂습니다.</li>
-<li><b>코어</b>: CPU 안에 들어 있는 실제 계산 단위. 서버 CPU는 한 개에 16~64코어 이상도 흔합니다.</li>
-<li><b>스레드</b>: 코어 하나가 동시에 처리하는 작업 흐름. 하이퍼스레딩(SMT<span class="small muted">, Simultaneous Multithreading</span>) 기술로 보통 코어 1개 = 스레드 2개.</li>
-<li><b>클럭(GHz)</b>: CPU가 1초에 박자를 치는 횟수(동작 속도). 3.0GHz는 1초에 30억 번 박자를 칩니다.</li>
+<li><b>코어</b>: CPU 안에서 명령을 독립적으로 처리하는 장치(실제 계산 단위). CPU 하나에 여러 개가 들어 있고, 서버 CPU는 한 개에 16~64코어 이상도 흔합니다.</li>
+<li><b>스레드</b>: 코어 하나가 동시에 맡을 수 있는 작업 흐름. SMT<span class="small muted">(Simultaneous Multithreading)</span>를 지원하는 코어는 보통 1개당 스레드 2개이고, 지원하지 않으면 1개입니다. Intel 제품에서는 SMT를 하이퍼스레딩이라고 부릅니다.</li>
+<li><b>클럭(GHz)</b>: CPU가 1초에 박자를 치는 횟수(동작 속도). 3.0GHz는 1초에 30억 번 박자를 칩니다. 박자 한 번에 여러 작업을 처리할 수도 있고, 작업 하나에 여러 박자가 걸릴 수도 있습니다. 그래서 클럭만으로 성능을 비교할 수는 없습니다.</li>
 </ul>
 <div class="box analogy"><span class="lbl">비유로 보면</span>코어는 요리사의 수, 스레드는 요리사 한 명이 양손을 쓰는 것, 클럭은 요리사의 손 빠르기입니다.</div>
 <div class="box mem"><span class="lbl">계산해 보기</span><p>CPU 2개(소켓 2) × 각 16코어 × 코어당 2스레드 = <b>논리 CPU 64개</b>. 리눅스의 <code>nproc</code>, <code>lscpu</code> 명령으로 보이는 숫자가 이 "논리 CPU" 수입니다. 클라우드의 <b>vCPU</b><span class="small muted">(virtual CPU, 가상 CPU)</span> <b>1개는 보통 이 논리 CPU(스레드) 1개</b>에 해당합니다.</p></div>
 <p>서버용 CPU는 Intel <b>Xeon</b>, AMD <b>EPYC</b>가 대표적입니다. 요즘은 ARM 계열 서버 CPU도 쓰입니다.</p>
 
 <h2 id="s4">메모리: 작업 중인 데이터를 올려 두는 곳</h2>
-<p>프로그램은 디스크에 저장되어 있다가, 실행되면 <b>메모리로 올라와서</b> 동작합니다. 메모리는 디스크보다 수천 배 이상 빠르지만, <mark>전원이 꺼지면 내용이 사라집니다(휘발성)</mark>.</p>
+<p>프로그램은 디스크에 저장되어 있다가, 실행되면 <b>메모리로 올라와서</b> 동작합니다. 메모리는 디스크보다 수천 배 이상 빠르지만, <mark>전원이 꺼지면 내용이 사라집니다(휘발성)</mark>. 그래서 오래 보관할 데이터는 디스크에 저장합니다.</p>
 <p>메모리가 모자라면 이런 순서로 문제가 커집니다.</p>
 <ol>
 <li>리눅스는 남는 메모리를 파일 캐시(buff/cache)로 쓰다가, 필요하면 비워서 내줍니다. 여기까지는 정상입니다.</li>
@@ -72,11 +72,12 @@ body:`
 
 <h2 id="s5">디스크: 종류와 성능 지표</h2>
 <div class="tbl-wrap"><table class="wide"><thead><tr><th>종류</th><th>원리</th><th>속도</th><th>용량당 가격</th><th>주 용도</th></tr></thead><tbody>
-<tr><td><b>HDD</b></td><td>회전하는 원판에 자기로 기록</td><td>느림</td><td>쌈</td><td>대용량 보관, 백업</td></tr>
-<tr><td class="nw"><b>SSD (SATA/SAS)</b></td><td>반도체(플래시)에 기록</td><td>빠름</td><td>중간</td><td>일반 서버, OS</td></tr>
-<tr><td class="nw"><b>NVMe SSD</b></td><td>PCIe로 CPU에 가깝게 연결한 SSD</td><td>매우 빠름</td><td>비쌈</td><td>DB, 고성능 스토리지</td></tr>
+<tr><td><b>HDD</b></td><td>회전하는 원판에 자석 방향(N극·S극)으로 0과 1을 기록</td><td>느림</td><td>쌈</td><td>대용량 보관, 백업</td></tr>
+<tr><td class="nw"><b>SSD (SATA/SAS)</b></td><td>반도체(플래시)에 기록. 원래 HDD용으로 만든 연결 방식(SATA/SAS)을 그대로 씀</td><td>빠름</td><td>중간</td><td>일반 서버, OS</td></tr>
+<tr><td class="nw"><b>NVMe SSD</b></td><td>같은 플래시를 쓰지만 PCIe로 CPU에 가깝게 연결해 훨씬 빠름</td><td>매우 빠름</td><td>비쌈</td><td>DB, 고성능 스토리지</td></tr>
 </tbody></table></div>
 <p class="small muted">HDD: Hard Disk Drive(하드디스크) · SSD: Solid State Drive(반도체 저장 장치) · SATA: Serial AT Attachment · SAS: Serial Attached SCSI(둘 다 디스크 연결 방식, SAS는 서버용) · NVMe: Non-Volatile Memory Express(플래시용 고속 연결 규격) · PCIe: Peripheral Component Interconnect Express(고속 확장 연결 통로) · OS: Operating System(운영체제) · DB: Database(데이터베이스)</p>
+<p>플래시에 기록한다는 것은 SSD 안의 셀에 전자를 가두느냐 비워 두느냐로 0과 1을 구분한다는 뜻입니다.</p>
 <p>스토리지 성능은 용량만으로 말하지 않습니다. 이 세 숫자를 함께 봅니다.</p>
 <ul>
 <li><b>IOPS</b>: 1초에 몇 번 읽고 쓸 수 있나. 작은 데이터를 자주 읽고 쓰는 DB에 중요.</li>
@@ -87,6 +88,7 @@ body:`
 <p>서버는 디스크 고장에 대비해 여러 디스크를 묶는 <b>RAID</b><span class="small muted">(Redundant Array of Independent Disks)</span>를 씁니다(예: 두 디스크에 똑같이 기록하는 RAID 1). <a data-lesson="d11"></a>에서 자세히 배웁니다.</p>
 
 <h2 id="s6">NIC: 네트워크 연결 장치</h2>
+<p>NIC는 컴퓨터를 네트워크에 연결해 데이터를 주고받는 장치입니다.</p>
 <ul>
 <li><b>속도</b>: 1Gbps, 10Gbps, 25Gbps, 100Gbps. 데이터센터 서버는 10G 이상이 흔합니다.</li>
 <li><b>포트 여러 개와 본딩</b>: NIC 포트 2개를 묶어(본딩) 하나가 끊겨도 통신이 이어지게 하거나, 속도를 합칩니다.</li>
@@ -120,12 +122,14 @@ body:`
 <li><b>가상 장치 제공</b>: 각 VM에게 가상 CPU(vCPU), 가상 메모리, 가상 디스크, 가상 NIC를 진짜 장치처럼 보여 줍니다. VM끼리는 하이퍼바이저 안의 <b>가상 스위치</b>로 연결됩니다.</li>
 <li><b>생명주기 관리</b>: VM 생성, 시작, 정지, 삭제, 스냅샷, 다른 서버로 이동.</li>
 </ol>
+<p><b>호스트 OS</b>는 물리 컴퓨터에 직접 설치된 OS이고, <b>게스트 OS</b>는 VM 안에 설치된 OS입니다.</p>
 <div class="tbl-wrap"><table class="wide"><thead><tr><th>종류</th><th>설치 위치</th><th>예</th><th>주로 쓰는 곳</th></tr></thead><tbody>
-<tr><td><b>Type 1</b> (베어메탈)</td><td>물리 서버 위에 바로. 하이퍼바이저가 곧 OS 역할</td><td><span class="nw">KVM</span>, <span class="nw">VMware ESXi</span>, <span class="nw">Microsoft Hyper-V</span>, Xen</td><td>데이터센터, 클라우드</td></tr>
+<tr><td><b>Type 1</b> (베어메탈)</td><td>물리 서버 위에 바로. 하이퍼바이저가 곧 OS 역할이라 별도의 호스트 OS가 없음</td><td><span class="nw">KVM</span>, <span class="nw">VMware ESXi</span>, <span class="nw">Microsoft Hyper-V</span>, Xen</td><td>데이터센터, 클라우드</td></tr>
 <tr><td><b>Type 2</b> (호스트형)</td><td>Windows·macOS 같은 OS 위에 프로그램처럼</td><td><span class="nw">VirtualBox</span>, <span class="nw">VMware Workstation</span></td><td>개인 PC에서 연습·테스트</td></tr>
 </tbody></table></div>
 <p class="small muted">KVM: Kernel-based Virtual Machine(리눅스 커널에 들어 있는 하이퍼바이저. 키보드·모니터를 전환하는 KVM 스위치와는 다름) · PC: Personal Computer(개인용 컴퓨터)</p>
-<p><b>KVM</b>은 리눅스 커널에 들어 있는 오픈소스 하이퍼바이저로, 많은 클라우드와 오픈소스 가상화 플랫폼의 기반입니다. <b>VMware ESXi</b>는 기업 데이터센터에서 오래 쓰여 온 상용 제품입니다.</p>
+<p>Type 1은 별도의 호스트 OS가 없지만, 그 위에 만든 각 VM 안에는 Linux 같은 게스트 OS를 설치합니다. Type 2는 예를 들어 Windows에 VMware Workstation 같은 프로그램을 설치하고, 그 안에서 VM을 만든 뒤 Rocky Linux 같은 OS를 설치합니다.</p>
+<p><b>KVM</b>은 리눅스 커널에 들어 있는 오픈소스 하이퍼바이저입니다. 리눅스 자체가 하이퍼바이저 역할을 하므로 Type 1에 속하고, 많은 클라우드와 오픈소스 가상화 플랫폼의 기반입니다. <b>VMware ESXi</b>는 기업 데이터센터에서 오래 쓰여 온 상용 제품입니다.</p>
 
 <h2 id="s10">계층 구조: 서버 · Hypervisor · VM</h2>
 <div class="layers">
@@ -149,11 +153,11 @@ body:`
 <h2 id="s11">VM을 만들 때 고르는 것</h2>
 <ul>
 <li><b>vCPU 수와 메모리</b>: 클라우드에서는 <b>인스턴스 타입</b>이라는 규격으로 묶여 있습니다. 예: 2 vCPU + 4GB (작은 웹 서버), 8 vCPU + 32GB (DB).</li>
-<li><b>디스크(볼륨)</b>: OS가 들어갈 부팅 디스크 + 필요하면 데이터 디스크를 추가로 붙입니다. VM 입장에서는 <code>/dev/vda</code>, <code>/dev/vdb</code> 같은 진짜 디스크로 보입니다(<a data-lesson="d06"></a>).</li>
+<li><b>디스크(볼륨)</b>: OS가 들어갈 부팅 디스크 + 필요하면 데이터 디스크를 추가로 붙입니다. VM 입장에서는 <code>/dev/vda</code>, <code>/dev/vdb</code> 같은 진짜 디스크로 보입니다(<a data-lesson="d06"></a>). 이 이름은 KVM 계열의 예이고, 클라우드나 하이퍼바이저에 따라 다릅니다.</li>
 <li><b>이미지</b>: 어떤 OS를 설치된 상태로 시작할지 고르는 틀 (Rocky Linux 9, Ubuntu 24.04 …).</li>
 <li><b>네트워크</b>: 어떤 가상 네트워크(VPC<span class="small muted"> = Virtual Private Cloud, 클라우드 안의 전용 가상 네트워크</span>, Subnet)에 연결할지, 어떤 방화벽 규칙(Security Group)을 적용할지.</li>
 </ul>
-<p><b>오버커밋</b>: 하이퍼바이저는 실제 물리 자원보다 많은 vCPU를 나눠 줄 수 있습니다. 모든 VM이 동시에 CPU를 100% 쓰지는 않는다는 가정입니다. 너무 많이 나누면 모든 VM이 함께 느려집니다.</p>
+<p><b>오버커밋</b>: 하이퍼바이저는 실제 물리 자원보다 많은 vCPU·메모리를 VM들에게 나눠 줄 수 있습니다. 모든 VM이 받은 자원을 항상 다 쓰지는 않기 때문에 가능합니다. 하지만 여러 VM이 동시에 자원을 많이 쓰면 자원이 부족해져 모든 VM이 함께 느려질 수 있습니다. 특히 메모리가 모자라면 느려지는 데서 끝나지 않고 프로그램이 강제로 종료될 수 있습니다(위 <a href="#d02" data-sec="s4">「메모리」 절</a>의 OOM Killer).</p>
 <div class="box warn"><span class="lbl">헷갈리기 쉬운 점</span><p>VM을 많이 만든다고 물리 CPU 성능이 늘어나는 것은 아닙니다. 물리 서버의 자원을 <b>나눠 쓰는 것</b>일 뿐입니다.</p></div>
 
 <h2 id="s12">가상화로 얻는 기능</h2>
@@ -169,7 +173,7 @@ body:`
 <div class="tbl-wrap"><table><thead><tr><th></th><th>VM</th><th>컨테이너</th></tr></thead><tbody>
 <tr><td>격리 단위</td><td>OS까지 통째로 (게스트 OS가 따로 있음)</td><td>앱과 실행 환경만 (호스트 OS의 커널을 공유)</td></tr>
 <tr><td>크기·시작 시간</td><td>GB 단위, 수십 초~분</td><td>MB 단위, 수 초</td></tr>
-<tr><td>대표 기술</td><td>KVM, ESXi</td><td>Docker, Kubernetes</td></tr>
+<tr><td>대표 기술</td><td>KVM, ESXi</td><td>Docker(컨테이너를 만들고 실행), Kubernetes(많은 컨테이너를 여러 서버에 배치하고 관리)</td></tr>
 </tbody></table></div>
 <div class="box analogy"><span class="lbl">비유로 보면</span>VM은 아파트 각 호실(벽, 수도, 전기가 따로), 컨테이너는 공유 오피스의 칸막이 자리(건물 설비는 공유)입니다.</div>
 <p class="small muted">Zadara zCompute는 VM과 함께 Kubernetes도 제공합니다. 컨테이너는 OJT(On-the-Job Training, 현장 직무 교육) 이후에 따로 배웁니다.</p>
