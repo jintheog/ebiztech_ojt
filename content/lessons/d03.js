@@ -146,7 +146,7 @@ trainee@ojt-web01:~$    <span class="c">← Ubuntu 모양: 사용자명@서버�
 <h3>④ systemd</h3>
 <p>커널이 가장 먼저 실행하는 프로그램이라 프로세스 번호(PID)가 <b>1</b>입니다. 모든 프로세스의 조상입니다. <code>/etc/fstab</code>을 읽어 디스크를 연결하고, 네트워크, SSH(sshd), 웹 서버 같은 서비스를 <b>정해진 의존 순서대로</b> 실행합니다. 서비스 관리 명령(<code>systemctl</code>)은 <a data-lesson="d05"></a>에서 배웁니다.</p>
 <h3>⑤ target 도달과 로그인</h3>
-<p>systemd는 목표 상태(<b>target</b>)까지 서비스를 올리면 부팅을 마칩니다. 서버는 보통 <code>multi-user.target</code>입니다. 이제 로그인 프롬프트가 뜨고 SSH 접속도 받을 수 있습니다.</p>
+<p>systemd는 목표 상태(<b>target</b>)까지 서비스를 올리면 부팅을 마칩니다. target이란 '이 서비스들이 다 떠 있으면 이 단계까지 준비된 것으로 본다'를 정해 둔 서비스 묶음입니다. 서버는 보통 <code>multi-user.target</code>입니다. 이제 로그인 프롬프트가 뜨고 SSH 접속도 받을 수 있습니다.</p>
 <div class="tbl-wrap"><table><thead><tr><th>target</th><th>뜻</th><th>예전 이름 (runlevel)</th></tr></thead><tbody>
 <tr><td><code>multi-user.target</code></td><td>네트워크 포함 일반 서버 모드 (화면 없음)</td><td>3</td></tr>
 <tr><td><code>graphical.target</code></td><td>화면(GUI)까지 켬</td><td>5</td></tr>
