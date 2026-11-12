@@ -148,9 +148,9 @@ trainee@ojt-web01:~$    <span class="c">← Ubuntu 모양: 사용자명@서버�
 <h3>⑤ target 도달과 로그인</h3>
 <p>systemd는 목표 상태(<b>target</b>)까지 서비스를 올리면 부팅을 마칩니다. target이란 '이 서비스들이 다 떠 있으면 이 단계까지 준비된 것으로 본다'를 정해 둔 서비스 묶음입니다. 서버는 보통 <code>multi-user.target</code>입니다. 이제 로그인 프롬프트가 뜨고 SSH 접속도 받을 수 있습니다.</p>
 <div class="tbl-wrap"><table><thead><tr><th>target</th><th>뜻</th><th>예전 이름 (runlevel)</th></tr></thead><tbody>
-<tr><td><code>multi-user.target</code></td><td>네트워크 포함 일반 서버 모드 (화면 없음)</td><td>3</td></tr>
-<tr><td><code>graphical.target</code></td><td>화면(GUI)까지 켬</td><td>5</td></tr>
-<tr><td><code>rescue.target</code></td><td>복구용 최소 모드 (root 혼자)</td><td>1</td></tr>
+<tr><td><code>multi-user.target</code></td><td>여러 사용자 로그인, 네트워크 포함 일반 서버 모드 (GUI 없음)</td><td>3</td></tr>
+<tr><td><code>graphical.target</code></td><td><code>multi-user</code> + 화면(GUI)까지 켬</td><td>5</td></tr>
+<tr><td><code>rescue.target</code></td><td>최소 기능만 켜는 복구 모드(root 혼자)</td><td>1</td></tr>
 <tr><td><code>emergency.target</code></td><td>아주 최소한만 켠 응급 모드</td><td>-</td></tr>
 </tbody></table></div>
 <div class="box analogy"><span class="lbl">비유로 보면 (가게 문 열기)</span>① 건물 전기·설비 점검 → ② 열쇠로 문 열기 → ③ 점장 출근 → ④ 점장이 직원들을 순서대로 출근시킴 → ⑤ 영업 시작(손님 받기)</div>
