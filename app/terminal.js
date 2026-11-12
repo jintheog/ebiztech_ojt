@@ -168,7 +168,7 @@ const MAN = {
   mkdir: '디렉터리 만들기. -p 중간 디렉터리까지', touch: '빈 파일 만들기', cp: '복사. cp 원본 대상', mv: '이동·이름 바꾸기', rm: '삭제. 되돌릴 수 없음! 디렉터리는 rm -r',
   cat: '파일 내용 출력', head: '앞부분 보기. -n 숫자', tail: '뒷부분 보기. -n 숫자', grep: '글자가 들어간 줄만 보기. -i 대소문자 무시, -v 제외, -c 개수', echo: '글자 출력. > 덮어쓰기, >> 이어 쓰기',
   sort: '정렬. -h 크기 단위, -r 거꾸로, -n 숫자', wc: '줄 수 세기 (wc -l)', tee: '받은 내용을 화면과 파일에 함께 쓰기. -a 이어 쓰기',
-  whoami: '현재 사용자 이름', id: 'UID, GID, 소속 그룹', groups: '소속 그룹', who: '지금 로그인한 사람', last: '최근 로그인 기록', umask: '새 파일 기본 권한에서 빼는 값',
+  whoami: '현재 사용자 이름', id: 'UID, GID, 소속 그룹', groups: '소속 그룹', who: '지금 로그인한 사람', last: '최근 로그인 기록', umask: '새 파일을 만들 때 꺼 둘 권한',
   chmod: '권한 변경. chmod 644 파일, chmod u+x 파일', chown: '소유자 변경(root만). chown 사용자[:그룹] 파일',
   sudo: '명령 하나를 관리자 권한으로. sudo -i 는 root로 전환(exit로 복귀)', useradd: '사용자 추가(root)', userdel: '사용자 삭제(root). -r 홈까지', passwd: '비밀번호 변경', groupadd: '그룹 추가(root)', usermod: '사용자 수정. usermod -aG 그룹 사용자',
   ssh: '원격 접속. ssh 사용자@IP', 'ssh-keygen': 'SSH 키 한 쌍 만들기',

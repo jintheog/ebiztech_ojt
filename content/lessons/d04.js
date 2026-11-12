@@ -12,13 +12,13 @@ terms:[
 ['root','슈퍼유저','모든 권한을 가진 관리자 계정. UID는 0.'],
 ['시스템 계정','System Account','사람이 아니라 서비스(sshd, nginx 등)가 쓰는 계정. 로그인할 수 없게 막아 둔다.'],
 ['UID / GID','User ID / Group ID','사용자와 그룹을 구분하는 번호. 시스템은 이름보다 번호로 구분한다.'],
-['그룹','Group','여러 사용자를 묶어 같은 권한을 주기 위한 단위. 기본 그룹 1개 + 보조 그룹 여러 개.'],
+['그룹','Group','여러 사용자를 묶어 같은 권한을 주기 위한 단위. 기본 그룹 1개 + 보조 그룹(없어도 되고 여러 개도 가능).'],
 ['sudo','superuser do','허락받은 사용자가 명령 하나를 관리자 권한으로 실행하는 명령. 기록이 남는다.'],
 ['sudoers','/etc/sudoers','누가 어떤 명령을 sudo로 쓸 수 있는지 적은 설정. visudo로만 고친다.'],
 ['su','switch user','다른 사용자로 아예 전환하는 명령.'],
 ['권한 (rwx)','Permission','r(읽기) w(쓰기) x(실행). 소유자·그룹·기타 사용자에게 각각 따로 준다.'],
 ['chmod / chown','change mode / owner','파일 권한을 바꾸는 명령 / 파일 소유자(와 그룹)를 바꾸는 명령(root만).'],
-['umask','유마스크','새 파일을 만들 때 기본 권한에서 빼는 값. 보통 022 → 파일 644, 디렉터리 755.'],
+['umask','유마스크','새 파일을 만들 때 꺼 둘 권한을 적어 둔 설정값. 보통 022 → 파일 644, 디렉터리 755.'],
 ['SSH','Secure Shell','네트워크로 다른 서버에 암호화된 통로를 만들어 접속하는 방식. 기본 포트 22.'],
 ['sshd','SSH Daemon','서버에서 SSH 접속을 기다리는 서비스(데몬). 설정 파일은 /etc/ssh/sshd_config.'],
 ['공개키 / 개인키','Public / Private Key','한 쌍으로 만들어지는 열쇠. 공개키는 자물쇠(서버에 등록), 개인키는 열쇠(내가 보관, 공유 금지).'],
@@ -30,7 +30,7 @@ body:`
 <h2 id="s1">명령어의 문법과 꼭 알아야 할 키</h2>
 <pre class="code">ls     -l      /etc
 <span class="c">명령어  옵션    대상</span></pre>
-<p>명령어는 <b>동사</b>, 옵션은 <b>부사</b>(어떻게), 대상은 <b>목적어</b>(무엇을)라고 생각하면 됩니다. 옵션은 <code>-l -a</code>처럼 따로 써도, <code>-la</code>처럼 붙여 써도 됩니다. 긴 옵션은 <code>--help</code>처럼 줄 두 개로 씁니다.</p>
+<ul><li>명령어는 <b>동사</b>, 옵션은 <b>부사</b>(어떻게), 대상은 <b>목적어</b>(무엇을)라고 생각하면 됩니다.</li><li>옵션은 <code>-l -a</code>처럼 따로 써도 되고 <code>-la</code>처럼 붙여 써도 됩니다.</li><li>긴 옵션은 <code>--help</code>처럼 하이픈(-) 두 개로 씁니다.</li></ul>
 <div class="tbl-wrap"><table><thead><tr><th>키·기호</th><th>하는 일</th></tr></thead><tbody>
 <tr><td><kbd>Tab</kbd></td><td>파일·명령 이름 자동 완성. 오타를 줄여 주니 습관처럼 누르세요.</td></tr>
 <tr><td><kbd>↑</kbd> <kbd>↓</kbd></td><td>이전에 입력한 명령 다시 불러오기</td></tr>
@@ -53,7 +53,7 @@ body:`
 <tr><td><code>cat</code></td><td>concatenate</td><td><code>cat /etc/hostname</code></td><td>파일 내용 출력</td></tr>
 <tr><td><code>less</code></td><td>-</td><td><code>less /var/log/messages</code></td><td>긴 파일을 한 화면씩 보기. 스페이스 다음 장, /글자 검색, q 나가기</td></tr>
 <tr><td><code>head</code> / <code>tail</code></td><td>머리 / 꼬리</td><td><code>tail -n 20 파일</code></td><td>앞부분 / 뒷부분만 보기. 로그는 최신이 뒤에 있어서 tail을 많이 씀. <code>tail -f</code>는 실시간으로 계속 보기</td></tr>
-<tr><td><code>grep</code></td><td>글자 찾기</td><td><code>grep -i error /var/log/messages</code></td><td>특정 글자가 들어간 줄만 보기. -i 대소문자 무시, -v 제외</td></tr>
+<tr><td><code>grep</code></td><td>global regular expression print (글자 찾기)</td><td><code>grep -i error /var/log/messages</code></td><td>특정 글자가 들어간 줄만 보기. -i 대소문자 무시, -v 제외</td></tr>
 <tr><td><code>echo</code></td><td>메아리</td><td><code>echo hello &gt; a.txt</code></td><td>글자 출력. 파일에 쓰기</td></tr>
 <tr><td><code>whoami</code> / <code>id</code></td><td>who am I</td><td><code>id</code></td><td>나는 누구? / 내 UID와 그룹</td></tr>
 <tr><td><code>history</code></td><td>-</td><td><code>history</code></td><td>지금까지 입력한 명령 목록</td></tr>
@@ -75,14 +75,14 @@ trainee:x:1000:1000:OJT Trainee:/home/trainee:/bin/bash
 
 <span class="c"># /etc/shadow : 암호화된 비밀번호 (root만 읽을 수 있음)</span>
 trainee:$6$Xy...(암호화된 값):20395:0:99999:7:::
-<span class="c">이름   :비밀번호 해시          :마지막 변경일:최소:최대 사용 일수:만료 경고일</span>
+<span class="c">이름   :비밀번호 해시          :마지막 변경일:최소 사용 일수:최대 사용 일수:만료 경고일</span>
 
 <span class="c"># /etc/group : 그룹 목록</span>
 wheel:x:10:trainee,kim
 <span class="c">그룹명:비번:GID:소속 사용자들</span></pre>
 <h3>계정 관리 명령 (root 또는 sudo 필요)</h3>
 <div class="tbl-wrap"><table><thead><tr><th>명령</th><th>하는 일</th></tr></thead><tbody>
-<tr><td><code>sudo useradd kim</code></td><td>사용자 kim 만들기 (홈 /home/kim, 같은 이름의 기본 그룹도 생성). Ubuntu에서는 대화형 <code>adduser</code>도 많이 씀</td></tr>
+<tr><td><code>sudo useradd kim</code></td><td>사용자 kim 만들기 (홈 /home/kim, 같은 이름의 기본 그룹도 생성). Ubuntu의 <code>useradd</code>는 <code>-m</code>을 붙여야 홈 디렉터리를 만들고, Ubuntu에서는 대화형 <code>adduser</code>도 많이 씀</td></tr>
 <tr><td><code>sudo passwd kim</code></td><td>kim의 비밀번호 설정 (설정 전에는 비밀번호로 로그인 불가)</td></tr>
 <tr><td><code>sudo userdel -r kim</code></td><td>kim 삭제 (-r: 홈 디렉터리도 함께)</td></tr>
 <tr><td><code>sudo chage -l kim</code></td><td>비밀번호 만료 정책 확인</td></tr>
@@ -92,17 +92,28 @@ wheel:x:10:trainee,kim
 
 <h2 id="s4">그룹과 sudo: 권한을 나눠 주는 방법</h2>
 <p><b>그룹</b>은 여러 사용자에게 같은 권한을 한 번에 주기 위한 묶음입니다. 개발자 5명이 같은 디렉터리를 써야 한다면, 5명에게 따로 권한을 주지 않고 <code>dev</code> 그룹에 넣고 디렉터리를 그 그룹 소유로 만듭니다.</p>
-<ul><li><b>기본 그룹</b>: 사용자마다 1개. 보통 사용자 이름과 같습니다. 새 파일을 만들면 이 그룹 소유가 됩니다.</li><li><b>보조 그룹</b>: 여러 개 가입 가능. 예: wheel, dev, docker.</li></ul>
+<ul><li><b>기본 그룹</b>: 모든 사용자가 반드시 1개 가집니다. 사용자를 만들 때 보통 사용자 이름과 같은 그룹이 자동으로 생성되어 기본 그룹이 됩니다. 새 파일을 만들면 이 그룹 소유가 됩니다.</li><li><b>보조 그룹</b>: 필요에 따라 추가로 가입하는 그룹입니다. 없어도 되고 여러 개여도 됩니다. 예: wheel, dev, docker.</li></ul>
+<p>접근 권한을 검사할 때는 기본·보조를 구분하지 않고, 가입한 모든 그룹의 권한을 똑같이 받습니다. 둘의 차이는 새 파일이 어느 그룹 소유로 만들어지느냐뿐입니다.</p>
+<pre class="code">$ id alice
+uid=1001(alice) gid=1001(alice) groups=1001(alice),10(wheel),1002(dev)
+<span class="c"># gid= 기본 그룹 / groups= 가입한 전체 그룹(기본 + 보조)</span></pre>
 <div class="tbl-wrap"><table><thead><tr><th>명령</th><th>하는 일</th></tr></thead><tbody>
 <tr><td><code>sudo groupadd dev</code></td><td>그룹 dev 만들기</td></tr>
 <tr><td><code>sudo usermod -aG dev kim</code></td><td>kim을 dev 그룹에 <b>추가</b>. <b>-a를 빼먹으면 기존 보조 그룹이 지워지고</b> dev만 남으니 주의. 그룹 변경은 다시 로그인해야 적용</td></tr>
 <tr><td><code>sudo gpasswd -d kim dev</code></td><td>kim을 dev 그룹에서 빼기</td></tr>
 </tbody></table></div>
+<p>그룹을 바꾸는 명령:</p>
+<pre class="code">sudo usermod -aG dev alice   <span class="c"># 보조 그룹에 추가 (-a를 빼면 기존 보조 그룹이 전부 지워짐)</span>
+sudo usermod -g dev alice    <span class="c"># 기본 그룹 자체를 dev로 변경</span></pre>
 <h3>sudo와 su</h3>
-<ul><li><code>sudo 명령어</code>: 허락받은 사용자가 그 명령 <b>한 번만</b> 관리자 권한으로 실행합니다. 처음에 <b>자기</b> 비밀번호를 묻고, 누가 언제 무엇을 했는지 <code>/var/log/secure</code>에 기록이 남습니다. <mark>실무에서는 root로 직접 로그인하지 않고 sudo를 씁니다.</mark></li><li><code>su - 사용자</code>: 그 사용자로 아예 전환합니다. <b>상대방의</b> 비밀번호가 필요합니다. <code>sudo -i</code>는 root로 전환(프롬프트가 <code>#</code>로 바뀜), <code>exit</code>로 돌아옵니다.</li></ul>
-<p>누가 sudo를 쓸 수 있는지는 <code>/etc/sudoers</code>에 적혀 있습니다. Red Hat 계열은 <b>wheel</b> 그룹, Ubuntu는 <b>sudo</b> 그룹에 넣으면 sudo를 쓸 수 있습니다.</p>
+<ul><li><code>sudo 명령어</code>: 허락받은 사용자가 그 명령 <b>한 번만</b> 관리자 권한으로 실행합니다. 처음에 <b>자기</b> 비밀번호를 묻고, 누가 언제 무엇을 했는지 기록이 남습니다(Red Hat 계열 <code>/var/log/secure</code>, Ubuntu <code>/var/log/auth.log</code>). <mark>실무에서는 root로 직접 로그인하지 않고 sudo를 씁니다.</mark></li><li><code>su - 사용자</code>: 그 사용자로 아예 전환합니다. <b>상대방의</b> 비밀번호가 필요합니다. <code>sudo -i</code>는 root로 전환(프롬프트가 <code>#</code>로 바뀜), <code>exit</code>로 돌아옵니다.</li></ul>
+<p>누가 sudo를 쓸 수 있는지는 <code>/etc/sudoers</code> 파일에 적혀 있습니다. 이 파일에는 "특정 그룹의 멤버는 sudo를 쓸 수 있다"는 규칙이 미리 들어 있는데, 그 그룹이 Red Hat 계열은 <b>wheel</b>, Ubuntu는 <b>sudo</b>입니다.</p>
 <pre class="code">%wheel  ALL=(ALL)  ALL        <span class="c"># wheel 그룹은 모든 명령을 sudo로 실행 가능</span>
 sudo visudo                   <span class="c"># sudoers는 반드시 visudo로 수정 (문법 오류를 검사해 줌)</span></pre>
+<p>그룹은 폴더가 아니라 <code>/etc/group</code> 파일의 한 줄이며, 사용자를 그룹에 넣으면 그 줄의 멤버 목록에 이름이 추가됩니다.</p>
+<pre class="code">$ sudo usermod -aG wheel lee
+$ grep wheel /etc/group
+wheel:x:10:trainee,kim,lee</pre>
 <div class="box analogy"><span class="lbl">비유로 보면</span>root는 건물의 <b>마스터키</b>. 마스터키를 항상 들고 다니면 잃어버리거나 실수로 아무 문이나 열게 됩니다. sudo는 "필요할 때 관리실에서 마스터키를 빌리고, 대장에 이름을 적는 것"입니다. wheel 그룹은 "마스터키를 빌릴 수 있는 사람 명단"입니다.</div>
 
 <h2 id="s5">파일 권한: 누가 무엇을 할 수 있나</h2>
@@ -124,15 +135,26 @@ sudo visudo                   <span class="c"># sudoers는 반드시 visudo로 �
 <p>세 자리를 각각 더합니다. <code>rw-</code> = 4+2+0 = <b>6</b>, <code>r-x</code> = 4+0+1 = <b>5</b>, <code>rwx</code> = 4+2+1 = <b>7</b>.</p>
 <div class="box mem"><span class="lbl">외울 것: 자주 쓰는 권한</span>
 <div class="tbl-wrap" style="margin:.5rem 0 0"><table><tbody>
-<tr><td><code>755</code></td><td><code>rwxr-xr-x</code></td><td>디렉터리, 실행 파일. 나는 다 하고, 남은 읽기·실행만</td></tr>
-<tr><td><code>644</code></td><td><code>rw-r--r--</code></td><td>일반 파일. 나는 읽고 쓰고, 남은 읽기만</td></tr>
+<tr><td><code>755</code></td><td><code>rwxr-xr-x</code></td><td>디렉터리, 실행 파일. 나는 다 하고, 나머지는 읽기·실행만</td></tr>
+<tr><td><code>644</code></td><td><code>rw-r--r--</code></td><td>일반 파일. 나는 읽고 쓰고, 나머지는 읽기만</td></tr>
 <tr><td><code>600</code></td><td><code>rw-------</code></td><td>비밀 파일, <b>SSH 개인키</b>, authorized_keys. 나만 읽고 쓰기</td></tr>
 <tr><td><code>700</code></td><td><code>rwx------</code></td><td>나만 쓰는 디렉터리 (예: ~/.ssh)</td></tr>
 <tr><td><code>770</code></td><td><code>rwxrwx---</code></td><td>팀 공유 디렉터리 (소유자와 그룹만)</td></tr>
 </tbody></table></div></div>
 <div data-widget="permcalc"></div>
 <h3>새 파일의 기본 권한: umask</h3>
-<p>새로 만든 파일이 왜 644, 디렉터리가 왜 755일까요? 시작값(파일 666, 디렉터리 777)에서 <b>umask</b> 값(보통 <code>022</code>)을 빼기 때문입니다. 666 − 022 = <b>644</b>, 777 − 022 = <b>755</b>. <code>umask</code> 명령으로 현재 값을 볼 수 있습니다.</p>
+<ul><li><b>umask</b>는 "새 파일을 만들 때 꺼 둘 권한"을 적어 둔 설정값입니다.</li><li>프로그램이 파일을 만들 때 요청하는 최대치(파일 666, 디렉터리 777)가 있고, 시스템이 만드는 순간에 umask에 적힌 권한을 꺼서 만듭니다.</li><li>umask의 각 자리는 끌 권한을 뜻합니다. 0은 아무것도 끄지 않고, 2는 w를, 7은 rwx를 모두 끕니다. 뺄셈이 아니라 권한을 끄는 것이므로, umask 027이면 666은 640(<code>rw-r-----</code>)이 됩니다.</li></ul>
+<div class="tbl-wrap"><table><thead><tr><th></th><th>요청값</th><th>umask 022</th><th>결과</th></tr></thead><tbody>
+<tr><td><b>파일</b></td><td>666 <code>rw-rw-rw-</code></td><td><code>----w--w-</code> 제거</td><td><b>644</b> <code>rw-r--r--</code></td></tr>
+<tr><td><b>디렉터리</b></td><td>777 <code>rwxrwxrwx</code></td><td><code>----w--w-</code> 제거</td><td><b>755</b> <code>rwxr-xr-x</code></td></tr>
+</tbody></table></div>
+<p>umask는 서버마다 다를 수 있습니다. 대부분 022지만 보장되지 않으니, 새 서버에 들어가면 <code>umask</code>로 확인하는 것이 안전합니다. umask는 배포판·서버·사용자·세션 단위로 달라질 수 있습니다.</p>
+<div class="tbl-wrap"><table><thead><tr><th>단위</th><th>예</th></tr></thead><tbody>
+<tr><td><b>배포판</b></td><td>대부분 022. 배포판과 버전에 따라 일반 사용자는 002인 경우도 있음</td></tr>
+<tr><td><b>서버</b></td><td>보안 정책이 엄격한 회사는 027이나 077로 바꿔 둠</td></tr>
+<tr><td><b>사용자</b></td><td>각자 <code>~/.bashrc</code>(셸을 시작할 때 읽는 개인 설정 파일)에 <code>umask 077</code>을 넣으면 그 사용자만 달라짐</td></tr>
+<tr><td><b>세션</b></td><td>터미널에서 <code>umask 077</code>을 입력하면 그 터미널에서만 적용되고, 로그아웃하면 사라짐</td></tr>
+</tbody></table></div>
 <h3>특수 권한 (이름만 알아 두기)</h3>
 <ul><li><b>sticky bit</b> (<code>t</code>): <code>/tmp</code>는 <code>drwxrwxrwt</code>입니다. 누구나 파일을 만들 수 있지만, <b>남의 파일은 지울 수 없게</b> 막습니다.</li><li><b>setuid</b> (<code>s</code>): <code>/usr/bin/passwd</code>는 <code>-rwsr-xr-x</code>입니다. 일반 사용자가 실행해도 잠깐 root 권한으로 동작해서 자기 비밀번호를 바꿀 수 있습니다.</li></ul>
 
@@ -276,8 +298,8 @@ quiz:[
  {q:'kim의 기존 보조 그룹은 유지하면서 dev 그룹에 추가하는 명령은?',o:['sudo usermod -aG dev kim','sudo usermod -G dev kim','sudo useradd dev kim','sudo groupadd dev kim'],e:'-a(append)를 붙여야 기존 보조 그룹이 유지됩니다. -G만 쓰면 기존 보조 그룹이 지워질 수 있습니다.'}
 ]},
 {v:[
- {q:'umask가 022일 때 새로 만든 일반 파일의 권한은?',o:['644','755','666','600'],e:'파일 시작값 666에서 022를 빼면 644입니다. 디렉터리는 777 − 022 = 755.'},
- {q:'umask가 022일 때 새로 만든 디렉터리의 권한은?',o:['755','644','777','700'],e:'디렉터리 시작값 777에서 022를 빼면 755입니다. 일반 파일은 666 − 022 = 644입니다.'}
+ {q:'umask가 022일 때 새로 만든 일반 파일의 권한은?',o:['644','755','666','600'],e:'파일 요청값 666에서 022에 해당하는 w 권한(그룹·기타)을 끄면 644입니다. 디렉터리는 777에서 같은 권한을 끄면 755입니다.'},
+ {q:'umask가 022일 때 새로 만든 디렉터리의 권한은?',o:['755','644','777','700'],e:'디렉터리 요청값 777에서 022에 해당하는 w 권한(그룹·기타)을 끄면 755입니다. 일반 파일은 666에서 같은 권한을 끄면 644입니다.'}
 ]},
 {v:[
  {q:'sshd_config를 고친 뒤 가장 안전한 행동은?',o:['sshd -t로 문법 확인 → 재시작 → 기존 창은 유지한 채 새 창으로 접속 확인','바로 재부팅한다','기존 접속을 먼저 끊고 다시 접속해 본다','chmod 777로 바꾼다'],e:'설정이 잘못됐는데 기존 창까지 끊기면 서버에 다시 들어갈 방법이 없을 수 있습니다.'},
