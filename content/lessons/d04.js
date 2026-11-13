@@ -121,7 +121,7 @@ wheel:x:10:trainee,kim,lee</pre>
 <pre class="code">-rw-r--r--  1  trainee  trainee  120  Nov  4 10:00  memo.txt
 <span class="c">권한        링크 소유자   소유 그룹 크기  수정 시각     이름</span></pre>
 <div class="perm-anat"><span class="pa-t">-<small>종류</small></span><span class="pa-u">rw-<small>소유자 (u)</small></span><span class="pa-g">r--<small>그룹 (g)</small></span><span class="pa-o">r--<small>기타 (o)</small></span></div>
-<ul><li><b>첫 글자</b>: <code>-</code> 일반 파일, <code>d</code> 디렉터리, <code>l</code> 링크</li><li><b>그다음 3글자씩</b>: 소유자(user) / 소유 그룹(group) / 그 밖의 모든 사람(others)</li></ul>
+<ul><li><b>첫 글자</b>: <code>-</code> 일반 파일, <code>d</code> 디렉터리, <code>l</code> 심볼릭 링크(바로가기 같은 것)</li><li><b>그다음 3글자씩</b>: 소유자(user) / 소유 그룹(group) / 그 밖의 모든 사람(others)</li></ul>
 <div class="tbl-wrap"><table><thead><tr><th>글자</th><th>파일일 때</th><th>디렉터리일 때</th><th>숫자</th></tr></thead><tbody>
 <tr><td><code>r</code> read</td><td>내용 읽기</td><td>목록 보기(ls)</td><td><b>4</b></td></tr>
 <tr><td><code>w</code> write</td><td>내용 고치기</td><td>안에 파일 만들기·지우기·이름 바꾸기</td><td><b>2</b></td></tr>
@@ -156,9 +156,15 @@ wheel:x:10:trainee,kim,lee</pre>
 <tr><td><b>세션</b></td><td>터미널에서 <code>umask 077</code>을 입력하면 그 터미널에서만 적용되고, 로그아웃하면 사라짐</td></tr>
 </tbody></table></div>
 <h3>특수 권한 (이름만 알아 두기)</h3>
-<ul><li><b>sticky bit</b> (<code>t</code>): <code>/tmp</code>는 <code>drwxrwxrwt</code>입니다. 누구나 파일을 만들 수 있지만, <b>남의 파일은 지울 수 없게</b> 막습니다.</li><li><b>setuid</b> (<code>s</code>): <code>/usr/bin/passwd</code>는 <code>-rwsr-xr-x</code>입니다. 일반 사용자가 실행해도 잠깐 root 권한으로 동작해서 자기 비밀번호를 바꿀 수 있습니다.</li></ul>
+<ul><li><b>sticky bit</b> (<code>t</code>): <code>/tmp</code>는 모든 사용자와 프로그램이 임시 파일을 만드는 공용 디렉터리이고, 권한은 <code>drwxrwxrwt</code>입니다. 누구나 파일을 만들 수 있지만, <b>남의 파일은 이름을 바꾸거나 지울 수 없게</b> 막습니다. <code>t</code>는 기타 권한의 x 자리에 대신 들어갑니다.</li><li><b>setuid</b> (<code>s</code>): <code>/usr/bin/passwd</code>는 <code>-rwsr-xr-x</code>입니다. 일반 사용자가 실행해도 잠깐 root 권한으로 동작해서 자기 비밀번호를 바꿀 수 있습니다.</li></ul>
 
 <h2 id="s6">chmod와 chown</h2>
+<ul><li><b>chmod</b>(change mode): 파일의 <b>권한</b>을 바꾸는 명령입니다. 누가 이 파일을 읽고(r), 쓰고(w), 실행(x)할 수 있는지를 바꿉니다.<ul><li>chmod는 파일 소유자나 root만 할 수 있습니다.</li></ul></li><li><b>chown</b>(change owner): 파일의 <b>주인</b>을 바꾸는 명령입니다. 이 파일의 소유자와 그룹이 누구인지를 바꿉니다.<ul><li>chown으로 소유자를 바꾸는 것은 root만 할 수 있습니다. 일반 사용자가 남에게 파일을 떠넘기지 못하게 하기 위해서입니다.</li></ul></li></ul>
+<p>리눅스의 모든 파일에는 소유자, 그룹, 권한이 붙어 있고, <code>ls -l</code>로 볼 수 있습니다.</p>
+<pre class="code">-rw-r--r--  1  kim  dev  1024  Nov 13 09:00  note.txt
+<span class="c">└───┬────┘     └──┬───┘
+   권한         소유자·그룹
+chmod가 바꾸는 곳  chown이 바꾸는 곳</span></pre>
 <pre class="code">chmod 600 mykey.pem          <span class="c"># 숫자 방식: 나만 읽고 쓰기</span>
 chmod u+x deploy.sh          <span class="c"># 기호 방식: 소유자(u)에게 실행(x) 추가(+)</span>
 chmod go-w report.txt        <span class="c"># 그룹(g)과 기타(o)에게서 쓰기(w) 빼기(-)</span>
@@ -166,7 +172,6 @@ chmod -R 750 /srv/app        <span class="c"># -R: 디렉터리 안의 모든 �
 sudo chown kim note.txt      <span class="c"># 소유자를 kim으로 (root만 가능 → sudo)</span>
 sudo chown kim:dev note.txt  <span class="c"># 소유자는 kim, 그룹은 dev로</span>
 sudo chown -R nginx:nginx /usr/share/nginx/html   <span class="c"># 웹 파일을 nginx 계정 소유로</span></pre>
-<ul><li><b>chmod</b>는 파일 <b>소유자</b>나 root만 할 수 있습니다.</li><li><b>chown</b>은 <b>root만</b> 할 수 있습니다. 일반 사용자가 남에게 파일을 떠넘기지 못하게 하기 위해서입니다.</li></ul>
 <div class="box warn"><span class="lbl">하지 말 것: chmod 777</span><p>안 되면 일단 777로 다 열어 버리는 것은 가장 흔한 나쁜 습관입니다. 누구나 고치고 지울 수 있게 됩니다. <b>필요한 사람에게 필요한 권한만</b>(최소 권한 원칙) 주세요.</p></div>
 
 <h2 id="s7">SSH: 멀리 있는 서버에 들어가는 문</h2>
