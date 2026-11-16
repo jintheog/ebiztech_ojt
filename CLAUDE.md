@@ -109,7 +109,7 @@
 
 - **상세 계획 파일:** `C:\Users\user\.claude\plans\foamy-shimmying-widget.md` (폴더 구조, 레슨 형식, 단계, 검증 방법)
 - **원격 저장소:** https://github.com/jintheog/ebiztech_ojt.git (`main`)
-- **최종 갱신:** 2026-11-16, 앱 개발 2단계 d08 완료 시점
+- **최종 갱신:** 2026-11-16, 앱 개발 2단계 d09 완료 시점
 
 ## 진행 상황
 
@@ -118,7 +118,7 @@
 | 단계 | 내용 | 상태 |
 |---|---|---|
 | 1 | 앱 골격 + 기존 레슨 10개(w1-1~w1-4, d01~d06) 이전 | ✅ 완료 (커밋 `8704a00`) |
-| 2 | 3주차 일차 07~10 Network 레슨 4개 (`d07`~`d10`) + 서브넷 계산기 위젯(`subnetcalc`, d07 s7) | 🔄 d07·d08 완료, d09~d10 진행 중 |
+| 2 | 3주차 일차 07~10 Network 레슨 4개 (`d07`~`d10`) + 서브넷 계산기 위젯(`subnetcalc`, d07 s7) | 🔄 d07~d09 완료, d10 진행 중 |
 | 3 | 4주차 일차 11~14 Storage·데이터 보호·Cloud 레슨 4개 (`d11`~`d14`) | 대기 |
 | 4 | 5~6주차 zCompute 레슨 8개 (`zc1`~`zc8`, 실습 과제 1~3은 zc4·zc6·zc8의 `tasks`) | 대기 |
 | 5 | 7주차 zStorage 레슨 5개 (`zs1`~`zs5`) | 대기 |
@@ -161,6 +161,8 @@
 - 2단계 진행 방식: 레슨을 하나씩 만든다. d07은 계획(절·용어·그림·링크·퀴즈·셀프체크)을 먼저 보여 주고 확인받은 뒤 만들었다. **d08부터는 계획 단계에서 멈추지 않고 바로 만든다**(사용자 결정, d08~d14 일정 때문). d07.js를 기준으로 삼고, 애매한 것은 합리적으로 정해서 진행한 뒤 마지막 보고에 "내가 정한 것"과 "정확성이 걱정되는 곳"을 알린다. 보고는 짧게 쓴다: 절 목록(한 줄씩), 그림·위젯, 문제 은행 슬롯 수(gen 개수), 셀프체크 수, 테스트 결과, 내가 정한 것, 정확성이 걱정되는 곳. 테스트·스크린샷 뒤 커밋은 사용자가 확인한 다음에 한다.
   - `d07` 「Network 기초」: 10절, 용어 20개, 그림 3개(s3 캡슐화, s6 네트워크·호스트 부분, s8 /24를 /26 네 개로), 셀프체크 6개, 문제 은행 20슬롯(gen 4: 사용 가능한 호스트 수, 네트워크 주소, 브로드캐스트 주소·사용 가능한 범위, 같은 서브넷 판단). 계층 모델과 IP·서브넷 계산만 다루고, 게이트웨이·라우팅·공인/사설 IP는 `d08`, TCP/UDP·포트·DNS·NAT·명령어는 `d09`, 방화벽·Security Group·HTTP/TLS·로드밸런싱은 `d10`, VPC·Subnet 설계는 `zc2`로 링크만 걸었다. 레슨 제목은 기존 레슨처럼 레슨 파일의 `title`에 부제를 붙인다("Network 기초: OSI 7계층, TCP/IP, IP 주소와 서브넷"). curriculum.js의 제목은 "Network 기초" 그대로.
   - `d08` 「Network 통신 구조」: 9절, 용어 19개, 그림 3개(s2 두 서브넷과 라우터, s4 패킷 경로: MAC은 구간마다 바뀌고 목적지 IP는 그대로, s6 VLAN), 셀프체크 6개, 문제 은행 20슬롯(gen 3: 게이트웨이로 쓸 수 있는 주소, 라우팅 테이블에서 경로 고르기, 사설 IP 고르기). d07의 "다르면 게이트웨이를 거친다"에서 이어받아 ARP·스위치 → 게이트웨이 → 라우팅 테이블 → 패킷 경로 → L2/L3 비교 → VLAN → 공인·사설 IP → Public/Private Subnet 순서. NAT의 동작·DNS·포트·traceroute는 `d09`, 방화벽·Security Group은 `d10`, Route Table 설계는 `zc2`·`zc8`로 링크만 걸었다. 패킷 경로 그림은 목적지 IP만 "끝까지 그대로"로 그리고, 출발지 IP가 NAT로 바뀌는 예외는 본문 한 문단으로 알린다.
+  - `d09` 「Network 주요 서비스」: 9절, 용어 20개, 그림 3개(s2 DNS 조회 과정, s3 TCP 3-way handshake, s5 NAT), 셀프체크 6개, 문제 은행 20슬롯(gen 1: NAT를 지난 뒤의 출발지·목적지). 순서는 DNS → DNS 조회와 레코드 → TCP·UDP → 포트 → NAT → 통신 확인 명령어(표 + 명령별 출력 읽기: ip addr·ip route, ping, traceroute, nslookup·dig, ss, nc·curl) → 접속 실패의 세 가지 모양(resolve 실패·refused·timed out) → "DNS 조회 → 포트 확인 → 경로 확인" 순서 → 직접 해 보기(답은 `fold`). d07·d08에서 넘긴 NAT의 동작, ip addr·ip route 설명, traceroute를 여기서 다뤘다. 방화벽·Security Group·HTTP/HTTPS·TLS·로드밸런싱은 `d10`으로 링크만. 포트 번호를 외워서 맞히는 문제는 넣지 않았다. 연습 터미널에는 네트워크 명령을 추가하지 않았다(제안만 함).
+    - 사용자 검토 뒤 고친 서술 기준(뒤 레슨에서도 지킬 것): ① IP 주소만 바꾸는 NAT(1:1)와 포트까지 바꾸는 PAT(NAPT)를 구분한다. ② ping 실패는 연결 실패가 아니다(ICMP 차단, 클라우드 보안 정책). 판단 기준은 포트 확인이다. ③ resolve 실패·refused·timed out은 "관찰된 사실"이고 원인은 여러 가지다. 하나로 단정하지 않는다. ④ VM 안에서 공인 IP가 보이는지는 환경마다 다르다(AWS는 사설 IP만 보임, zCompute는 실습 환경에서 확인). ⑤ 명령 출력은 "학습용 예시"라고 밝히고, 지어낸 주소와 실제 조회 결과를 구분한다. ⑥ 레슨 첫머리에 "접속 한 번에 일어나는 일" 순서를 두고 각 절을 그 순서에 연결한다.
   - 서브넷 계산기: `app/widgets.js`의 `subnetCalc(ip, 프리픽스)`(계산)와 `mountSubnetCalc`(화면). /31·/32는 예외로 처리한다. 연습 터미널에는 네트워크 명령이 없어서 d07의 「직접 해 보기」는 계산기 연습 문제다.
 
 사용자 결정 사항:
@@ -304,6 +306,8 @@ tests/apptest.html    동작 테스트 페이지
 ```
 4. zCompute·zStorage 레슨은 쓰기 전에 `Zadara Cloud Platform 기능 소개_20261103.pdf`와 `신입사원 기술 부문 OJT 계획서_v4_20261103.pdf`를 먼저 읽습니다. 자료로 확인할 수 없는 콘솔 화면이나 절차는 지어내지 않고 "사내 실습 환경에서 확인" 박스로 표시합니다.
    - **zc2 메모:** d08 s8의 '인터넷 게이트웨이'는 AWS 이름. zc2를 만들 때 Zadara 기능 소개 PDF로 zCompute의 실제 이름을 확인하고 d08과 맞출 것.
+     - d09 검토 때 확인한 것(기능 소개 PDF p21): zCompute의 네트워크는 AWS VPC와 같은 구조와 이름을 쓴다. VPC, Subnet(퍼블릭/프라이빗), Internet GW, NAT GW, Route Table, Peering, Elastic IP(공인 IP 할당), Load Balancer(ALB L7 / NLB L4), Security Group. d09 s5의 클라우드 표에 이 내용을 반영했다. d08 s8의 "클라우드마다 이름이 다르다"는 문장은 아직 그대로다.
+     - 같은 PDF p24의 3-Tier 참조 아키텍처는 **Web 서버를 Public Subnet에** 둔다(Public Tier: IGW, ALB, Web, NAT GW, Bastion EIP / Private Tier: NLB, WAS / Private Tier: DB, zStorage). 레슨 5(d01)·d08의 모델(LB만 PUBLIC, Web·WAS는 PRIVATE)과 다르다. zCompute 레슨을 쓰기 전에 어느 쪽으로 맞출지 사용자에게 확인할 것.
 
 ## 검증 방법
 
