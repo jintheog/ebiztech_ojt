@@ -4,6 +4,7 @@
 
    부품: i-cloud(인터넷) i-server(서버) i-lb(로드밸런서) i-db(DB 원통) i-storage(스토리지·백업)
          i-rack(랙, 세로로 긴 비율) i-ups(UPS 배터리) i-gen(발전기) i-cool(냉각) i-lock(출입 통제) i-x(장애 ✕)
+         i-pc(PC·모니터) i-switch(스위치) i-router(라우터)
    화살표 머리: marker-end="url(#ar)" / url(#ar-acc)
    모든 부품은 선 색이 currentColor라서 <use class="acc"> / class="bad" / class="mut" 로 색을 바꿉니다. */
 const ICON_SPRITE = `<svg xmlns="http://www.w3.org/2000/svg" class="fig-sprite" aria-hidden="true" focusable="false">
@@ -22,6 +23,9 @@ const ICON_SPRITE = `<svg xmlns="http://www.w3.org/2000/svg" class="fig-sprite" 
 <symbol id="i-cool" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="24" y1="6" x2="24" y2="42"/><line x1="8.4" y1="15" x2="39.6" y2="33"/><line x1="8.4" y1="33" x2="39.6" y2="15"/><polyline points="19,9 24,13 29,9"/><polyline points="19,39 24,35 29,39"/><polyline points="9,21 14,20 12.5,15"/><polyline points="39,27 34,28 35.5,33"/><polyline points="9,27 14,28 12.5,33"/><polyline points="39,21 34,20 35.5,15"/></symbol>
 <symbol id="i-lock" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><rect x="11" y="21" width="26" height="20" rx="3"/><path d="M16 21 V15 A8 8 0 0 1 32 15 V21"/><circle cx="24" cy="30" r="2.2" fill="currentColor" stroke="none"/><line x1="24" y1="31" x2="24" y2="36"/></symbol>
 <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></symbol>
+<symbol id="i-pc" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="7" y="9" width="34" height="24" rx="2.5"/><line x1="24" y1="33" x2="24" y2="39"/><line x1="15" y1="40" x2="33" y2="40"/></symbol>
+<symbol id="i-switch" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="13" width="38" height="22" rx="3"/><polyline points="12,20 30,20"/><polyline points="26,16.5 30,20 26,23.5"/><polyline points="36,28 18,28"/><polyline points="22,24.5 18,28 22,31.5"/></symbol>
+<symbol id="i-router" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="17"/><line x1="13" y1="24" x2="35" y2="24"/><line x1="24" y1="13" x2="24" y2="35"/><polyline points="16,21 13,24 16,27"/><polyline points="32,21 35,24 32,27"/><polyline points="21,16 24,13 27,16"/><polyline points="21,32 24,35 27,32"/></symbol>
 </svg>`;
 (function () {
   const put = () => { if (!document.querySelector('.fig-sprite')) document.body.insertAdjacentHTML('afterbegin', ICON_SPRITE); };

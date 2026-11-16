@@ -378,3 +378,12 @@ td.nw,.nw{white-space:nowrap}
 .sc-leg{display:block;font-family:var(--f-body);font-size:.8rem;margin-top:5px}
 .sc-err{color:var(--bad);font-size:.9rem;margin:12px 0 0}
 .sc-out .v .muted{font-family:var(--f-body);font-size:.92rem}
+.fig .t-m{font-size:17px}
+
+/* ---------- 본문 접기 (연습 문제의 답 등): <details class="fold"><summary>답 보기</summary><p>…</p></details> ---------- */
+details.fold{margin:.6rem 0 1.1rem}
+details.fold>summary{display:inline-flex;align-items:center;gap:6px;cursor:pointer;border:1px solid var(--line);background:var(--card);border-radius:8px;padding:5px 10px;font-size:.84rem;font-weight:500;list-style:none}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary::before{content:"▸";color:var(--muted)}
+details.fold[open]>summary::before{content:"▾"}
+details.fold>p{margin:.6rem 0 0}
