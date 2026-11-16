@@ -356,3 +356,25 @@ h3 + .lesson-list{margin-top:6px}
 .fig .tc-sm text{font-size:15px}
 td.nw,.nw{white-space:nowrap}
 .tbl-wrap table.wide{min-width:540px}
+
+/* ---------- 그림의 색 칸 (레슨 d07~): 강조(파랑) · 대비(초록) · 중립 ---------- */
+.fig .bx-a{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2}
+.fig .bx-g{fill:var(--good-soft);stroke:var(--good);stroke-width:2}
+.fig .bx-n{fill:var(--card);stroke:var(--muted);stroke-width:2}
+
+/* ---------- 서브넷 계산기 (레슨 d07, app/widgets.js) ---------- */
+.sc-in{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px}
+.sc-in input{font-family:var(--f-mono)}
+.sc-in .ip{width:10.5em}
+.sc-in .pf{width:3.4em;text-align:center}
+.sc-in .ex{margin-left:12px}
+.sc-out{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:8px 20px;margin-top:14px;font-size:.92rem;align-items:baseline}
+.sc-out .k{color:var(--muted)}
+.sc-out .v{font-family:var(--f-mono);font-size:1rem;overflow-wrap:anywhere}
+.sc-out .v small{font-family:var(--f-body);font-size:.8rem;color:var(--muted);margin-left:10px}
+.sc-n,.sc-h{border-radius:4px;padding:1px 3px}
+.sc-n{background:var(--accent-soft)}
+.sc-h{background:var(--good-soft)}
+.sc-leg{display:block;font-family:var(--f-body);font-size:.8rem;margin-top:5px}
+.sc-err{color:var(--bad);font-size:.9rem;margin:12px 0 0}
+.sc-out .v .muted{font-family:var(--f-body);font-size:.92rem}

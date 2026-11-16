@@ -80,6 +80,30 @@ const FB_BAD = ['fb:0', 'fb:2', 'fb:3', 'fb:7']; // x:1 두 개 + 실패하는 g
       const badRefs = refs.filter(([, id]) => !META[id]).map(([lid, id]) => lid + '→' + id);
       ok('lesson refs point to real lesson ids', refs.length > 0 && badRefs.length === 0, refs.length + '개' + (badRefs.length ? ' 불량: ' + badRefs.join(',') : ''));
 
+      /* ---- 서브넷 계산기 (app/widgets.js의 subnetCalc, 레슨 d07) ---- */
+      const sc = (ip, p) => { const r = subnetCalc(ip, p); return r.ok ? [r.mask, r.network, r.broadcast, r.first, r.last, r.usable, r.total].join(' ') : 'ERR'; };
+      const scMiss = cases => cases.filter(([ip, p, want]) => sc(ip, p) !== want).map(([ip, p]) => ip + '/' + p + ' → ' + sc(ip, p)).join(' | ');
+      const scNormal = scMiss([
+        ['10.0.1.10', 24, '255.255.255.0 10.0.1.0 10.0.1.255 10.0.1.1 10.0.1.254 254 256'],
+        ['10.0.1.130', 26, '255.255.255.192 10.0.1.128 10.0.1.191 10.0.1.129 10.0.1.190 62 64'],
+        ['172.16.5.9', 16, '255.255.0.0 172.16.0.0 172.16.255.255 172.16.0.1 172.16.255.254 65534 65536'],
+        ['192.168.10.77', 20, '255.255.240.0 192.168.0.0 192.168.15.255 192.168.0.1 192.168.15.254 4094 4096'],
+        ['10.0.3.21', '28', '255.255.255.240 10.0.3.16 10.0.3.31 10.0.3.17 10.0.3.30 14 16'],
+        ['10.0.1.5', 30, '255.255.255.252 10.0.1.4 10.0.1.7 10.0.1.5 10.0.1.6 2 4'],
+        ['10.200.3.4', 8, '255.0.0.0 10.0.0.0 10.255.255.255 10.0.0.1 10.255.255.254 16777214 16777216'],
+        ['255.255.255.255', 1, '128.0.0.0 128.0.0.0 255.255.255.255 128.0.0.1 255.255.255.254 2147483646 2147483648'],
+        ['203.0.113.10', 0, '0.0.0.0 0.0.0.0 255.255.255.255 0.0.0.1 255.255.255.254 4294967294 4294967296']
+      ]);
+      ok('subnetCalc: mask, network, broadcast, range, count (/0 ~ /30)', scNormal === '', scNormal);
+      const scEdge = scMiss([
+        ['10.0.1.5', 31, '255.255.255.254   10.0.1.4 10.0.1.5 2 2'],
+        ['10.0.1.4', 31, '255.255.255.254   10.0.1.4 10.0.1.5 2 2'],
+        ['10.0.1.5', 32, '255.255.255.255   10.0.1.5 10.0.1.5 1 1'],
+        ['255.255.255.255', 32, '255.255.255.255   255.255.255.255 255.255.255.255 1 1']
+      ]);
+      ok('subnetCalc: /31 and /32 are exceptions (no network/broadcast address, note shown)', scEdge === '' && !!subnetCalc('10.0.1.5', 31).note && !!subnetCalc('10.0.1.5', 32).note && subnetCalc('10.0.1.5', 30).note === '', scEdge);
+      ok('subnetCalc rejects bad input', ['10.0.1.256', '10.0.1', '10.0.1.1.1', 'abc', '', '10.0.1.-1', '10.0.1.1/24'].every(x => !subnetCalc(x, 24).ok) && [33, -1, 'x', '', 2.5, '24a'].every(p => !subnetCalc('10.0.1.1', p).ok));
+
       /* ---- 문제 은행: 가짜 데이터로 규칙 검사 ---- */
       const fb = FAKE[1];
       ok('qMake rejects throwing gen / dup options', qMake(fb.quiz[2]) === null && qMake(fb.quiz[3]) === null);
@@ -138,6 +162,18 @@ const FB_BAD = ['fb:0', 'fb:2', 'fb:3', 'fb:7']; // x:1 두 개 + 실패하는 g
       let changed = false;
       for (let t = 0; t < 5 && !changed; t++) { for (let i = 0; i < LQ.qs.length; i++) answerLesson(i); document.querySelector('#qAgain').click(); changed = slotSet(LQ.qs) !== first; }
       ok('retry changes composition', changed);
+
+      // 서브넷 계산기 위젯: 값 입력 → 결과 갱신, 예시 버튼, "IP/숫자"를 한 칸에 넣기, 잘못된 입력
+      await go('d07');
+      const scEl = document.querySelector('#view .sc'), scIp = scEl.querySelector('.ip'), scPf = scEl.querySelector('.pf');
+      const scType = (el, v) => { el.value = v; el.dispatchEvent(new Event('input')); }, scText = () => scEl.querySelector('.sc-res').textContent;
+      scType(scIp, '192.168.10.77'); scType(scPf, '27'); const scT1 = scText();
+      scEl.querySelector('[data-ex="172.16.5.9/16"]').click(); const scT2 = scText();
+      scType(scIp, '10.0.1.5/31'); const scT3 = scText(), scMoved = scIp.value === '10.0.1.5' && scPf.value === '31';
+      scType(scIp, '10.0.1.999'); const scErr = !!scEl.querySelector('.sc-err');
+      ok('subnet calculator widget: typing, example button, "ip/prefix" in one box, bad input',
+        scT1.includes('192.168.10.64') && scT1.includes('192.168.10.95') && scT1.includes('30개') && scT2.includes('172.16.255.255') && scT2.includes('65,534개') && scMoved && scT3.includes('따로 없음') && scErr,
+        [scT1, scT2, scT3, scMoved, scErr].join(' / '));
 
       // essays: type + grade
       await go('d01');
