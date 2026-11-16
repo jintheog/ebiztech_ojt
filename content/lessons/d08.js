@@ -209,7 +209,8 @@ default via 10.0.1.1 dev eth0
 <p><mark>Subnet이 Public인지 Private인지는 이름이 아니라 라우팅으로 정해집니다.</mark> 인터넷 게이트웨이로 가는 경로가 있으면 Public이고, 없으면 Private입니다.</p>
 <div class="flow"><div class="n"><b>사용자</b><small>인터넷</small></div><span class="ar">→</span><div class="n k"><b>로드밸런서</b><small>Public Subnet · 공인 IP</small></div><span class="ar">→</span><div class="n"><b>Web 서버 · WAS</b><small>Private Subnet · 사설 IP</small></div><span class="ar">→</span><div class="n"><b>DB</b><small>Private Subnet · 사설 IP</small></div></div>
 <p>로드밸런서와 Web 서버는 Subnet이 다르지만 같은 VPC 안에 있습니다. 그래서 VPC 내부 경로를 따라 사설 IP로 통신합니다. 인터넷의 사용자는 로드밸런서의 공인 IP까지만 볼 수 있습니다.</p>
-<p class="small muted">인터넷 게이트웨이 같은 이름은 AWS(Amazon Web Services)에서 널리 쓰는 말이고, 클라우드마다 이름과 설정 방법이 다릅니다. 직접 구성하는 방법은 <a data-lesson="zc2"></a>와 <a data-lesson="zc8"></a>에서 배웁니다.</p>
+<p>위의 배치는 이 과정의 기본 원칙(<a data-lesson="d01"></a>: 로드밸런서만 Public, Web 서버·WAS는 Private)입니다. 회사의 참조 아키텍처는 이와 달리 Web 서버를 Public Tier에 두고, Security Group(VM에 붙이는 방화벽 규칙, <a data-lesson="d10"></a>)으로 접근을 제한합니다. 둘 다 실제로 쓰이는 구성이고, 차이는 Web 서버가 인터넷 쪽 구역에 있느냐입니다. zCompute에서의 구성은 <a data-lesson="zc2"></a>와 <a data-lesson="zc8"></a>에서 회사 아키텍처대로 배웁니다.</p>
+<p class="small muted">AWS(Amazon Web Services)와 Zadara zCompute는 인터넷 게이트웨이(Internet GW), NAT 게이트웨이(NAT GW), Elastic IP(공인 IP)라는 이름을 씁니다. 다른 클라우드는 같은 기능을 다른 이름으로 부를 수 있습니다.</p>
 
 <h2 id="s9">직접 해 보기</h2>
 <p>손노트에 풀어 보세요. 먼저 풀고 나서, 문제 아래의 「답 보기」를 눌러 확인합니다.</p>
