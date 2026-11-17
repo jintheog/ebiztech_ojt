@@ -190,7 +190,7 @@ default via 10.0.1.1 dev eth0
 <p>IPv4 주소는 약 43억 개뿐이라 모든 장비에 공인 IP를 줄 수 없습니다. 그래서 내부에서는 사설 IP를 쓰고, 인터넷과 통신할 때만 공인 IP를 함께 씁니다.</p>
 <ul><li><b>사설 IP끼리</b>: 같은 내부 네트워크 안에서는 그대로 통신합니다.</li><li><b>사설 IP에서 인터넷으로</b>: 인터넷과 맞닿은 장비가 출발지 주소를 공인 IP로 바꿔 줍니다(NAT, <a data-lesson="d09"></a>).</li><li><b>인터넷에서 사설 IP로</b>: 직접 들어올 수 없습니다. 공인 IP를 가진 장비(로드밸런서 등)를 거치거나, 그 서버에 공인 IP를 연결해 줘야 합니다.</li></ul>
 <p>인터넷에서 직접 들어올 수 없다는 점은 보안에도 도움이 됩니다. <a data-lesson="d01"></a>의 망 분리에서 Web 서버·WAS<span class="small muted">(Web Application Server)</span>·DB<span class="small muted">(Database)</span>를 PRIVATE 영역에 둔 것이 이 성질을 이용한 것입니다.</p>
-<p class="small muted">클라우드의 VM은 Subnet의 사설 IP를 기본으로 받고, 인터넷에서 접속해야 하는 VM에만 공인 IP를 따로 연결합니다. 이 공인 IP를 부르는 이름은 클라우드마다 다릅니다.</p>
+<p class="small muted">클라우드의 VM은 Subnet의 사설 IP를 기본으로 받고, 인터넷에서 접속해야 하는 VM에만 공인 IP를 따로 연결합니다. 이 공인 IP를 AWS(Amazon Web Services)와 Zadara zCompute에서는 Elastic IP라고 부르고, 다른 클라우드는 이름이 다를 수 있습니다.</p>
 <h3>알아 둘 특수 주소</h3>
 <div class="tbl-wrap"><table><thead><tr><th>주소</th><th>뜻</th></tr></thead><tbody>
 <tr><td class="nw"><code>127.0.0.1</code></td><td>자기 자신을 가리키는 주소(루프백). 이름은 localhost</td></tr>
@@ -210,7 +210,7 @@ default via 10.0.1.1 dev eth0
 <div class="flow"><div class="n"><b>사용자</b><small>인터넷</small></div><span class="ar">→</span><div class="n k"><b>로드밸런서</b><small>Public Subnet · 공인 IP</small></div><span class="ar">→</span><div class="n"><b>Web 서버 · WAS</b><small>Private Subnet · 사설 IP</small></div><span class="ar">→</span><div class="n"><b>DB</b><small>Private Subnet · 사설 IP</small></div></div>
 <p>로드밸런서와 Web 서버는 Subnet이 다르지만 같은 VPC 안에 있습니다. 그래서 VPC 내부 경로를 따라 사설 IP로 통신합니다. 인터넷의 사용자는 로드밸런서의 공인 IP까지만 볼 수 있습니다.</p>
 <p>위의 배치는 이 과정의 기본 원칙(<a data-lesson="d01"></a>: 로드밸런서만 Public, Web 서버·WAS는 Private)입니다. 회사의 참조 아키텍처는 이와 달리 Web 서버를 Public Tier에 두고, Security Group(VM에 붙이는 방화벽 규칙, <a data-lesson="d10"></a>)으로 접근을 제한합니다. 둘 다 실제로 쓰이는 구성이고, 차이는 Web 서버가 인터넷 쪽 구역에 있느냐입니다. zCompute에서의 구성은 <a data-lesson="zc2"></a>와 <a data-lesson="zc8"></a>에서 회사 아키텍처대로 배웁니다.</p>
-<p class="small muted">AWS(Amazon Web Services)와 Zadara zCompute는 인터넷 게이트웨이(Internet GW), NAT 게이트웨이(NAT GW), Elastic IP(공인 IP)라는 이름을 씁니다. 다른 클라우드는 같은 기능을 다른 이름으로 부를 수 있습니다.</p>
+<p class="small muted">AWS와 Zadara zCompute는 인터넷 게이트웨이(Internet GW), NAT 게이트웨이(NAT GW), Elastic IP(공인 IP)라는 이름을 씁니다. 다른 클라우드는 같은 기능을 다른 이름으로 부를 수 있습니다.</p>
 
 <h2 id="s9">직접 해 보기</h2>
 <p>손노트에 풀어 보세요. 먼저 풀고 나서, 문제 아래의 「답 보기」를 눌러 확인합니다.</p>
@@ -329,7 +329,7 @@ quiz:[
 ]},
 {v:[
  {q:'클라우드에서 Public Subnet과 Private Subnet을 가르는 기준은?',o:['인터넷 게이트웨이로 가는 경로(0.0.0.0/0)가 라우팅 테이블에 있는지','Subnet의 이름에 public이라는 글자가 있는지','Subnet의 크기가 /24보다 큰지','사설 IP 대역을 쓰는지'],e:'Public인지 Private인지는 이름이 아니라 라우팅으로 정해집니다. 인터넷 게이트웨이로 가는 경로가 있으면 Public Subnet입니다.'},
- {q:'인터넷에서 요청을 받는 웹 서비스에서, Public Subnet과 Private Subnet에 두는 것을 맞게 짝지은 것은?',o:['로드밸런서는 Public, Web 서버·WAS·DB는 Private','DB는 Public, 로드밸런서는 Private','모든 서버를 Public에 둔다','Web 서버는 Public, 로드밸런서는 Private'],e:'인터넷에 직접 닿는 것은 최소로 둡니다. 로드밸런서만 Public Subnet에 두고 Web 서버·WAS·DB는 Private Subnet에 둡니다([[d01]]의 망 분리).'}
+ {q:'인터넷에서 요청을 받는 웹 서비스를 구성할 때, 이 과정의 기본 원칙에서 Public Subnet과 Private Subnet에 두는 것을 맞게 짝지은 것은?',o:['로드밸런서는 Public, Web 서버·WAS·DB는 Private','DB는 Public, 로드밸런서는 Private','모든 서버를 Public에 둔다','Web 서버는 Public, 로드밸런서는 Private'],e:'이 과정의 기본 원칙은 인터넷에 직접 닿는 것을 최소로 두는 것입니다. 로드밸런서만 Public Subnet에 두고 Web 서버·WAS·DB는 Private Subnet에 둡니다([[d01]]의 망 분리). Web 서버를 Public 쪽에 두고 Security Group으로 접근을 제한하는 구성도 실제로 쓰입니다.'}
 ]}
 ]
 });
