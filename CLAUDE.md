@@ -119,7 +119,7 @@
 |---|---|---|
 | 1 | 앱 골격 + 기존 레슨 10개(w1-1~w1-4, d01~d06) 이전 | ✅ 완료 (커밋 `8704a00`) |
 | 2 | 3주차 일차 07~10 Network 레슨 4개 (`d07`~`d10`) + 서브넷 계산기 위젯(`subnetcalc`, d07 s7) | ✅ 완료 (d07~d10) |
-| 3 | 4주차 일차 11~14 Storage·데이터 보호·Cloud 레슨 4개 (`d11`~`d14`) | 🔄 진행 중 |
+| 3 | 4주차 일차 11~14 Storage·데이터 보호·Cloud 레슨 4개 (`d11`~`d14`) | 🔄 진행 중 (d11 작성 완료, 사용자 확인·커밋 대기) |
 | 4 | 5~6주차 zCompute 레슨 8개 (`zc1`~`zc8`, 실습 과제 1~3은 zc4·zc6·zc8의 `tasks`) | 대기 |
 | 5 | 7주차 zStorage 레슨 5개 (`zs1`~`zs5`) | 대기 |
 | 6 | 마무리: 이 문서에 최종 구조 반영, 전체 점검 | 대기 |
@@ -177,7 +177,9 @@
   - `d09` 「Network 주요 서비스」: 9절, 용어 20개, 그림 3개(s2 DNS 조회 과정, s3 TCP 3-way handshake, s5 NAT), 셀프체크 6개, 문제 은행 20슬롯(gen 1: NAT를 지난 뒤의 출발지·목적지). 순서는 DNS → DNS 조회와 레코드 → TCP·UDP → 포트 → NAT → 통신 확인 명령어(표 + 명령별 출력 읽기: ip addr·ip route, ping, traceroute, nslookup·dig, ss, nc·curl) → 접속 실패의 세 가지 모양(resolve 실패·refused·timed out) → "DNS 조회 → 포트 확인 → 경로 확인" 순서 → 직접 해 보기(답은 `fold`). d07·d08에서 넘긴 NAT의 동작, ip addr·ip route 설명, traceroute를 여기서 다뤘다. 방화벽·Security Group·HTTP/HTTPS·TLS·로드밸런싱은 `d10`으로 링크만. 포트 번호를 외워서 맞히는 문제는 넣지 않았다. 연습 터미널에는 네트워크 명령을 추가하지 않았다(제안만 함).
     - 사용자 검토 뒤 고친 서술 기준(뒤 레슨에서도 지킬 것): ① IP 주소만 바꾸는 NAT(1:1)와 포트까지 바꾸는 PAT(NAPT)를 구분한다. ② ping 실패는 연결 실패가 아니다(ICMP 차단, 클라우드 보안 정책). 판단 기준은 포트 확인이다. ③ resolve 실패·refused·timed out은 "관찰된 사실"이고 원인은 여러 가지다. 하나로 단정하지 않는다. ④ VM 안에서 공인 IP가 보이는지는 환경마다 다르다(AWS는 사설 IP만 보임, zCompute는 실습 환경에서 확인). ⑤ 명령 출력은 "학습용 예시"라고 밝히고, 지어낸 주소와 실제 조회 결과를 구분한다. ⑥ 레슨 첫머리에 "접속 한 번에 일어나는 일" 순서를 두고 각 절을 그 순서에 연결한다.
   - `d10` 「Network 보안·서비스」: 9절, 용어 20개, 그림 3개(s2 상태 저장 방화벽, s5 TLS 연결 순서, s8 웹 요청 경로), 셀프체크 6개, 문제 은행 20슬롯(gen 1: Security Group 규칙 두 줄로 허용·차단 판정). 순서는 방화벽 → 상태 저장 → Security Group → HTTP → HTTPS와 TLS → SSH(출발지 제한, Bastion) → 로드밸런싱(Listener·Target Group·Health Check, L4 NLB / L7 ALB) → 종합(웹 요청 한 번의 경로와 "어디서 막히면 어떻게 보이나") → 직접 해 보기(답은 `fold`). 레슨 5의 방화벽·로드밸런서·망 분리, d04의 SSH, d09의 포트·refused/timed out은 링크로 이어받았다. Security Group은 개념과 규칙 읽는 법까지만 쓰고 설정은 `zc2`, 로드밸런서 실습은 `zc6`, 내부 서버 접근 통제는 `zc8`로 링크. s8의 그림은 기본 원칙(LB만 Public) 배치이고, 회사 참조 아키텍처와의 차이는 그림 아래 한 문단으로 알린다. Security Group의 세부 동작(규칙에 순서 없음, 출발지에 다른 SG 지정, 새 SG의 기본 규칙)은 "AWS 방식 기준"으로 쓰고 zCompute는 회사 자료(p23)에 있는 것만 적었다.
-  - 서브넷 계산기: `app/widgets.js`의 `subnetCalc(ip, 프리픽스)`(계산)와 `mountSubnetCalc`(화면). /31·/32는 예외로 처리한다. 연습 터미널에는 네트워크 명령이 없어서 d07의 「직접 해 보기」는 계산기 연습 문제다.
+  - 서브넷 계산기: `app/widgets.js`의 `subnetCalc(ip, 프리픽스)`(계산)와 `mountSubnetCalc`(화면).
+- 3단계 레슨 기록:
+  - `d11` 「Storage 기초 Ⅰ」: 9절, 용어 20개, 그림 3개(s3 RAID 0·1·5 세 칸 비교, s4 SAN, s6 Block Volume 사용 과정), 셀프체크 6개, 문제 은행 20슬롯(gen 1: RAID 레벨별 사용 가능한 용량). 순서는 Block Storage → Volume·LUN·풀 → RAID(0·1·5·6·10 비교, 재구성·핫 스페어, "RAID는 백업이 아니다") → DAS·SAN(FC·iSCSI) → iSCSI(Initiator·Target·IQN, iscsiadm 예시) → 종합 사용 과정(d06 절차와 이어짐) → 클라우드의 Block Volume → 주의할 점 → 직접 해 보기(답은 `fold`). 회사 PDF에서 확인한 것만 씀: zStorage는 VPSA 단위, Block·File·Object 제공, Block은 FC·iSCSI·iSER, 매체는 HDD·SSD·NVMe·Hybrid(기능 소개 p19·p20). 화면·절차는 "사내 실습 환경에서 확인"으로 두고 zc5·zs1·zs2로 링크. /31·/32는 예외로 처리한다. 연습 터미널에는 네트워크 명령이 없어서 d07의 「직접 해 보기」는 계산기 연습 문제다.
 
 사용자 결정 사항:
 - 블록 하나를 끝낼 때마다 사용자에게 확인을 받고 다음 단계로 넘어갑니다.
