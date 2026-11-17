@@ -119,7 +119,7 @@
 |---|---|---|
 | 1 | 앱 골격 + 기존 레슨 10개(w1-1~w1-4, d01~d06) 이전 | ✅ 완료 (커밋 `8704a00`) |
 | 2 | 3주차 일차 07~10 Network 레슨 4개 (`d07`~`d10`) + 서브넷 계산기 위젯(`subnetcalc`, d07 s7) | ✅ 완료 (d07~d10) |
-| 3 | 4주차 일차 11~14 Storage·데이터 보호·Cloud 레슨 4개 (`d11`~`d14`) | 🔄 진행 중 (d11 작성 완료, 사용자 확인·커밋 대기) |
+| 3 | 4주차 일차 11~14 Storage·데이터 보호·Cloud 레슨 4개 (`d11`~`d14`) | 🔄 진행 중 (d11·d12 완료, d13 진행 중) |
 | 4 | 5~6주차 zCompute 레슨 8개 (`zc1`~`zc8`, 실습 과제 1~3은 zc4·zc6·zc8의 `tasks`) | 대기 |
 | 5 | 7주차 zStorage 레슨 5개 (`zs1`~`zs5`) | 대기 |
 | 6 | 마무리: 이 문서에 최종 구조 반영, 전체 점검 | 대기 |
@@ -179,7 +179,9 @@
   - `d10` 「Network 보안·서비스」: 9절, 용어 20개, 그림 3개(s2 상태 저장 방화벽, s5 TLS 연결 순서, s8 웹 요청 경로), 셀프체크 6개, 문제 은행 20슬롯(gen 1: Security Group 규칙 두 줄로 허용·차단 판정). 순서는 방화벽 → 상태 저장 → Security Group → HTTP → HTTPS와 TLS → SSH(출발지 제한, Bastion) → 로드밸런싱(Listener·Target Group·Health Check, L4 NLB / L7 ALB) → 종합(웹 요청 한 번의 경로와 "어디서 막히면 어떻게 보이나") → 직접 해 보기(답은 `fold`). 레슨 5의 방화벽·로드밸런서·망 분리, d04의 SSH, d09의 포트·refused/timed out은 링크로 이어받았다. Security Group은 개념과 규칙 읽는 법까지만 쓰고 설정은 `zc2`, 로드밸런서 실습은 `zc6`, 내부 서버 접근 통제는 `zc8`로 링크. s8의 그림은 기본 원칙(LB만 Public) 배치이고, 회사 참조 아키텍처와의 차이는 그림 아래 한 문단으로 알린다. Security Group의 세부 동작(규칙에 순서 없음, 출발지에 다른 SG 지정, 새 SG의 기본 규칙)은 "AWS 방식 기준"으로 쓰고 zCompute는 회사 자료(p23)에 있는 것만 적었다.
   - 서브넷 계산기: `app/widgets.js`의 `subnetCalc(ip, 프리픽스)`(계산)와 `mountSubnetCalc`(화면).
 - 3단계 레슨 기록:
-  - `d11` 「Storage 기초 Ⅰ」: 9절, 용어 20개, 그림 3개(s3 RAID 0·1·5 세 칸 비교, s4 SAN, s6 Block Volume 사용 과정), 셀프체크 6개, 문제 은행 20슬롯(gen 1: RAID 레벨별 사용 가능한 용량). 순서는 Block Storage → Volume·LUN·풀 → RAID(0·1·5·6·10 비교, 재구성·핫 스페어, "RAID는 백업이 아니다") → DAS·SAN(FC·iSCSI) → iSCSI(Initiator·Target·IQN, iscsiadm 예시) → 종합 사용 과정(d06 절차와 이어짐) → 클라우드의 Block Volume → 주의할 점 → 직접 해 보기(답은 `fold`). 회사 PDF에서 확인한 것만 씀: zStorage는 VPSA 단위, Block·File·Object 제공, Block은 FC·iSCSI·iSER, 매체는 HDD·SSD·NVMe·Hybrid(기능 소개 p19·p20). 화면·절차는 "사내 실습 환경에서 확인"으로 두고 zc5·zs1·zs2로 링크. /31·/32는 예외로 처리한다. 연습 터미널에는 네트워크 명령이 없어서 d07의 「직접 해 보기」는 계산기 연습 문제다.
+  - `d11` 「Storage 기초 Ⅰ」: 9절, 용어 20개, 그림 3개(s3 RAID 0·1·5 세 칸 비교, s4 SAN, s6 Block Volume 사용 과정), 셀프체크 6개, 문제 은행 20슬롯(gen 1: RAID 레벨별 사용 가능한 용량). 순서는 Block Storage → Volume·LUN·풀 → RAID(0·1·5·6·10 비교, 재구성·핫 스페어, "RAID는 백업이 아니다") → DAS·SAN(FC·iSCSI) → iSCSI(Initiator·Target·IQN, iscsiadm 예시) → 종합 사용 과정(d06 절차와 이어짐) → 클라우드의 Block Volume → 주의할 점 → 직접 해 보기(답은 `fold`). 회사 PDF에서 확인한 것만 씀: zStorage는 VPSA 단위, Block·File·Object 제공, Block은 FC·iSCSI·iSER, 매체는 HDD·SSD·NVMe·Hybrid(기능 소개 p19·p20). 화면·절차는 "사내 실습 환경에서 확인"으로 두고 zc5·zs1·zs2로 링크.
+  - `d12` 「Storage 기초 Ⅱ」: 8절, 용어 18개, 그림 1개(s1 같은 파일 report.pdf를 Block·File·Object로 저장하는 세 칸 비교), 셀프체크 6개, 문제 은행 19슬롯(gen 없음: 계산이 없는 레슨). 중심은 Block·File·Object 비교(s1 그림, s6 표: 보이는 모양·접근 단위·찾는 방법·접근 방법·파일시스템·동시 쓰기·장점·용도·예, 고르는 기준, 쇼핑몰 예). NFS·SMB는 OS·포트·붙이는 방법·권한 방식으로 비교. Object는 버킷·객체·키·메타데이터, 키의 슬래시는 디렉터리가 아님(접두사), 통째로 PUT/GET, S3 API가 사실상 표준이 된 이유. HTTP 요청과 aws CLI는 "학습용 예시"로 표시. 회사 자료(기능 소개 p3·p19·p25, OJT 계획서): File은 NFS·CIFS·Active Directory, Object는 S3·Swift, 이름은 NGOS, EBS/EFS/S3 ↔ Block/File/Object. 공유·버킷 만드는 절차는 "사내 실습 환경에서 확인"으로 두고 zs3·zs4로 링크.
+  - 주의: 레슨 본문은 JS 템플릿 문자열이라 역슬래시를 두 번 써야 한다(`\\\\NAS\\share` → 화면에 `\\NAS\share`). /31·/32는 예외로 처리한다. 연습 터미널에는 네트워크 명령이 없어서 d07의 「직접 해 보기」는 계산기 연습 문제다.
 
 사용자 결정 사항:
 - 블록 하나를 끝낼 때마다 사용자에게 확인을 받고 다음 단계로 넘어갑니다.
