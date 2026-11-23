@@ -126,7 +126,7 @@ body:`
 <tr><td>prod</td><td>Member</td><td>읽기 전용</td></tr>
 </tbody></table></div>
 <p>사용자가 자원을 다루려면 <b>최소 하나의 Project에 역할과 Zadara 정책이 함께 배정</b>되어 있어야 한다. Account에 사용자를 만들기만 해서는 아무 자원도 쓸 수 없다.</p>
-<div class="box warn"><span class="lbl">주의: 사용자를 지워도 자원은 남는다</span>사용자를 삭제해도 그 사용자가 만든 VM이나 Volume은 지워지지 않고, Project에 접근할 수 있는 다른 사람이 계속 쓸 수 있다. 자원의 소유 단위는 사람이 아니라 Project다.</div>
+<div class="box warn"><span class="lbl">주의: 사용자를 지워도 자원은 남는다</span><p>사용자를 삭제해도 그 사용자가 만든 VM이나 Volume은 지워지지 않고, Project에 접근할 수 있는 다른 사람이 계속 쓸 수 있다. 자원의 소유 단위는 사람이 아니라 Project다.</p></div>
 
 <h2 id="s6">정책: Zadara 정책과 AWS API 정책</h2>
 <p>zCompute는 API를 두 벌 제공하고, 권한도 그에 맞춰 두 종류가 있다.</p>
@@ -169,7 +169,7 @@ body:`
 
 <h2 id="s9">정리: 권한을 설계하는 순서</h2>
 <ol><li><b>조직을 Account로 나눈다.</b></li><li><b>과제와 환경을 Project로 나눈다.</b> 개발과 운영은 분리한다.</li><li><b>사용자를 만들고 그룹으로 묶는다.</b></li><li><b>Project마다 역할과 정책을 준다.</b> 필요한 최소 권한만 준다.</li><li><b>인증을 강화한다.</b> MFA를 켜고, API 키는 안전하게 다룬다.</li><li><b>Limit으로 자원 사용을 제한한다.</b></li></ol>
-<div class="box mem"><span class="lbl">외울 것: 한 줄 요약</span><b>Account</b>는 사람과 권한의 경계, <b>Project</b>는 자원의 경계, <b>역할과 정책</b>은 그 안에서 할 수 있는 일이다.</div>
+<div class="box mem"><span class="lbl">외울 것: 한 줄 요약</span><p><b>Account</b>는 사람과 권한의 경계, <b>Project</b>는 자원의 경계, <b>역할과 정책</b>은 그 안에서 할 수 있는 일이다.</p></div>
 <h3>직접 해 보기</h3>
 <p>한 회사가 쇼핑몰 서비스를 zCompute에 올린다. 개발자 3명은 개발 환경을 마음대로 쓰고, 운영 환경은 보기만 해야 한다. 운영 담당자 1명은 운영 환경을 변경할 수 있어야 한다. Account와 Project를 어떻게 나누고 권한을 어떻게 줄까?</p>
 <details class="fold"><summary>답 보기</summary><p>Account 하나에 <code>dev</code>와 <code>prod</code> Project를 만든다. 개발자 3명을 그룹으로 묶어 <code>dev</code>에는 Member 역할과 전체 사용 정책을, <code>prod</code>에는 Member 역할과 읽기 전용 정책을 준다. 운영 담당자에게는 <code>prod</code>에 Member 역할과 전체 사용 정책을 준다. 사용자와 Project를 관리할 Tenant Admin은 따로 정하고, 모두 MFA를 켠다.</p></details>

@@ -62,7 +62,7 @@ body:`
 <tr><td><code>10.0.1.255</code></td><td>마지막 주소</td></tr>
 <tr><td><code>10.0.1.4</code> ~ <code>10.0.1.254</code></td><td><b>VM에 줄 수 있는 주소 (251개)</b></td></tr>
 </tbody></table></div>
-<div class="box mem"><span class="lbl">외울 것: Subnet에서 VM에 줄 수 있는 주소 수</span><b>2<sup>(32 − 프리픽스)</sup> − 5</b>. 예: /24는 256 − 5 = 251개, /28은 16 − 5 = 11개다.</div>
+<div class="box mem"><span class="lbl">외울 것: Subnet에서 VM에 줄 수 있는 주소 수</span><p><b>2<sup>(32 − 프리픽스)</sup> − 5</b>. 예: /24는 256 − 5 = 251개, /28은 16 − 5 = 11개다.</p></div>
 <p class="small muted">.2와 .3이 DHCP 서버라는 것은 가이드의 기본 VPC 예시 기준이다. Direct Subnet은 규칙이 다르다.</p>
 <p>아래 계산기로 대역을 확인할 수 있다. <b>계산기의 "사용 가능한 범위"와 "사용 가능한 개수"는 2개만 뺀 일반 네트워크 기준</b>이므로, zCompute의 VPC Subnet에서는 개수에서 3개를 더 빼고, 범위는 .4부터 본다.</p>
 <div data-widget="subnetcalc"></div>
@@ -114,8 +114,8 @@ body:`
 <tr><td class="nw">출발지·목적지</td><td>Any, Group(다른 Security Group), Subnet(CIDR·IP)</td></tr>
 </tbody></table></div>
 <p><mark>규칙에 IP 대신 다른 Security Group을 적으면, VM이 늘거나 IP가 바뀌어도 규칙을 고치지 않아도 된다.</mark> 계층 구조에서는 "앞 계층의 Security Group에서 오는 접속만 허용"으로 쓴다.</p>
-<div class="box warn"><span class="lbl">주의: 인터페이스는 VM당 하나를 권장한다</span>공식 가이드는 VM마다 Network Interface 하나를 권장한다. 인터페이스가 여러 개이면 DHCP가 기본 경로를 여러 개 주어서, Elastic IP로 들어온 접속의 응답이 다른 길로 나가 통신이 실패할 수 있다.</div>
-<div class="box warn"><span class="lbl">사내 실습 환경에서 확인</span>기본 Security Group과 새로 만든 Security Group에 처음 들어 있는 규칙</div>
+<div class="box warn"><span class="lbl">주의: 인터페이스는 VM당 하나를 권장한다</span><p>공식 가이드는 VM마다 Network Interface 하나를 권장한다. 인터페이스가 여러 개이면 DHCP가 기본 경로를 여러 개 주어서, Elastic IP로 들어온 접속의 응답이 다른 길로 나가 통신이 실패할 수 있다.</p></div>
+<div class="box warn"><span class="lbl">사내 실습 환경에서 확인</span><p>기본 Security Group과 새로 만든 Security Group에 처음 들어 있는 규칙</p></div>
 
 <h2 id="s8">DHCP Option Set과 DNS</h2>
 <p>VM은 시작할 때 DHCP<span class="small muted">(Dynamic Host Configuration Protocol)</span>로 IP와 네트워크 설정을 받는다. 이때 받는 설정을 모아 둔 것이 <b>DHCP Option Set</b>이다.</p>
@@ -133,7 +133,7 @@ body:`
 </tbody></table></div>
 <p>VPC DNS를 켜면 VM의 DNS 질의는 VPC DNS 서비스로 간다. 이 서비스는 VPC 안의 이름은 직접 답하고, 외부 이름은 DHCP Option Set의 DNS 서버로 넘긴다. VM은 IP가 a.b.c.d이면 <code>host-a-b-c-d</code> 형식의 내부 이름을 받는다.</p>
 <p>VM의 IP는 바뀔 수 있으므로, 서버끼리는 IP보다 <b>이름으로</b> 접속하게 구성한다.</p>
-<div class="box warn"><span class="lbl">사내 실습 환경에서 확인</span>기본 DHCP Option Set에 들어 있는 도메인 이름</div>
+<div class="box warn"><span class="lbl">사내 실습 환경에서 확인</span><p>기본 DHCP Option Set에 들어 있는 도메인 이름</p></div>
 
 <h2 id="s9">Direct Subnet과 DVS: 개념만</h2>
 <p>VPC 말고도 VM을 물리 네트워크에 직접 연결하는 방법이 두 가지 있다. 둘 다 관리자나 Zadara 운영 조직의 설정이 필요해서, 이 과정에서는 개념만 구분한다.</p>
@@ -199,8 +199,8 @@ body:`
 <tr><td class="nw"><b>db-sg</b></td><td>3306</td><td>was-sg</td><td>WAS에서 오는 접속만</td></tr>
 </tbody></table></div>
 <p class="small muted">Web·WAS·DB의 SSH(22번)는 bastion-sg에서 오는 접속만 허용한다. 전체 구축은 <a data-lesson="zc8"></a>에서 한다.</p>
-<div class="box warn"><span class="lbl">사내 실습 환경에서 확인</span>NLB 뒤의 서버가 보는 출발지. 이 값에 따라 was-sg의 출발지를 정하며, <a data-lesson="zc6"></a>의 로드밸런서 실습에서 확인한다.</div>
-<div class="box warn"><span class="lbl">Web 서버가 Public Subnet에 있을 때 지킬 것</span>Web 서버에 Elastic IP를 붙이지 않고, web-sg의 80번 출발지를 <code>0.0.0.0/0</code>으로 열지 않는다. 사용자의 접속은 ALB로만 들어오게 한다.</div>
+<div class="box warn"><span class="lbl">사내 실습 환경에서 확인</span><p>NLB 뒤의 서버가 보는 출발지. 이 값에 따라 was-sg의 출발지를 정하며, <a data-lesson="zc6"></a>의 로드밸런서 실습에서 확인한다.</p></div>
+<div class="box warn"><span class="lbl">Web 서버가 Public Subnet에 있을 때 지킬 것</span><p>Web 서버에 Elastic IP를 붙이지 않고, web-sg의 80번 출발지를 <code>0.0.0.0/0</code>으로 열지 않는다. 사용자의 접속은 ALB로만 들어오게 한다.</p></div>
 <h3>직접 해 보기</h3>
 <p>VPC <code>10.20.0.0/16</code>에 Public Subnet 하나와 Private Subnet 하나를 /24로 만든다. Private Subnet의 VM은 패키지를 내려받아야 하지만, 밖에서 접속되면 안 된다. Subnet, Route Table, 필요한 Gateway를 적어 보고, Subnet 하나에서 VM에 줄 수 있는 주소 수를 계산해 보자.</p>
 <details class="fold"><summary>답 보기</summary><p>예: Public <code>10.20.1.0/24</code>, Private <code>10.20.2.0/24</code>. Internet GW를 VPC에 붙이고, Public Subnet에 Elastic IP를 지정한 NAT GW를 만든다. public-rt는 <code>10.20.0.0/16 → local</code>, <code>0.0.0.0/0 → Internet GW</code>이고, private-rt는 <code>10.20.0.0/16 → local</code>, <code>0.0.0.0/0 → NAT GW</code>다. 각 Route Table을 해당 Subnet에 연결한다. VM에 줄 수 있는 주소는 256 − 5 = 251개다.</p></details>
