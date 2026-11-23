@@ -120,7 +120,7 @@
 | 1 | 앱 골격 + 기존 레슨 10개(w1-1~w1-4, d01~d06) 이전 | ✅ 완료 (커밋 `8704a00`) |
 | 2 | 3주차 일차 07~10 Network 레슨 4개 (`d07`~`d10`) + 서브넷 계산기 위젯(`subnetcalc`, d07 s7) | ✅ 완료 (d07~d10) |
 | 3 | 4주차 일차 11~14 Storage·데이터 보호·Cloud 레슨 4개 (`d11`~`d14`) | ✅ 완료 (d11~d14) |
-| 4 | 5~6주차 zCompute 레슨 8개 (`zc1`~`zc8`, 실습 과제 1~3은 zc4·zc6·zc8의 `tasks`) | 대기 |
+| 4 | 5~6주차 zCompute 레슨 8개 (`zc1`~`zc8`, 실습 과제 1~3은 zc4·zc6·zc8의 `tasks`). 이번 범위는 zc1~zc4, zc5~zc8은 6주차 작업 | 진행 중 (zc1 완료, zc2 작성 중) |
 | 5 | 7주차 zStorage 레슨 5개 (`zs1`~`zs5`) | 대기 |
 | 6 | 마무리: 이 문서에 최종 구조 반영, 전체 점검 | 대기 |
 
@@ -183,12 +183,35 @@
   - `d12` 「Storage 기초 Ⅱ」: 8절, 용어 18개, 그림 1개(s1 같은 파일 report.pdf를 Block·File·Object로 저장하는 세 칸 비교), 셀프체크 6개, 문제 은행 19슬롯(gen 없음: 계산이 없는 레슨). 중심은 Block·File·Object 비교(s1 그림, s6 표: 보이는 모양·접근 단위·찾는 방법·접근 방법·파일시스템·동시 쓰기·장점·용도·예, 고르는 기준, 쇼핑몰 예). NFS·SMB는 OS·포트·붙이는 방법·권한 방식으로 비교. Object는 버킷·객체·키·메타데이터, 키의 슬래시는 디렉터리가 아님(접두사), 통째로 PUT/GET, S3 API가 사실상 표준이 된 이유. HTTP 요청과 aws CLI는 "학습용 예시"로 표시. 회사 자료(기능 소개 p3·p19·p25, OJT 계획서): File은 NFS·CIFS·Active Directory, Object는 S3·Swift, 이름은 NGOS, EBS/EFS/S3 ↔ Block/File/Object. 공유·버킷 만드는 절차는 "사내 실습 환경에서 확인"으로 두고 zs3·zs4로 링크.
   - `d13` 「데이터 보호」: 9절, 용어 18개, 그림 2개(s2 RPO·RTO 시간축, s6 동기·비동기 복제), 셀프체크 6개, 문제 은행 19슬롯(gen 3: 백업 주기로 최악의 RPO, 백업 시각과 장애 시각으로 잃는 데이터, 복구 단계 시간의 합으로 서비스 재개 시각). 순서는 잃는 원인과 보호 방식 → RPO·RTO → 스냅샷(쓰기 시 복사, "스냅샷은 백업이 아니다", DB 스냅샷 주의) → 클론 → 백업과 복원(전체·증분·차등, 3-2-1, 불변 백업, "복구 테스트를 해 보지 않은 백업은 믿을 수 없다") → 복제(동기·비동기와 RPO, "복제는 실수로 지운 것도 그대로 복제한다") → 종합 비교(RAID·스냅샷·클론·백업·복제 × 지켜 주는 것·같은 곳·원본이 망가지면·과거 시점·복구 속도·RPO, 겹쳐 쓰기 예) → Zadara → 직접 해 보기(답은 `fold`). 회사 자료(기능 소개 p8·p15, OJT 계획서): zCompute의 Volume·Snapshot, VM Snapshot·데이터 보호 개요, zStorage의 Snapshot·Clone·Backup·Restore와 복구 검증, 실습 과제 3의 Protection Group, Backup·DR as a Service와 Ransomware Protect. 화면·Protection Group 동작·복제 방식은 "사내 실습 환경에서 확인"으로 두고 zc5·zc8·zs5로 링크.
   - `d14` 「Cloud Computing」: 8절, 용어 17개, 그림 1개(s3 공동 책임 모델 여섯 묶음 × 온프렘·IaaS·PaaS·SaaS), 셀프체크 6개, 문제 은행 16슬롯(gen 없음). w1-2의 정의와 d02의 IaaS 계층 표에서 이어받아, 지금까지 배운 계층(데이터·계정 → 앱 → 런타임 → 게스트 OS → 네트워크 설정 → VM·하이퍼바이저 → 물리 장비·데이터센터)이 누구 몫인지 연결. 중심은 공동 책임 모델 표(12행 × 온프렘·IaaS·PaaS·SaaS, 행마다 앞 레슨 링크). "클라우드여도 고객 몫인 것"(데이터·백업, Security Group 규칙, 계정·권한, OS 패치, 공개 설정) 절을 따로 둠. 배포 모델은 누가 쓰나·어디에 있나·누가 운영하나로 비교하고 멀티 클라우드와 하이브리드 차이 한 줄. Zadara(기능 소개 p7·p9·p21·p25): 퍼블릭과 프라이빗의 장점 결합("Public Cloud Experience, Private Cloud Control"), zCompute(IaaS)·zStorage(STaaS)를 고객이나 서비스 사업자의 데이터센터에 둠, 퍼블릭 클라우드와 전용 연결로 백업·DR, Global Customer Center 관리, AWS 호환. Zadara 환경의 책임 경계는 "사내 실습 환경에서 확인". 마지막 절(s7)에서 기초 레슨 ↔ zc1~zc8·zs1 대응표로 다음 단계에 이음. 제품 이름을 맞히는 퀴즈는 없음.
+- 4단계 레슨 기록 (zc 레슨 공통: 본문·해설은 ~한다체, 앞 레슨을 되짚는 문장 없음, 링크는 뒤 레슨으로 넘길 때만, 버전마다 바뀌는 세부값은 출제하지 않음):
+  - `zc1` 「플랫폼 및 권한」: 9절, 용어 19개, 그림 2개(s2 리소스 계층도, s4 사용자 유형별 관리 범위), 셀프체크 6개, 문제 은행 18슬롯(gen 없음). 순서는 구성(Cloud·노드·테넌트) → 계층 → Account·Project·Limit → 사용자 유형 → 사용자·그룹·역할 → Zadara 정책과 AWS API 정책 → AWS IAM Role·Instance Profile → 인증(콘솔·MFA·AD·토큰·Access Key) → 권한 설계 순서와 직접 해 보기. Region과 Cloud를 같은 단위로 부르는 것은 과정 안의 약속으로만 썼다(공식 정의 아님, 출제하지 않음). 관리자 유형은 회사 자료 기준 4가지이고 가이드의 3가지 설명을 본문에 한 줄로 밝혔다(개수는 출제하지 않음). **가이드에서 확인되지 않음:** 권한 판정 순서, Access Key 범위, 최소 노드 수.
   - 주의: 레슨 본문은 JS 템플릿 문자열이라 역슬래시를 두 번 써야 한다(`\\\\NAS\\share` → 화면에 `\\NAS\share`). /31·/32는 예외로 처리한다. 연습 터미널에는 네트워크 명령이 없어서 d07의 「직접 해 보기」는 계산기 연습 문제다.
 
 사용자 결정 사항:
 - 블록 하나를 끝낼 때마다 사용자에게 확인을 받고 다음 단계로 넘어갑니다.
 - 연습 터미널, 종합시험, 질문 노트, 복습 일정은 모두 유지합니다.
 - 일차 번호와 tag는 교육일정표 PDF 표를 따릅니다: 일차 07~10은 3주차, 일차 11~14는 4주차입니다.
+
+## zCompute 자료 대응표
+
+레슨을 쓰기 전에 여기 적힌 자료를 읽는다. 쪽은 PDF 페이지 번호다. 가이드는 버전 25.06.1이고, U = [User Guide](https://guides.zadarastorage.com/cs-compute-guide/latest/), A = [Admin Guide](https://guides.zadarastorage.com/cs-admin-guide/latest/)이며 절 이름은 파일 이름(`.html` 생략)으로 적었다. 기능 소개 = `Zadara Cloud Platform 기능 소개_20261103.pdf`.
+
+| 레슨 | 회사 자료 | 교육자료 (L1~L3) | 공식 가이드 |
+|---|---|---|---|
+| zc1 플랫폼 및 권한 | 기능 소개 p6·p7·p11·p15·p25 | L1 9 p18, 10 p3·p4·p9, 11 p5·p9(개요), 12 p4~p7·p14, 17 p2·p4·p7·p14·p34, L1 1 p24 / 참고: L2 38 p3~p12, 36 p16~p18(Access Key), L2 39, L3 49 | U: cloud-services-overview, aws-service-map, glossary, iam-introduction, iam-accounts, iam-projects, iam-users, connect-to-idp, iam-authenticate-api, aws-policies, aws-roles, zadara-cs-policies, aws-iam / A: msp-iam-introduction, msp-glossary |
+| zc2 네트워크 설계 | 기능 소개 p21~p24 | L1 19, 20, 21, 22(pdf), 23, 24, 25, 26, 27, 28, 29, 30 / 참고: L2 35 p14~p20 | U: networking-vpc, subnets, network-interfaces, route-tables, internet-gateways, dhcp-option-sets, security-groups, elastic-ips, nat-gateways, private-hosted-zones, dns-services, peering-connections, networking-dvs, aws-vpc / A: msp-region-networks-edge-networks, msp-account-networking-vlans-management |
+| zc3 VM 리소스 | 기능 소개 p13·p16·p17 | L1 14 p4~p7·p11~p18, 15, 16 p32~p36, 18 p3·p8, 33 p2~p6, L1 1 p16·p17 | U: vm-operations, vm-common-operations, vm-placement-rules, cloud-init, instance-type, key-pair, machine-images, modify-cloud-image-qcow |
+| zc4 Linux Web 서버 | 일정표(실습 과제 1), OJT 계획서, 기능 소개 p23 | L1 13 p3·p16~p20, 25, 29 | U: zcompute-first-steps, vm-operations, testing-vm-connectivity, elastic-ips, security-groups |
+| zc5 데이터 볼륨 | 기능 소개 p19·p20 | L1 18, 32, 14 p17 / 참고: L3 47 | U: snapshots, protection-groups, vm-common-operations / A: msp-storage-management-volume-types, msp-storage-management-storage-classes |
+| zc6 Load Balancing | 일정표(실습 과제 2), 기능 소개 p18·p22 | L1 22 p8~p10, 14 p19~p22 | U: setup-lb, aws-elb, ssl-certificates, auto-scaling-groups |
+| zc7 기본 모니터링 | 기능 소개 p12 | L2 34 p16~p25, L2 44 p5~p19 | U: compute-project-overview, monitoring-compute-events / A: msp-monitoring-overview, msp-monitoring-compute-events |
+| zc8 구축 결과 검증 | 일정표(실습 과제 3), 기능 소개 p21~p24 | L2 41 p11~p27, L2 44, L1 1 p24 | U: protection-groups, b2os, testing-vm-connectivity / A: msp-protection-groups |
+
+자료끼리 다른 곳(용어와 동작은 공식 가이드 우선):
+- 관리자 역할: 공식 가이드는 3가지(Member, MSP or Tenant Admin, Zadara Ops Admin), 교육자료 L1 12 p14와 기능 소개 p15는 4가지(Cloud Admin, MSP Admin, Tenant Admin, Member). zc1은 관리 범위를 보이려고 4가지로 쓰고 차이를 본문에 밝혔다.
+- 최소 노드 수: 가이드 용어집은 3대, 교육자료 L1 11 p9와 기능 소개 p13은 Compute 노드 4대. 값이 달라서 레슨에 넣지 않았다.
+- Region과 Cloud: 가이드는 관계를 정의하지 않는다. AWS API의 region 값은 무시된다. zc1은 같은 단위로 쓴다고 밝혔다.
+- Access Key의 범위: 가이드에 없다. 교육자료 L1 12 p7 그림은 Project 아래에 둔다. 사내 환경에서 확인할 것.
 
 ## 앱 구조
 
@@ -354,4 +377,4 @@ CH="/c/Program Files/Google/Chrome/Application/chrome.exe"; P="<스크래치 폴
 - 저장소 사용자는 `jintheog <jintheog11@gmail.com>`입니다(저장소 로컬 설정).
 - **단계가 끝날 때마다 커밋하고 `git push`합니다.** 강제 push는 하지 않습니다. 원격에 예상하지 못한 변경이 있으면 멈추고 사용자에게 먼저 알립니다.
 - 커밋 메시지는 한국어로 "N단계: …" 형식으로 쓰고, 끝에 `Co-Authored-By` 줄을 붙입니다.
-- PDF(회사 원본 자료)는 `.gitignore`로 저장소에서 제외되어 있습니다.
+- 회사 원본 자료(PDF, PPTX, `L1/`·`L2/`·`L3/`)는 `.gitignore`로 저장소에서 제외되어 있습니다.
