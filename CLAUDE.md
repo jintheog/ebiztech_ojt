@@ -120,7 +120,7 @@
 | 1 | 앱 골격 + 기존 레슨 10개(w1-1~w1-4, d01~d06) 이전 | ✅ 완료 (커밋 `8704a00`) |
 | 2 | 3주차 일차 07~10 Network 레슨 4개 (`d07`~`d10`) + 서브넷 계산기 위젯(`subnetcalc`, d07 s7) | ✅ 완료 (d07~d10) |
 | 3 | 4주차 일차 11~14 Storage·데이터 보호·Cloud 레슨 4개 (`d11`~`d14`) | ✅ 완료 (d11~d14) |
-| 4 | 5~6주차 zCompute 레슨 8개 (`zc1`~`zc8`, 실습 과제 1~3은 zc4·zc6·zc8의 `tasks`). 이번 범위는 zc1~zc4, zc5~zc8은 6주차 작업 | 진행 중 (zc1 완료, zc2 작성 중) |
+| 4 | 5~6주차 zCompute 레슨 8개 (`zc1`~`zc8`, 실습 과제 1~3은 zc4·zc6·zc8의 `tasks`). 이번 범위는 zc1~zc4, zc5~zc8은 6주차 작업 | 진행 중 (zc1 완료, zc2 작성, 사용자 확인 대기) |
 | 5 | 7주차 zStorage 레슨 5개 (`zs1`~`zs5`) | 대기 |
 | 6 | 마무리: 이 문서에 최종 구조 반영, 전체 점검 | 대기 |
 
@@ -184,7 +184,8 @@
   - `d13` 「데이터 보호」: 9절, 용어 18개, 그림 2개(s2 RPO·RTO 시간축, s6 동기·비동기 복제), 셀프체크 6개, 문제 은행 19슬롯(gen 3: 백업 주기로 최악의 RPO, 백업 시각과 장애 시각으로 잃는 데이터, 복구 단계 시간의 합으로 서비스 재개 시각). 순서는 잃는 원인과 보호 방식 → RPO·RTO → 스냅샷(쓰기 시 복사, "스냅샷은 백업이 아니다", DB 스냅샷 주의) → 클론 → 백업과 복원(전체·증분·차등, 3-2-1, 불변 백업, "복구 테스트를 해 보지 않은 백업은 믿을 수 없다") → 복제(동기·비동기와 RPO, "복제는 실수로 지운 것도 그대로 복제한다") → 종합 비교(RAID·스냅샷·클론·백업·복제 × 지켜 주는 것·같은 곳·원본이 망가지면·과거 시점·복구 속도·RPO, 겹쳐 쓰기 예) → Zadara → 직접 해 보기(답은 `fold`). 회사 자료(기능 소개 p8·p15, OJT 계획서): zCompute의 Volume·Snapshot, VM Snapshot·데이터 보호 개요, zStorage의 Snapshot·Clone·Backup·Restore와 복구 검증, 실습 과제 3의 Protection Group, Backup·DR as a Service와 Ransomware Protect. 화면·Protection Group 동작·복제 방식은 "사내 실습 환경에서 확인"으로 두고 zc5·zc8·zs5로 링크.
   - `d14` 「Cloud Computing」: 8절, 용어 17개, 그림 1개(s3 공동 책임 모델 여섯 묶음 × 온프렘·IaaS·PaaS·SaaS), 셀프체크 6개, 문제 은행 16슬롯(gen 없음). w1-2의 정의와 d02의 IaaS 계층 표에서 이어받아, 지금까지 배운 계층(데이터·계정 → 앱 → 런타임 → 게스트 OS → 네트워크 설정 → VM·하이퍼바이저 → 물리 장비·데이터센터)이 누구 몫인지 연결. 중심은 공동 책임 모델 표(12행 × 온프렘·IaaS·PaaS·SaaS, 행마다 앞 레슨 링크). "클라우드여도 고객 몫인 것"(데이터·백업, Security Group 규칙, 계정·권한, OS 패치, 공개 설정) 절을 따로 둠. 배포 모델은 누가 쓰나·어디에 있나·누가 운영하나로 비교하고 멀티 클라우드와 하이브리드 차이 한 줄. Zadara(기능 소개 p7·p9·p21·p25): 퍼블릭과 프라이빗의 장점 결합("Public Cloud Experience, Private Cloud Control"), zCompute(IaaS)·zStorage(STaaS)를 고객이나 서비스 사업자의 데이터센터에 둠, 퍼블릭 클라우드와 전용 연결로 백업·DR, Global Customer Center 관리, AWS 호환. Zadara 환경의 책임 경계는 "사내 실습 환경에서 확인". 마지막 절(s7)에서 기초 레슨 ↔ zc1~zc8·zs1 대응표로 다음 단계에 이음. 제품 이름을 맞히는 퀴즈는 없음.
 - 4단계 레슨 기록 (zc 레슨 공통: 본문·해설은 ~한다체, 앞 레슨을 되짚는 문장 없음, 링크는 뒤 레슨으로 넘길 때만, 버전마다 바뀌는 세부값은 출제하지 않음):
-  - `zc1` 「플랫폼 및 권한」: 9절, 용어 19개, 그림 2개(s2 리소스 계층도, s4 사용자 유형별 관리 범위), 셀프체크 6개, 문제 은행 18슬롯(gen 없음). 순서는 구성(Cloud·노드·테넌트) → 계층 → Account·Project·Limit → 사용자 유형 → 사용자·그룹·역할 → Zadara 정책과 AWS API 정책 → AWS IAM Role·Instance Profile → 인증(콘솔·MFA·AD·토큰·Access Key) → 권한 설계 순서와 직접 해 보기. Region과 Cloud를 같은 단위로 부르는 것은 과정 안의 약속으로만 썼다(공식 정의 아님, 출제하지 않음). 관리자 유형은 회사 자료 기준 4가지이고 가이드의 3가지 설명을 본문에 한 줄로 밝혔다(개수는 출제하지 않음). **가이드에서 확인되지 않음:** 권한 판정 순서, Access Key 범위, 최소 노드 수.
+  - `zc1` 「플랫폼 및 권한」: 9절, 용어 19개, 그림 2개(s2 리소스 계층도, s4 사용자 유형별 관리 범위), 셀프체크 6개, 문제 은행 18슬롯(gen 없음). 순서는 구성(Region·노드·테넌트) → 계층 → Account·Project·Limit → 사용자 유형 → 사용자·그룹·역할 → Zadara 정책과 AWS API 정책 → AWS IAM Role·Instance Profile → 인증(콘솔·MFA·AD·토큰·Access Key) → 권한 설계 순서와 직접 해 보기. **결정(사용자, 2026-11-23, 정의의 출처 자료 이름은 미기재):** 최상위 단위는 Region이다. Region = zCompute 서비스의 최상위 물리·논리 단위(서비스 지역), 계층 = Region → Account → Project → 자원, Account = 고객이나 큰 조직 단위, Project = 서비스 자원을 논리적으로 나누는 공간, User = 할당된 역할과 정책에 따라 자원을 제어. "클라우드"는 회사 소개 자료나 일부 문서의 표현으로 한 줄만 알리고, 역할 이름 Cloud Admin은 그대로 둔다. 계층 순서는 출제해도 된다. "zCompute는 AWS region 값을 무시한다"의 근거는 User Guide `aws-ec2-api`의 Important 상자. 관리자 유형은 회사 자료 기준 4가지이고 가이드의 3가지 설명을 본문에 한 줄로 밝혔다(개수는 출제하지 않음). **가이드에서 확인되지 않음:** 권한 판정 순서, Access Key 범위, 최소 노드 수.
+  - `zc2` 「네트워크 설계」: 10절, 용어 20개, 그림 1개(s10 회사 참조 아키텍처를 옮긴 VPC 설계), 위젯 `subnetcalc`(s3, 계산기는 2개만 빼므로 본문에 VPC Subnet은 3개 더 뺀다고 안내), 셀프체크 6개, 문제 은행 20슬롯(gen 4: VM에 줄 수 있는 주소 수, 첫·마지막 주소, VPC 안의 Subnet, 겹치는 Subnet). 순서는 Guest·Host Networking → VPC → Subnet(예약 주소 5개는 가이드 subnets 절 기준) → Route Table → Internet GW·Edge Network·Elastic IP → NAT GW → Security Group·Network Interface → DHCP Option Set·DNS → Direct Subnet·DVS(개념만) → 참조 아키텍처와 실습용 설계. 공인 IP 이름은 Elastic IP로 쓰고, 기능 소개 p22 화면의 Floating IP는 본문에 밝혔다. **가이드에서 확인되지 않음:** VM 안에서 Elastic IP가 보이는지, 새 Security Group의 처음 규칙, NLB 뒤 서버가 보는 출발지. **자료끼리 다름:** 기본 DHCP 도메인 이름(가이드 VPC 절과 DHCP 절이 달라 레슨에 넣지 않음). Elastic IP 없는 VM의 Edge Router NAT는 교육자료(L2 35 p18) 기준.
   - 주의: 레슨 본문은 JS 템플릿 문자열이라 역슬래시를 두 번 써야 한다(`\\\\NAS\\share` → 화면에 `\\NAS\share`). /31·/32는 예외로 처리한다. 연습 터미널에는 네트워크 명령이 없어서 d07의 「직접 해 보기」는 계산기 연습 문제다.
 
 사용자 결정 사항:
@@ -210,7 +211,7 @@
 자료끼리 다른 곳(용어와 동작은 공식 가이드 우선):
 - 관리자 역할: 공식 가이드는 3가지(Member, MSP or Tenant Admin, Zadara Ops Admin), 교육자료 L1 12 p14와 기능 소개 p15는 4가지(Cloud Admin, MSP Admin, Tenant Admin, Member). zc1은 관리 범위를 보이려고 4가지로 쓰고 차이를 본문에 밝혔다.
 - 최소 노드 수: 가이드 용어집은 3대, 교육자료 L1 11 p9와 기능 소개 p13은 Compute 노드 4대. 값이 달라서 레슨에 넣지 않았다.
-- Region과 Cloud: 가이드는 관계를 정의하지 않는다. AWS API의 region 값은 무시된다. zc1은 같은 단위로 쓴다고 밝혔다.
+- Region: 가이드 용어집에는 정의가 없다. zc1은 사용자가 정한 정의(최상위 물리·논리 단위)를 쓴다. AWS API의 region 값은 무시된다(U: aws-ec2-api).
 - Access Key의 범위: 가이드에 없다. 교육자료 L1 12 p7 그림은 Project 아래에 둔다. 사내 환경에서 확인할 것.
 
 ## 앱 구조

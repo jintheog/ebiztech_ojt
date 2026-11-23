@@ -3,17 +3,17 @@ id:'zc1', week:5, tag:'zCompute 1', mins:'약 3시간',
 title:'플랫폼 및 권한: Region, Account, Project, IAM',
 cover:[['Region','s1'],['Account','s3'],['Project','s3'],['IAM','s5']],
 act:'zCompute의 리소스 계층과 권한 구조 설명',
-goal:['zCompute의 구성(노드, 클러스터, 테넌트)을 설명할 수 있다','Cloud → Account → Project → VPC·VM 계층과 각 단위가 나누는 것을 설명할 수 있다','Cloud Admin, MSP Admin, Tenant Admin, Member의 관리 범위를 구분할 수 있다','사용자·그룹·역할·정책의 관계와 Zadara 정책과 AWS API 정책의 차이를 설명할 수 있다','콘솔 로그인, MFA, AD 연동, API 토큰과 Access Key의 쓰임을 구분할 수 있다'],
+goal:['zCompute의 구성(Region, 노드, 테넌트)을 설명할 수 있다','Region → Account → Project → VPC·VM 계층과 각 단위가 나누는 것을 설명할 수 있다','Cloud Admin, MSP Admin, Tenant Admin, Member의 관리 범위를 구분할 수 있다','사용자·그룹·역할·정책의 관계와 Zadara 정책과 AWS API 정책의 차이를 설명할 수 있다','콘솔 로그인, MFA, AD 연동, API 토큰과 Access Key의 쓰임을 구분할 수 있다'],
 terms:[
 ['zCompute','Zadara zCompute','Zadara의 IaaS 컴퓨팅 서비스. VM, 가상 네트워크, 로드밸런서 등을 셀프 서비스로 제공하고 AWS 호환 API를 지원한다.'],
-['Cloud / Region','Cloud / Region','이 과정에서 zCompute 환경 하나를 부르는 이름. 두 이름을 같은 단위로 부르는 것은 과정 안의 약속이고, 공식 정의가 아니다.'],
+['Region','Region','zCompute 서비스의 최상위 물리·논리 단위(서비스 지역). 계층은 Region → Account → Project → 자원이다.'],
 ['노드','Node','zCompute가 설치되어 컴퓨팅·스토리지·메모리를 제공하는 물리 서버.'],
 ['클러스터','Cluster','노드의 묶음. VM은 클러스터의 노드 위에서 실행된다.'],
 ['테넌트','Tenant','같은 물리 자원을 나눠 쓰면서 논리적으로 분리된 사용 조직.'],
 ['멀티 테넌시','Multi-tenancy','하나의 플랫폼을 여러 테넌트가 서로 분리된 상태로 함께 쓰는 구조.'],
 ['MSP','Managed Service Provider','고객을 대신해 클라우드와 IT 서비스를 운영하는 사업자.'],
-['Account','Account','사용자·그룹·Project와 그 사이의 권한 관계를 담는 관리 단위. 조직이나 업무 영역을 나눈다.'],
-['Project','Project','클라우드 자원(VPC, VM, Volume 등)이 실제로 들어 있는 단위. 과제나 업무를 나눈다.'],
+['Account','Account','고객이나 큰 조직 단위. 사용자·그룹·Project와 그 사이의 권한 관계를 담는다.'],
+['Project','Project','서비스 자원을 논리적으로 나누는 공간. VPC, VM, Volume 등이 들어 있다.'],
 ['Limit (쿼터)','Limit / Quota','Account나 Project가 쓸 수 있는 자원의 상한.'],
 ['IAM','Identity and Access Management','누가 어떤 자원에 무엇을 할 수 있는지 관리하는 기능.'],
 ['역할 (Zadara)','Role','Member, Tenant Admin처럼 사용자가 Project 안에서 갖는 관리 등급.'],
@@ -26,15 +26,15 @@ terms:[
 ['Access Key','Access Key / Secret Key','AWS 호환 API와 도구가 쓰는 인증 키 한 쌍. Secret Key는 만들 때만 확인할 수 있다.']
 ],
 body:`
-<h2 id="s1">zCompute의 구성: Cloud, 노드, 테넌트</h2>
+<h2 id="s1">zCompute의 구성: Region, 노드, 테넌트</h2>
 <p><b>zCompute</b>는 Zadara의 IaaS<span class="small muted">(Infrastructure as a Service)</span> 컴퓨팅 서비스다. 사용자는 웹 콘솔이나 API로 VM<span class="small muted">(Virtual Machine)</span>, 가상 네트워크, 로드밸런서를 직접 만들어 쓴다. 고객 데이터센터나 지정한 IDC<span class="small muted">(Internet Data Center)</span>에 설치할 수 있고, AWS<span class="small muted">(Amazon Web Services)</span> 호환 API를 제공한다.</p>
 <div class="tbl-wrap"><table><thead><tr><th>구성</th><th>뜻</th></tr></thead><tbody>
-<tr><td class="nw"><b>Cloud / Region</b></td><td>이 과정에서 zCompute 환경 하나를 부르는 이름(과정 안의 약속). 그 안에 여러 Account가 있다.</td></tr>
+<tr><td class="nw"><b>Region</b></td><td>zCompute 서비스의 최상위 물리·논리 단위(서비스 지역). 그 안에 여러 Account가 있다.</td></tr>
 <tr><td class="nw"><b>노드</b></td><td>zCompute가 설치된 물리 서버. CPU, 메모리, 디스크를 제공한다.</td></tr>
 <tr><td class="nw"><b>클러스터</b></td><td>노드의 묶음. VM은 클러스터의 노드 위에서 실행된다.</td></tr>
 <tr><td class="nw"><b>테넌트</b></td><td>플랫폼을 함께 쓰면서 논리적으로 분리된 사용 조직.</td></tr>
 </tbody></table></div>
-<p class="small muted">공식 가이드 용어집에는 Region 정의가 없고, Cloud를 zCompute 클러스터와 같다고 하지도 않는다. 이 과정에서는 편의상 Region과 Cloud를 같은 단위로 부른다. 이것은 공식 정의가 아니라 과정 안의 약속이다. AWS의 Region은 여러 가용 영역으로 이루어진 지역 단위이므로 규모가 같다고 생각하면 안 된다. AWS 도구에는 Region 값을 넣어야 하지만, zCompute는 이 값을 무시한다.</p>
+<p class="small muted">회사 소개 자료나 일부 문서는 zCompute 환경을 "클라우드"라고 부르기도 한다. AWS의 Region은 여러 가용 영역으로 이루어진 지역 단위이므로 zCompute의 Region과 규모가 다를 수 있다. AWS 도구에는 유효한 AWS Region 값을 넣어야 하지만, zCompute는 이 값을 무시한다.</p>
 <p>zCompute의 핵심 구조는 <b>멀티 테넌시</b>다. 하이퍼바이저, 스위치, 스토리지 같은 <b>물리 자원은 함께 쓰고</b>, VM·네트워크·스토리지 같은 <b>가상 자원은 테넌트별로 분리</b>한다.</p>
 <div class="box analogy"><span class="lbl">비유</span>건물(물리 자원)은 하나지만 입주사(테넌트)마다 사무실과 출입 권한이 따로 있는 것과 비슷하다.</div>
 <h3>AWS 이름과의 대응</h3>
@@ -46,11 +46,11 @@ body:`
 </tbody></table></div>
 <p class="small muted">이름이 같아도 세부 동작은 다를 수 있으므로, 동작은 Zadara 공식 가이드로 확인한다.</p>
 
-<h2 id="s2">리소스 계층: Cloud → Account → Project → 자원</h2>
-<p>zCompute의 자원과 권한은 세 범위로 나뉜다. <b>System</b>(Cloud 전체), <b>Account</b>(사용자와 권한을 관리하는 단위), <b>Project</b>(자원이 실제로 있는 단위)다.</p>
-<svg class="fig" viewBox="0 0 560 420" role="img" aria-label="리소스 계층도. Cloud 안에 Account A와 Account B가 있다. Account A에는 Project 1과 Project 2가, Account B에는 Project 3이 있고, 각 Project 안에 VPC, VM, Volume이 있다. 가상 자원은 분리되어 있고, 맨 아래의 서버, 스위치, 스토리지 같은 물리 자원은 여러 Account가 함께 쓴다.">
+<h2 id="s2">리소스 계층: Region → Account → Project → 자원</h2>
+<p>zCompute의 자원과 권한은 세 범위로 나뉜다. <b>Region</b>(서비스 전체), <b>Account</b>(사용자와 권한을 관리하는 단위), <b>Project</b>(자원이 실제로 있는 단위)다.</p>
+<svg class="fig" viewBox="0 0 560 420" role="img" aria-label="리소스 계층도. Region 안에 Account A와 Account B가 있다. Account A에는 Project 1과 Project 2가, Account B에는 Project 3이 있고, 각 Project 안에 VPC, VM, Volume이 있다. 가상 자원은 분리되어 있고, 맨 아래의 서버, 스위치, 스토리지 같은 물리 자원은 여러 Account가 함께 쓴다.">
 <rect x="4" y="4" width="552" height="412" rx="10" class="wall"/>
-<text x="22" y="34" class="b">Cloud</text>
+<text x="22" y="34" class="b">Region</text>
 <rect x="20" y="48" width="346" height="256" rx="10" class="zone"/>
 <text x="36" y="76" class="b">Account A</text>
 <rect x="34" y="88" width="154" height="202" rx="8" class="pair"/>
@@ -103,19 +103,19 @@ body:`
 </svg>
 <p class="fig-cap">막대가 그 유형이 관리할 수 있는 범위다. 점선은 일부만 가능하다는 뜻이다.</p>
 <div class="tbl-wrap"><table class="wide"><thead><tr><th>유형</th><th>누가</th><th>하는 일</th></tr></thead><tbody>
-<tr><td class="nw"><b>Cloud Admin</b></td><td>Zadara 운영 조직</td><td>물리 Cloud 전체(노드, 디스크, 물리 네트워크)를 관리한다.</td></tr>
-<tr><td class="nw"><b>MSP Admin</b></td><td>Cloud를 운영하는 사업자</td><td>모든 Account의 자원을 보고 변경할 수 있고, Cloud 설정 일부를 관리한다.</td></tr>
+<tr><td class="nw"><b>Cloud Admin</b></td><td>Zadara 운영 조직</td><td>Region의 물리 자원 전체(노드, 디스크, 물리 네트워크)를 관리한다.</td></tr>
+<tr><td class="nw"><b>MSP Admin</b></td><td>Region을 운영하는 사업자</td><td>모든 Account의 자원을 보고 변경할 수 있고, Region 설정 일부를 관리한다.</td></tr>
 <tr><td class="nw"><b>Tenant Admin</b></td><td>고객사 IT 담당자</td><td>자기 Account의 Project와 사용자를 만들고 역할과 정책을 준다.</td></tr>
 <tr><td class="nw"><b>Member</b></td><td>최종 사용자</td><td>배정된 Project에서 VM, Volume, VPC 같은 자원을 만들고 쓴다.</td></tr>
 </tbody></table></div>
 <p class="small muted">공식 가이드는 MSP Admin과 Tenant Admin을 묶어 3가지(Member, MSP or Tenant Admin, Zadara Ops Admin)로 설명한다. 이 레슨은 회사 자료 기준의 4가지로 쓴다.</p>
-<p>일반 Account의 사용자는 서로 엄격히 분리되어, 다른 Account의 자원을 볼 권한을 받을 수 없다. 반면 MSP Admin은 Account를 넘어 자원을 변경하고 삭제까지 할 수 있으므로, Cloud 수준의 작업에만 쓰고 MFA와 강한 비밀번호로 보호한다.</p>
-<div class="box mem"><span class="lbl">외울 것: 관리 범위</span><ul><li><b>Member</b>: 배정된 Project의 자원을 쓴다.</li><li><b>Tenant Admin</b>: 자기 Account를 관리한다.</li><li><b>MSP Admin</b>: 여러 Account를 넘어 관리한다.</li><li><b>Cloud Admin</b>: 물리 Cloud까지 관리한다.</li></ul></div>
+<p>일반 Account의 사용자는 서로 엄격히 분리되어, 다른 Account의 자원을 볼 권한을 받을 수 없다. 반면 MSP Admin은 Account를 넘어 자원을 변경하고 삭제까지 할 수 있으므로, Region 수준의 작업에만 쓰고 MFA와 강한 비밀번호로 보호한다.</p>
+<div class="box mem"><span class="lbl">외울 것: 관리 범위</span><ul><li><b>Member</b>: 배정된 Project의 자원을 쓴다.</li><li><b>Tenant Admin</b>: 자기 Account를 관리한다.</li><li><b>MSP Admin</b>: 여러 Account를 넘어 관리한다.</li><li><b>Cloud Admin</b>: Region의 물리 자원까지 관리한다.</li></ul></div>
 
 <h2 id="s5">사용자, 그룹, 역할</h2>
 <p><b>IAM</b><span class="small muted">(Identity and Access Management)</span>은 <b>누가(Who), 어떤 서비스에서(Which), 무엇을 할 수 있는지(What)</b>를 관리한다.</p>
 <div class="tbl-wrap"><table><thead><tr><th>구성 요소</th><th>뜻</th></tr></thead><tbody>
-<tr><td class="nw"><b>사용자</b></td><td>로그인하는 개인. 하나의 Account에 속한다.</td></tr>
+<tr><td class="nw"><b>사용자</b></td><td>로그인하는 개인. 하나의 Account에 속하고, 할당된 역할과 정책에 따라 자원을 제어한다.</td></tr>
 <tr><td class="nw"><b>그룹</b></td><td>사용자의 묶음. 같은 권한을 여러 사람에게 한 번에 줄 때 쓴다.</td></tr>
 <tr><td class="nw"><b>역할</b></td><td>Project 안에서의 관리 등급. Member, Tenant Admin 등이 있다.</td></tr>
 <tr><td class="nw"><b>정책</b></td><td>허용되는 동작을 적은 묶음. 예: VM을 읽기만 허용.</td></tr>
@@ -175,19 +175,19 @@ body:`
 <details class="fold"><summary>답 보기</summary><p>Account 하나에 <code>dev</code>와 <code>prod</code> Project를 만든다. 개발자 3명을 그룹으로 묶어 <code>dev</code>에는 Member 역할과 전체 사용 정책을, <code>prod</code>에는 Member 역할과 읽기 전용 정책을 준다. 운영 담당자에게는 <code>prod</code>에 Member 역할과 전체 사용 정책을 준다. 사용자와 Project를 관리할 Tenant Admin은 따로 정하고, 모두 MFA를 켠다.</p></details>
 <p class="small muted">이 구조 위에 만드는 네트워크는 <a data-lesson="zc2"></a>, VM은 <a data-lesson="zc3"></a>에서 다룬다.</p>
 `,
-summary:['zCompute는 물리 자원을 함께 쓰고 가상 자원을 테넌트별로 분리하는 멀티 테넌트 IaaS다.','계층은 Cloud → Account → Project → VPC·VM·Volume이다.','Account는 사용자와 권한의 경계, Project는 자원의 경계다. 사용자는 한 Account에 속하고 여러 Project에 배정될 수 있다.','관리 범위는 Member < Tenant Admin < MSP Admin < Cloud Admin 순으로 넓어진다.','권한은 Project 단위로 주며, 웹 콘솔·Symp는 Zadara 역할과 정책, AWS 호환 API는 AWS API 정책을 따른다.','Zadara 역할은 관리 등급이고, AWS IAM Role은 맡아서 임시로 쓰는 권한 묶음이다.','Secret Key는 만들 때만 볼 수 있고, VM 안에서는 Access Key 대신 Instance Profile을 쓴다.'],
+summary:['zCompute는 물리 자원을 함께 쓰고 가상 자원을 테넌트별로 분리하는 멀티 테넌트 IaaS다.','계층은 Region → Account → Project → VPC·VM·Volume이다.','Account는 사용자와 권한의 경계, Project는 자원의 경계다. 사용자는 한 Account에 속하고 여러 Project에 배정될 수 있다.','관리 범위는 Member < Tenant Admin < MSP Admin < Cloud Admin 순으로 넓어진다.','권한은 Project 단위로 주며, 웹 콘솔·Symp는 Zadara 역할과 정책, AWS 호환 API는 AWS API 정책을 따른다.','Zadara 역할은 관리 등급이고, AWS IAM Role은 맡아서 임시로 쓰는 권한 묶음이다.','Secret Key는 만들 때만 볼 수 있고, VM 안에서는 Access Key 대신 Instance Profile을 쓴다.'],
 essay:[
-{q:'Cloud, Account, Project, VM의 포함 관계를 설명하고, Account와 Project가 각각 무엇을 나누는지 말해 보세요.',a:'Cloud 안에 Account가 있고, Account 안에 Project가 있으며, VM·VPC·Volume 같은 자원은 Project 안에 있다. Account는 조직 단위로 사용자·그룹·권한을 나누고, Project는 과제나 환경 단위로 자원을 나눈다.'},
+{q:'Region, Account, Project, VM의 포함 관계를 설명하고, Account와 Project가 각각 무엇을 나누는지 말해 보세요.',a:'Region 안에 Account가 있고, Account 안에 Project가 있으며, VM·VPC·Volume 같은 자원은 Project 안에 있다. Account는 조직 단위로 사용자·그룹·권한을 나누고, Project는 과제나 환경 단위로 자원을 나눈다.'},
 {q:'멀티 테넌시에서 함께 쓰는 것과 분리되는 것을 구분해 보세요.',a:'하이퍼바이저, 스위치, 스토리지 같은 물리 자원은 함께 쓴다. VM, 네트워크, 스토리지 같은 가상 자원과 사용자·권한은 테넌트별로 분리된다.'},
-{q:'Cloud Admin, MSP Admin, Tenant Admin, Member의 관리 범위 차이를 설명해 보세요.',a:'Member는 배정된 Project의 자원을 쓴다. Tenant Admin은 자기 Account의 Project와 사용자를 관리한다. MSP Admin은 여러 Account의 자원과 Cloud 설정 일부를 관리한다. Cloud Admin은 노드와 물리 네트워크까지 Cloud 전체를 관리한다.'},
+{q:'Cloud Admin, MSP Admin, Tenant Admin, Member의 관리 범위 차이를 설명해 보세요.',a:'Member는 배정된 Project의 자원을 쓴다. Tenant Admin은 자기 Account의 Project와 사용자를 관리한다. MSP Admin은 여러 Account의 자원과 Region 설정 일부를 관리한다. Cloud Admin은 노드와 물리 네트워크까지 Region 전체를 관리한다.'},
 {q:'Zadara 정책과 AWS API 정책은 각각 어떤 경로의 호출에 적용되나요?',a:'Zadara 정책은 Zadara 역할과 함께 웹 콘솔과 Symp API·CLI에 적용된다. AWS API 정책은 AWS CLI, Terraform처럼 AWS 호환 API를 쓰는 호출에 적용된다.'},
 {q:'Zadara 역할과 AWS IAM Role의 차이를 설명해 보세요.',a:'Zadara 역할은 Member, Tenant Admin처럼 사용자에게 Project별로 배정하는 관리 등급이다. AWS IAM Role은 권한 정책과 신뢰 정책의 묶음으로, 사용자나 VM이 맡아서 임시로 그 권한을 쓴다.'},
 {q:'VM 안의 프로그램이 API를 호출해야 할 때 Access Key를 파일에 저장하는 대신 무엇을 쓰고, 왜 그렇게 하나요?',a:'AWS IAM Role을 연결한 Instance Profile을 쓴다. 서버에 키를 남기지 않으므로 키가 유출될 위험이 줄어든다.'}
 ],
 quiz:[
 {v:[
- {q:'zCompute의 리소스 계층으로 맞는 것은?',o:['Cloud → Account → Project → VPC·VM','Cloud → Project → Account → VPC·VM','Account → Cloud → VM → Project','Project → VM → Account → Cloud'],e:'Cloud 안에 Account가, Account 안에 Project가, Project 안에 VPC·VM 같은 자원이 있다.'},
- {q:'VM과 Volume 같은 클라우드 자원이 실제로 들어 있는 단위는?',o:['Project','Account','Cloud','사용자 그룹'],e:'자원은 Project 안에 만든다. Account는 사용자·그룹·Project와 권한 관계를 담는다.'}
+ {q:'zCompute의 리소스 계층으로 맞는 것은?',o:['Region → Account → Project → VPC·VM','Region → Project → Account → VPC·VM','Account → Region → VM → Project','Project → VM → Account → Region'],e:'Region 안에 Account가, Account 안에 Project가, Project 안에 VPC·VM 같은 자원이 있다.'},
+ {q:'VM과 Volume 같은 클라우드 자원이 실제로 들어 있는 단위는?',o:['Project','Account','Region','사용자 그룹'],e:'자원은 Project 안에 만든다. Account는 사용자·그룹·Project와 권한 관계를 담는다.'}
 ]},
 {v:[
  {q:'Account가 담는 것으로 가장 알맞은 것은?',o:['사용자, 그룹, Project와 그 사이의 권한 관계','물리 노드와 스위치','VM의 디스크 데이터','Subnet의 라우팅 규칙'],e:'Account는 조직 단위의 관리 경계로, 사용자·그룹·Project와 권한 관계를 담는다.'},
@@ -195,7 +195,7 @@ quiz:[
 ]},
 {v:[
  {q:'멀티 테넌시에서 테넌트끼리 함께 쓰는 것은?',o:['하이퍼바이저, 스위치 같은 물리 자원','VM','사용자 계정','Project의 권한'],e:'물리 자원은 함께 쓰고, VM·네트워크·스토리지 같은 가상 자원과 계정은 분리한다.'},
- {q:'zCompute의 멀티 테넌시를 바르게 설명한 것은?',o:['물리 자원은 공유하고 가상 자원은 테넌트별로 분리한다','물리 자원도 테넌트마다 반드시 따로 둔다','모든 테넌트가 같은 VPC를 쓴다','한 Cloud에는 테넌트가 하나만 있다'],e:'물리 자원을 함께 써서 효율을 얻고, 가상 자원을 분리해 테넌트를 격리한다.'}
+ {q:'zCompute의 멀티 테넌시를 바르게 설명한 것은?',o:['물리 자원은 공유하고 가상 자원은 테넌트별로 분리한다','물리 자원도 테넌트마다 반드시 따로 둔다','모든 테넌트가 같은 VPC를 쓴다','한 Region에는 테넌트가 하나만 있다'],e:'물리 자원을 함께 써서 효율을 얻고, 가상 자원을 분리해 테넌트를 격리한다.'}
 ]},
 {v:[
  {q:'사용자와 Account·Project의 관계로 맞는 것은?',o:['한 Account에 속하고, 여러 Project에 배정될 수 있다','여러 Account에 속하고, Project는 하나만 가능하다','Account 없이 Project에만 속한다','Project마다 사용자를 새로 만들어야 한다'],e:'사용자는 하나의 Account에 속하고, 그 안의 여러 Project에 배정될 수 있다.'},
@@ -206,11 +206,11 @@ quiz:[
  {q:'Tenant Admin이 할 수 없는 일은?',o:['다른 Account의 자원 관리','자기 Account에 Project 만들기','자기 Account에 사용자 만들기','자기 Account의 사용자에게 Project 권한 주기'],e:'Tenant Admin의 범위는 자기 Account까지다.'}
 ]},
 {v:[
- {q:'노드, 디스크, 물리 네트워크까지 Cloud 전체를 관리하는 유형은?',o:['Cloud Admin','Tenant Admin','Member','그룹 관리자'],e:'Cloud Admin은 물리 Cloud까지 관리한다.'},
- {q:'관리 범위가 좁은 것에서 넓은 것 순서로 맞는 것은?',o:['Member → Tenant Admin → MSP Admin → Cloud Admin','Tenant Admin → Member → Cloud Admin → MSP Admin','Cloud Admin → MSP Admin → Tenant Admin → Member','Member → MSP Admin → Tenant Admin → Cloud Admin'],e:'Member는 배정된 Project, Tenant Admin은 Account, MSP Admin은 여러 Account, Cloud Admin은 물리 Cloud까지다.'}
+ {q:'노드, 디스크, 물리 네트워크까지 Region 전체를 관리하는 유형은?',o:['Cloud Admin','Tenant Admin','Member','그룹 관리자'],e:'Cloud Admin은 Region의 물리 자원까지 관리한다.'},
+ {q:'관리 범위가 좁은 것에서 넓은 것 순서로 맞는 것은?',o:['Member → Tenant Admin → MSP Admin → Cloud Admin','Tenant Admin → Member → Cloud Admin → MSP Admin','Cloud Admin → MSP Admin → Tenant Admin → Member','Member → MSP Admin → Tenant Admin → Cloud Admin'],e:'Member는 배정된 Project, Tenant Admin은 Account, MSP Admin은 여러 Account, Cloud Admin은 Region의 물리 자원까지다.'}
 ]},
 {v:[
- {q:'MSP Admin 계정을 평소 작업에 쓰지 말아야 하는 이유는?',o:['여러 Account의 자원을 변경·삭제할 수 있어 실수와 유출의 영향이 크기 때문이다','VM을 만들 수 없기 때문이다','로그인할 때마다 비용이 나기 때문이다','Project에 접근할 수 없기 때문이다'],e:'MSP Admin은 Account를 넘어 자원을 다룰 수 있으므로 Cloud 수준의 작업에만 쓴다.'},
+ {q:'MSP Admin 계정을 평소 작업에 쓰지 말아야 하는 이유는?',o:['여러 Account의 자원을 변경·삭제할 수 있어 실수와 유출의 영향이 크기 때문이다','VM을 만들 수 없기 때문이다','로그인할 때마다 비용이 나기 때문이다','Project에 접근할 수 없기 때문이다'],e:'MSP Admin은 Account를 넘어 자원을 다룰 수 있으므로 Region 수준의 작업에만 쓴다.'},
  {q:'일반 Account의 사용자와 MSP Admin의 차이로 맞는 것은?',o:['일반 사용자는 다른 Account에 접근할 수 없고, MSP Admin은 Account를 넘어 관리할 수 있다','일반 사용자도 권한을 받으면 다른 Account를 볼 수 있다','MSP Admin은 자기 Project만 볼 수 있다','둘의 범위는 같다'],e:'일반 Account는 서로 엄격히 분리된다. Account를 넘는 관리는 MSP Admin의 권한이다.'}
 ]},
 {v:[
