@@ -110,18 +110,18 @@
 
 - **상세 계획 파일:** `C:\Users\user\.claude\plans\foamy-shimmying-widget.md` (폴더 구조, 레슨 형식, 단계, 검증 방법)
 - **원격 저장소:** https://github.com/jintheog/ebiztech_ojt.git (`main`)
-- **최종 갱신:** 2026-11-17, 앱 개발 3단계 완료(d14) 시점
+- **최종 갱신:** 2026-11-24, 앱 개발 4단계 완료(zc8) 시점
 
 ## 진행 상황
 
-작업 순서: 보완 2 → 보완 3 → 앱 개발 2단계. 2단계의 새 레슨은 보완 3에서 만든 v·gen 문제를 예시로 삼는다. (앱 개발 3단계까지 완료, 다음은 4단계 zCompute)
+작업 순서: 보완 2 → 보완 3 → 앱 개발 2단계. 2단계의 새 레슨은 보완 3에서 만든 v·gen 문제를 예시로 삼는다. (앱 개발 4단계까지 완료, 다음은 5단계 zStorage)
 
 | 단계 | 내용 | 상태 |
 |---|---|---|
 | 1 | 앱 골격 + 기존 레슨 10개(w1-1~w1-4, d01~d06) 이전 | ✅ 완료 (커밋 `8704a00`) |
 | 2 | 3주차 일차 07~10 Network 레슨 4개 (`d07`~`d10`) + 서브넷 계산기 위젯(`subnetcalc`, d07 s7) | ✅ 완료 (d07~d10) |
 | 3 | 4주차 일차 11~14 Storage·데이터 보호·Cloud 레슨 4개 (`d11`~`d14`) | ✅ 완료 (d11~d14) |
-| 4 | 5~6주차 zCompute 레슨 8개 (`zc1`~`zc8`, 실습 과제 1~3은 zc4·zc6·zc8의 `tasks`). 이번 범위는 zc1~zc4, zc5~zc8은 6주차 작업 | 진행 중 (zc1~zc7 완료, zc8 작성 중) |
+| 4 | 5~6주차 zCompute 레슨 8개 (`zc1`~`zc8`, 실습 과제 1~3은 zc4·zc6·zc8의 `tasks`). 이번 범위는 zc1~zc4, zc5~zc8은 6주차 작업 | ✅ 완료 (zc1~zc8) |
 | 5 | 7주차 zStorage 레슨 5개 (`zs1`~`zs5`) | 대기 |
 | 6 | 마무리: 이 문서에 최종 구조 반영, 전체 점검 | 대기 |
 
@@ -192,6 +192,7 @@
   - `zc5` 「데이터 볼륨」: 9절, 용어 18개, 그림 2개(s1 VM과 Boot·Data Volume, s8 Protection Group과 B2OS), 셀프체크 6개, 문제 은행 18슬롯(gen 2: 원격 스냅샷 주기, 복구 때 잃는 변경). 순서는 Volume → Volume Type → 생성·연결 → VM 안에서 쓰기 → 확장·분리·삭제 → Snapshot → Protection Group → B2OS → 복구. 명령은 일반 Linux 사용법이고 학습용 예시이며 실제 VM에서 실행해 보지 않음. **근거:** Attach 뒤 VM Stop·Start는 가이드 vm-common-operations 절차. **가이드에서 확인되지 않음(본문은 "사내 실습 환경에서 확인" 박스, 출제 안 함):** 볼륨 동시 연결, Detach 조건, 볼륨 삭제 시 스냅샷 처리, 테넌트에게 보이는 Volume Type 정보.
   - `zc6` 「Load Balancing (실습 과제 2)」: 10절, 용어 18개, 그림 2개(s2 요청 경로 LB → Listener → Target Group, s8 Web 1대 중지 시 제외), 셀프체크 6개, 문제 은행 17슬롯(gen 1: Interval × Threshold로 판정 시간), `tasks`에 실습 과제 2 일곱 단계를 그대로 넣음. 순서는 LB → 구성 요소 → ALB·NLB → Listener와 규칙 → Target Group → Health Check → LB의 Security Group(Standard·Managed) → Web 2대 이중화 → Auto Scaling(한 문단) → 직접 해 보기. **결정(사용자, 2026-11-24):** Web VM은 참조 아키텍처대로 Public Subnet에 둔다. Bastion은 zc8에서 만들므로 zc6에서는 쓰지 않고, 설치하는 동안만 Elastic IP를 붙이고 22번을 내 IP의 /32로 연 뒤 끝나면 Elastic IP를 떼고 22번 규칙을 지워 ALB로만 받는다. s8 시나리오는 Web 1 중지로 통일. Threshold 단위 문장은 본문에서 빼고 이 기록에만 남김. curl 출력은 학습용 예시이고 실제로 실행해 보지 않음. **근거:** U setup-lb, aws-elb(Scheme은 API에만 있어 본문에 넣지 않음), auto-scaling-groups, 기능 소개 p18·p22·p24. 가이드는 Threshold 단위를 seconds로 적었지만 설명은 횟수라 횟수로 씀. **가이드에서 확인되지 않음(본문은 "사내 실습 환경에서 확인" 박스, 출제 안 함):** LB 뒤 서버가 보는 출발지(access log로 확인), 실습 Project에서 LB 사용 가능 여부, Elastic IP를 뗀 Web VM의 외부 통신.
   - `zc7` 「기본 모니터링」: 9절, 용어 17개, 그림 1개(s5 Metric → Alarm → Event·SNS Topic), 셀프체크 6개, 문제 은행 15슬롯(gen 1: Statistic과 Threshold로 Alarm 상태 판정. 값은 항상 기준을 사이에 두어 Maximum과 Minimum의 결과가 갈리고, 연산자는 >=·>·<=·< 네 가지). 순서는 Metrics·Events·Alarms 비교 → Project Overview → Monitoring 탭 → Events(심각도, 필터, UUID) → Alarms → SNS Topic → 보는 범위(테넌트 사용자·관리자) → 상태 점검 순서 → 직접 해 보기. **근거:** U compute-project-overview(위젯 이름), monitoring-compute-events, A msp-monitoring-overview(Alarm 상태·설정, SNS Topics, System Alerts), L2 34 p17~p24, L2 44 p5~p15. 기능 소개 p12의 대시보드는 관리자용 Monitoring Overview라 테넌트 화면으로 쓰지 않음. Event 보관 기간·개수는 숫자 없이 씀. **결정(사용자, 2026-11-24):** Alarm은 Admin Guide와 L2 34를 근거로 쓰고, 일반 사용자(Member)가 만들 수 있는지는 확인 박스. s8 점검 순서는 가이드의 절차가 아니라 일반적인 점검 방법이라고 밝힘. s9 연습 값은 Average(OK)와 Maximum(ALARM)이 갈리게 함. 외부 모니터링 도구 이름은 넣지 않음. **가이드에서 확인되지 않음(본문은 "사내 실습 환경에서 확인" 박스, 출제 안 함):** Member의 Alarm·SNS Topic 생성 권한, Alarm에서 고를 수 있는 Metric 목록, 실습 Project의 Overview 화면 항목.
+  - `zc8` 「구축 결과 검증 (실습 과제 3)」: 10절, 용어 16개, 그림 1개(s2 Public·Private Subnet 전체 구성), 셀프체크 6개, 문제 은행 15슬롯(gen 없음), `tasks`에 실습 과제 3 일곱 항목. 순서는 요구사항 ↔ 설계 요소 ↔ 확인 방법 표 → 전체 구성 → Public/Private 구분 → Bastion 접근 통제(ssh -J) → Security Group 체인 → Storage(WAS 데이터 볼륨, 공유가 필요하면 zs3) → Protection Group 정책과 복구 검증 → 구축 결과 검증 표 → 산출물 빈 양식(구성도에 넣을 것, 리소스 내역서, 보고서 목차) → 직접 해 보기. 과제에 DB가 없어 DB 계층은 그리지 않음. Web은 참조 아키텍처대로 Public Subnet, Elastic IP는 ALB·Bastion·NAT GW에만. **결정(사용자, 2026-11-24):** s5 끝에 Web → NLB → WAS 연결(8080 테스트 서버의 응답 was1·was2, Nginx proxy_pass)을 학습용 예시로 넣고, 검증 표의 WAS 이중화 기대 결과를 "was2의 응답만 돌아온다"로 함. s9에 채운 산출물은 outputs/에 두고 커밋하지 않는다는 주의 상자. 정책 값·주소·명령은 학습용 예시이고 실제로 실행해 보지 않음. **근거:** 일정표 실습 과제 3, 기능 소개 p21~p24, U protection-groups, b2os. ssh -J는 일반적인 OpenSSH 사용법. **가이드에서 확인되지 않음(본문은 "사내 실습 환경에서 확인" 박스, 출제 안 함):** NLB 뒤 WAS가 보는 출발지(was-sg 출발지), 실습 Project의 Volume Type과 크기 지침, Elastic IP가 없는 Web VM의 아웃바운드(검증 표에도 한 줄).
   - 주의: 레슨 본문은 JS 템플릿 문자열이라 역슬래시를 두 번 써야 한다(`\\\\NAS\\share` → 화면에 `\\NAS\share`). /31·/32는 예외로 처리한다. 연습 터미널에는 네트워크 명령이 없어서 d07의 「직접 해 보기」는 계산기 연습 문제다.
 
 사용자 결정 사항:
