@@ -121,7 +121,7 @@
 | 1 | 앱 골격 + 기존 레슨 10개(w1-1~w1-4, d01~d06) 이전 | ✅ 완료 (커밋 `8704a00`) |
 | 2 | 3주차 일차 07~10 Network 레슨 4개 (`d07`~`d10`) + 서브넷 계산기 위젯(`subnetcalc`, d07 s7) | ✅ 완료 (d07~d10) |
 | 3 | 4주차 일차 11~14 Storage·데이터 보호·Cloud 레슨 4개 (`d11`~`d14`) | ✅ 완료 (d11~d14) |
-| 4 | 5~6주차 zCompute 레슨 8개 (`zc1`~`zc8`, 실습 과제 1~3은 zc4·zc6·zc8의 `tasks`). 이번 범위는 zc1~zc4, zc5~zc8은 6주차 작업 | 진행 중 (zc1~zc4 완료, zc5~zc8 대기) |
+| 4 | 5~6주차 zCompute 레슨 8개 (`zc1`~`zc8`, 실습 과제 1~3은 zc4·zc6·zc8의 `tasks`). 이번 범위는 zc1~zc4, zc5~zc8은 6주차 작업 | 진행 중 (zc1~zc4 완료, zc5 작성·사용자 확인 대기, zc6~zc8 대기) |
 | 5 | 7주차 zStorage 레슨 5개 (`zs1`~`zs5`) | 대기 |
 | 6 | 마무리: 이 문서에 최종 구조 반영, 전체 점검 | 대기 |
 
@@ -189,6 +189,7 @@
   - `zc2` 「네트워크 설계」: 10절, 용어 20개, 그림 1개(s10 회사 참조 아키텍처를 옮긴 VPC 설계), 위젯 `subnetcalc`(s3, 계산기는 2개만 빼므로 본문에 VPC Subnet은 3개 더 뺀다고 안내), 셀프체크 6개, 문제 은행 20슬롯(gen 4: VM에 줄 수 있는 주소 수, 첫·마지막 주소, VPC 안의 Subnet, 겹치는 Subnet). 순서는 Guest·Host Networking → VPC → Subnet(예약 주소 5개는 가이드 subnets 절 기준) → Route Table → Internet GW·Edge Network·Elastic IP → NAT GW → Security Group·Network Interface → DHCP Option Set·DNS → Direct Subnet·DVS(개념만) → 참조 아키텍처와 실습용 설계. 공인 IP 이름은 Elastic IP로 쓰고, 기능 소개 p22 화면의 Floating IP는 본문에 밝혔다. **결정(사용자, 2026-11-23):** s10에 Web 서버도 Private에 두는 구성이 쓰인다는 문장을 넣고, 실습은 회사 참조 아키텍처를 따른다. gen 문제에 "서브넷마다 주소 5개 예약" 기준을 적는다. **가이드에서 확인되지 않음(본문은 "사내 실습 환경에서 확인" 박스, 퀴즈·셀프체크 출제 안 함):** VM 안에서 Elastic IP가 보이는지, 새 Security Group의 처음 규칙, NLB 뒤 서버가 보는 출발지(was-sg의 출발지도 확인 대상으로 둠), 기본 DHCP 도메인 이름(가이드 VPC 절과 DHCP 절이 다름). Elastic IP 없는 VM의 Edge Router NAT는 교육자료(L2 35 p18) 기준.
   - `zc3` 「VM 리소스」: 10절, 용어 20개, 그림 3개(s1 VM을 이루는 자원, s6 Key Pair의 위치, s8 VM 상태 변화), 셀프체크 6개, 문제 은행 20슬롯(gen 3: z2 타입 이름에서 vCPU·메모리, N대의 합계, 타입별 최대 VM 수. 뒤의 두 문제는 타입의 vCPU·메모리를 문제에 직접 적음). 용량 계산은 기능 소개 p13의 값(노드 3대 × 128 vCPU·512GiB × 0.9)을 "가정한 값"으로 쓰고, 최소 노드 수는 넣지 않았다. **결정(사용자, 2026-11-23):** 크기 이름 규칙(large = 2, xlarge = 4, Nxlarge = 4×N vCPU)은 가이드에 문장이 없는 정리이므로 "z2 계열 기준"으로만 쓴다. Key Pair 분실 대응은 가이드의 절차가 아니라 일반적인 SSH·VM 운영 방법이라고 본문에 밝혔다. **가이드에서 확인되지 않음(본문은 "사내 실습 환경에서 확인" 박스, 출제 안 함):** 개인키 재다운로드, VM 삭제 시 볼륨 처리, 콘솔의 재부팅 버튼, Stop 후 IP 유지, Placement Rule의 새 VM 자동 적용. **자료끼리 다름:** 타입별 크기 범위(가이드와 기능 소개 p16이 달라 넣지 않음), 기능 소개 p16의 ZD8은 비율 1:8인데 크기는 1:4로 적혀 있음(회사 자료 확인 필요, 레슨에 넣지 않음). KMS는 교육자료(L1 15)만 근거다.
   - `zc4` 「Linux Web 서버 (실습 과제 1)」: 10절, 용어 18개, 그림 1개(s1 요청 경로 다섯 칸), 셀프체크 6개, 문제 은행 19슬롯(gen 없음: 핵심 계산이 없는 레슨), `tasks`에 일정표의 실습 과제 1 여섯 단계를 그대로 넣음. 순서는 접속 한 번의 경로 → VM 생성 → Elastic IP·Security Group(22는 내 IP, 80도 실습 중에는 내 IP) → SSH 키 접속 → 사용자 계정 → Nginx/Apache와 systemctl → curl 확인 → 로그·자원 → 접속 장애 점검(d09 서술 기준 ①~⑥) → 산출물 빈 양식(설정 내역서, VM 구축 결과). **명령과 출력은 학습용 예시이고, 실제 VM에서 실행해 보지 않음.** s10 위에 채운 문서를 저장소에 올리지 않는다는 주의 상자를 둠. **근거:** 메뉴·Test Connectivity·SSH 형식은 가이드(vm-operations, elastic-ips, testing-vm-connectivity), `ubuntu` 기본 사용자는 교육자료 L1 13 p20. 계정 생성, 패키지, 문서·로그 위치, OS 방화벽은 일반적인 Linux 사용법이고 가이드에 없다. **가이드에서 확인되지 않음(본문은 "사내 실습 환경에서 확인" 박스, 출제 안 함):** VM 안에서 Elastic IP가 보이는지, 새 Security Group의 처음 규칙과 Egress, 내 공인 IP를 확인하는 사내 방법.
+  - `zc5` 「데이터 볼륨」: 9절, 용어 18개, 그림 2개(s1 VM과 Boot·Data Volume, s8 Protection Group과 B2OS), 셀프체크 6개, 문제 은행 18슬롯(gen 2: 원격 스냅샷 주기, 복구 때 잃는 변경). 순서는 Volume → Volume Type → 생성·연결 → VM 안에서 쓰기 → 확장·분리·삭제 → Snapshot → Protection Group → B2OS → 복구. 명령은 일반 Linux 사용법이고 학습용 예시이며 실제 VM에서 실행해 보지 않음. **근거:** Attach 뒤 VM Stop·Start는 가이드 vm-common-operations 절차. **가이드에서 확인되지 않음(본문은 "사내 실습 환경에서 확인" 박스, 출제 안 함):** 볼륨 동시 연결, Detach 조건, 볼륨 삭제 시 스냅샷 처리, 테넌트에게 보이는 Volume Type 정보.
   - 주의: 레슨 본문은 JS 템플릿 문자열이라 역슬래시를 두 번 써야 한다(`\\\\NAS\\share` → 화면에 `\\NAS\share`). /31·/32는 예외로 처리한다. 연습 터미널에는 네트워크 명령이 없어서 d07의 「직접 해 보기」는 계산기 연습 문제다.
 
 사용자 결정 사항:
@@ -206,15 +207,18 @@
 | zc2 네트워크 설계 | 기능 소개 p21~p24 | L1 19, 20, 21, 22(pdf), 23, 24, 25, 26, 27, 28, 29, 30 / 참고: L2 35 p14~p20 | U: networking-vpc, subnets, network-interfaces, route-tables, internet-gateways, dhcp-option-sets, security-groups, elastic-ips, nat-gateways, private-hosted-zones, dns-services, peering-connections, networking-dvs, aws-vpc / A: msp-region-networks-edge-networks, msp-account-networking-vlans-management |
 | zc3 VM 리소스 | 기능 소개 p13·p16·p17 | L1 14 p4~p7·p11~p18, 15, 16 p32~p36, 18 p3·p8, 33 p2~p6, L1 1 p16·p17 | U: vm-operations, vm-common-operations, vm-placement-rules, cloud-init, instance-type, key-pair, machine-images, modify-cloud-image-qcow |
 | zc4 Linux Web 서버 | 일정표(실습 과제 1), OJT 계획서, 기능 소개 p23 | L1 13 p3·p16~p20, 25, 29 | U: zcompute-first-steps, vm-operations, testing-vm-connectivity, elastic-ips, security-groups |
-| zc5 데이터 볼륨 | 기능 소개 p19·p20 | L1 18, 32, 14 p17 / 참고: L3 47 | U: snapshots, protection-groups, vm-common-operations / A: msp-storage-management-volume-types, msp-storage-management-storage-classes |
-| zc6 Load Balancing | 일정표(실습 과제 2), 기능 소개 p18·p22 | L1 22 p8~p10, 14 p19~p22 | U: setup-lb, aws-elb, ssl-certificates, auto-scaling-groups |
-| zc7 기본 모니터링 | 기능 소개 p12 | L2 34 p16~p25, L2 44 p5~p19 | U: compute-project-overview, monitoring-compute-events / A: msp-monitoring-overview, msp-monitoring-compute-events |
-| zc8 구축 결과 검증 | 일정표(실습 과제 3), 기능 소개 p21~p24 | L2 41 p11~p27, L2 44, L1 1 p24 | U: protection-groups, b2os, testing-vm-connectivity / A: msp-protection-groups |
+| zc5 데이터 볼륨 | 기능 소개 p19·p20 | L1 18 p3·p8~p10, 14 p17, 32 p5·p6, L2 41 p3~p7·p11~p27·p30 / 참고: L3 47 | U: vm-common-operations(Adding Storage, Volume Types), snapshots, protection-groups, b2os / A: msp-storage-management-volume-types, msp-storage-management-storage-classes(테넌트가 알 만큼만) |
+| zc6 Load Balancing | 일정표(실습 과제 2), 기능 소개 p18·p22 | L1 22 p8~p10, 14 p19~p22(Auto Scaling) | U: setup-lb, aws-elb, ssl-certificates, auto-scaling-groups |
+| zc7 기본 모니터링 | 기능 소개 p12 | L2 34 p17~p24(Account 수준), p25~p28(Cloud 수준, 범위 구분용), L2 44 p5~p19 | U: compute-project-overview, monitoring-compute-events / A: msp-monitoring-overview(Alarms, SNS Topics는 여기에만 있음), msp-monitoring-compute-events |
+| zc8 구축 결과 검증 | 일정표(실습 과제 3), 기능 소개 p21~p24 | L2 44 p5~p19, L2 41 p3~p7, L1 1 p24 | U: protection-groups, b2os, testing-vm-connectivity / A: msp-protection-groups |
 
 자료끼리 다른 곳(용어와 동작은 공식 가이드 우선):
 - 관리자 역할: 공식 가이드는 3가지(Member, MSP or Tenant Admin, Zadara Ops Admin), 교육자료 L1 12 p14와 기능 소개 p15는 4가지(Cloud Admin, MSP Admin, Tenant Admin, Member). zc1은 관리 범위를 보이려고 4가지로 쓰고 차이를 본문에 밝혔다.
 - 최소 노드 수: 가이드 용어집은 3대, 교육자료 L1 11 p9와 기능 소개 p13은 Compute 노드 4대. 값이 달라서 레슨에 넣지 않았다.
 - Region: 가이드 용어집에는 정의가 없다. zc1은 사용자가 정한 정의(최상위 물리·논리 단위)를 쓴다. AWS API의 region 값은 무시된다(U: aws-ec2-api).
+- Alarm: User Guide에는 기능 절이 없고 Admin Guide `msp-monitoring-overview`에 있다. 교육자료 L2 34 p18~p20은 일반 사용자도 만들 수 있다고 설명한다.
+- Protection Group 예시: L2 41 p14 화면의 이름·설명은 "12시간마다 원격"인데 값은 6시간 주기에 로컬 12개마다 원격이다. 가이드 기준(로컬 스냅샷 개수)으로 계산하면 72시간이라 이 예시는 쓰지 않는다.
+- **레슨에 쓰지 않는 쪽:** L2 41 p8~p10(가격), p31(사내 전용 표시).
 - Access Key의 범위: 가이드에 없다. 교육자료 L1 12 p7 그림은 Project 아래에 둔다. 사내 환경에서 확인할 것.
 
 ## 앱 구조
